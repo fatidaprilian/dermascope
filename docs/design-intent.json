@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "design-intent-v1",
+  "mode": "ui-redesign",
+  "status": "active",
+  "project": {
+    "name": "ImgLab",
+    "context": "Goal-first digital image processing toolkit with optional backend processing.",
+    "domain": "Browser-based image processing workbench",
+    "runtimeConstraint": "React + Vite + Tailwind CSS + DaisyUI frontend, FastAPI backend for processing.",
+    "architectureConstraint": "Client-side SPA with optional API backend for heavy processing."
+  },
+  "assumptions": [
+    "Frontend uses /api endpoints for processing when backend is available.",
+    "UI must avoid grid or glow wallpaper and keep image color judgment intact.",
+    "Design contract follows the digital darkroom test-strip bench anchor."
+  ],
+  "motionPaletteDecision": "Motion: test-strip wipe reveal with a physical handle and reduced-motion fade fallback. Palette: graphite bench neutrals with safelight amber primary and cool cyan measurement accents.",
+  "conceptualAnchor": {
+    "mode": "agent-selected",
+    "name": "Digital darkroom test-strip bench",
+    "anchorReference": "silver-gelatin darkroom test-strip bench with optical enlarger, contact sheet, safelight, and calibration marks",
+    "specificReferencePoint": "A working bench with a test strip laid over a contact sheet, plus a visible safelight indicator.",
+    "rationale": "Anchors the UI in a purposeful workflow without using decorative wallpaper patterns.",
+    "signatureMotion": "A test-strip wipe reveals processed pixels over the original image.",
+    "signatureMove": "A physical handle sits on the wipe line and can be dragged by the user.",
+    "typographicDecision": "Compact operation titles, plain body copy, small metadata labels, aligned numeric parameter values."
+  },
+  "visualResetStrategy": "Replace the previous minimal canvas look with a layered bench composition, contact-sheet goal rail, and test-strip wipe stage while keeping backgrounds clean and non-decorative.",
+  "derivedTokenLogic": {
+    "anchorReference": "silver-gelatin darkroom test-strip bench with optical enlarger, contact sheet, safelight, and calibration marks",
+    "colorDerivationSource": "Graphite bench surfaces, safelight amber, and cool cyan tool markings.",
+    "spacingDerivationSource": "Bench layout with tight tool grouping and clear stage separation.",
+    "typographyDerivationSource": "Technical labeling from darkroom gear: compact titles, small metadata, monospaced numbers.",
+    "motionDerivationSource": "Manual test-strip wipe and short fades for state changes.",
+    "validationRule": "Every token must trace to the bench anchor; no grid or glow wallpaper tokens are allowed."
+  },
+  "tokenSystem": {
+    "colorTokens": {
+      "primary": "safelight-amber",
+      "secondary": "cyan-measure",
+      "neutral": "graphite",
+      "surface": "dark-paper",
+      "focus": "cyan-measure"
+    },
+    "typographyTokens": {
+      "display": "Space Grotesk",
+      "body": "IBM Plex Sans",
+      "mono": "JetBrains Mono"
+    },
+    "spacingTokens": {
+      "railGap": "12px",
+      "panelPadding": "20px",
+      "stageGap": "16px"
+    },
+    "radiusTokens": {
+      "panel": "16px",
+      "control": "12px"
+    },
+    "shadowTokens": {
+      "panel": "soft bench lift",
+      "focus": "high-contrast ring"
+    }
+  },
+  "colorTruth": {
+    "functionalRoles": [
+      "safelight amber indicates primary actions and processing readiness",
+      "cyan indicates measurement, focus, and wipe handle",
+      "green indicates success",
+      "red indicates error"
+    ],
+    "nonTransferableBehavior": "Safelight amber is intentionally dominant to evoke a darkroom workbench rather than a generic UI palette."
+  },
+  "crossViewportAdaptation": {
+    "mobile": "Stage first, goal rail collapses under the image with a single-column list.",
+    "tablet": "Stage and goal rail split into two columns with compact headers.",
+    "desktop": "Stage dominates left; goal rail is a vertical contact sheet on the right."
+  },
+  "motionSystem": {
+    "signature": "Test-strip wipe reveal",
+    "reducedMotionFallback": "Immediate swap or short fade with no wipe animation.",
+    "durationsMs": {
+      "stateTransition": 180,
+      "wipeReveal": 520
+    }
+  },
+  "componentMorphology": {
+    "stage": "Layered bench frame with a wipe line and handle.",
+    "goalRail": "Compact stacked buttons with intent summary.",
+    "statusPill": "Safelight indicator with backend readiness label.",
+    "dropzone": "Framed pad with dashed edge and clear action copy."
+  },
+  "aiSafeUiAudit": {
+    "status": "active",
+    "failureDefinition": "Fails if grid, line, or glow wallpaper appears or if calibration marks become page background.",
+    "backgroundPatternRule": "No decorative grid, scanlines, or radial glow backgrounds.",
+    "blockingByDefault": true
+  },
+  "productionContentPolicy": {
+    "language": ["id", "en"],
+    "noPlaceholderCopy": true,
+    "rule": "Goal copy must describe user intent and match real operations."
+  },
+  "accessibilityPolicy": {
+    "standard": "WCAG 2.2 AA",
+    "focusVisibility": "Visible focus ring on all interactive elements.",
+    "keyboardAccess": "Goal list and wipe slider must be keyboard operable."
+  },
+  "designExecutionPolicy": {
+    "doNotShip": [
+      "decorative grid wallpaper",
+      "radial glow backdrops",
+      "placeholder demo copy",
+      "parameter-first UI"
+    ],
+    "requiredSignals": [
+      "test-strip wipe",
+      "safelight status indicator",
+      "contact-sheet style goal rail"
+    ]
+  },
+  "designExecutionHandoff": {
+    "implementationOrder": [
+      "Update design docs",
+      "Apply DaisyUI theme tokens",
+      "Implement test-strip wipe stage",
+      "Finalize goal rail and status pill"
+    ],
+    "notes": "Keep backgrounds clean and avoid decorative lines or glows."
+  },
+  "reviewRubric": {
+    "mustPass": [
+      "No grid or glow wallpaper",
+      "Test-strip wipe present with handle",
+      "Goal-first flow is intact",
+      "Reduced-motion fallback works",
+      "Focus and contrast meet WCAG 2.2 AA"
+    ],
+    "driftSignals": [
+      "UI reads as generic dashboard",
+      "Goal rail looks like a default card list",
+      "Calibration marks appear in the background"
+    ]
+  },
+  "contextHygiene": {
+    "allowedSources": [
+      "docs/DESIGN.md",
+      "docs/design-intent.json",
+      "official React, Vite, Tailwind CSS, DaisyUI docs"
+    ],
+    "forbiddenSources": [
+      "generic dashboard templates",
+      "prior-project UI memory",
+      "unapproved external screenshots"
+    ]
+  },
+  "libraryResearchStatus": "verified",
+  "libraryDecisions": [
+    {
+      "library": "React",
+      "purpose": "Component model for the frontend UI.",
+      "verifiedAt": "2026-05-09",
+      "sourceUrl": "https://react.dev/learn/start-a-new-react-project",
+      "stableVersion": "current",
+      "risk": "Low",
+      "fallback": "Use the existing static HTML build if React tooling fails."
+    },
+    {
+      "library": "Vite",
+      "purpose": "Frontend dev server and build tool.",
+      "verifiedAt": "2026-05-09",
+      "sourceUrl": "https://vite.dev/guide/",
+      "stableVersion": "current",
+      "risk": "Low",
+      "fallback": "Use the static server for local-only preview."
+    },
+    {
+      "library": "Tailwind CSS",
+      "purpose": "Utility styling and token mapping via DaisyUI.",
+      "verifiedAt": "2026-05-09",
+      "sourceUrl": "https://tailwindcss.com/docs/installation",
+      "stableVersion": "current",
+      "risk": "Low",
+      "fallback": "Use scoped CSS for critical layout if Tailwind config fails."
+    },
+    {
+      "library": "DaisyUI",
+      "purpose": "Semantic component styling and theme tokens.",
+      "verifiedAt": "2026-05-09",
+      "sourceUrl": "https://daisyui.com/docs/install/",
+      "stableVersion": "current",
+      "risk": "Low",
+      "fallback": "Swap to base Tailwind utility styling."
+    }
+  ],
+  "forbiddenPatterns": [
+    "decorative grid wallpaper",
+    "decorative line backgrounds",
+    "radial glow backdrops",
+    "generic dashboard chrome",
+    "parameter-first UI"
+  ],
+  "repoEvidence": {
+    "designEvidenceSummary": "Frontend exists under frontend/ with React + Vite + Tailwind + DaisyUI. Current UI uses goal-first buttons and backend-only processing, but lacks the darkroom test-strip wipe and anchor-driven styling.",
+    "uiSurfaceFiles": [
+      "frontend/src/App.jsx",
+      "frontend/src/index.css",
+      "frontend/index.html"
+    ]
+  }
+}

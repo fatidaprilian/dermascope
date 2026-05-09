@@ -1,0 +1,235 @@
+{
+  "timestamp": "2026-05-09T12:26:07.464Z",
+  "files": {
+    ".instructions.md": {
+      "action": "restore",
+      "hash": "91efb30348194cff4f7a820caabeb60cd7ca59dea3982a7d3991c7b18991d225",
+      "mtimeMs": 1778108077312.119
+    },
+    ".cursorrules": {
+      "action": "restore",
+      "hash": "6dc7c85d6f494919689cbe992ff2409385bd0edef15eb66d87f310723f972341",
+      "mtimeMs": 1778165772731.1028
+    },
+    ".windsurfrules": {
+      "action": "restore",
+      "hash": "db41b792a03df3a2175b90018719cb8dc89b14ed1bf304dd6344700a019e60c1",
+      "mtimeMs": 1778165772735.2954
+    },
+    "AGENTS.md": {
+      "action": "restore",
+      "hash": "e9925404a0366c68c40f8eefa9962b8cae2484d8b0ede4879a543e0a1438db98",
+      "mtimeMs": 1778108077312.119
+    },
+    "CLAUDE.md": {
+      "action": "restore",
+      "hash": "4280797d647879664f802a51beed4ec7a17219a5705ad87794d20cb0244f4012",
+      "mtimeMs": 1778108077316.1035
+    },
+    "GEMINI.md": {
+      "action": "restore",
+      "hash": "03d8ccf777c797a8c56697f1e7d952d6703de6e2e4f11c8c035c246a7626e465",
+      "mtimeMs": 1778108077316.1035
+    },
+    ".cursor/rules/agentic-senior-core.mdc": {
+      "action": "restore",
+      "hash": "7e017e984f83467421b587a5c3e1420e41420e9263947441544f8ef860013714",
+      "mtimeMs": 1778108077316.1035
+    },
+    ".github/copilot-instructions.md": {
+      "action": "restore",
+      "hash": "2dba29db93e6f7919671cd62dbedb418a1258aeae58ed4a960ccbba8e680e542",
+      "mtimeMs": 1778108077320.0881
+    },
+    ".github/instructions/agentic-senior-core.instructions.md": {
+      "action": "restore",
+      "hash": "fd94d7713232e41ec0228126ee2e9278b826f39d04a1dba9a230f0d9ba749946",
+      "mtimeMs": 1778108077320.0881
+    },
+    ".windsurf/rules/agentic-senior-core.md": {
+      "action": "restore",
+      "hash": "b26968f1bf693d8700d276261b7000b91ae43770a1cd03304c563b90e834cd9c",
+      "mtimeMs": 1778108077320.0881
+    },
+    ".agent-override.md": {
+      "action": "restore",
+      "hash": "403d53316a6420a574bcd682dd0c7b82a409c2b61873873bece32616ed1fde39",
+      "mtimeMs": 1778108077324.0728
+    },
+    ".agent-context/policies/llm-judge-threshold.json": {
+      "action": "restore",
+      "hash": "73b025e154b1a021ea64e4aca88b27be42ea0ce2be074e778a554f69e1f499db",
+      "mtimeMs": 1778165772735.2954
+    },
+    ".agent-context/prompts/bootstrap-design.md": {
+      "action": "restore",
+      "hash": "4004d5fdc4e6dfb671d04847b608f0b81bbf8106cdad16b424e25f96269ceb1b",
+      "mtimeMs": 1778165772659.8271
+    },
+    ".agent-context/prompts/init-project.md": {
+      "action": "restore",
+      "hash": "14c4ef7edce220aebb48c12bc68f924c9dc2178db19f26fbbabd39df81c2a87e",
+      "mtimeMs": 1778165772659.8271
+    },
+    ".agent-context/prompts/refactor.md": {
+      "action": "restore",
+      "hash": "94e5c45c77bd528b2ef5b9fd77622c3873626e27e189aa5e0ef27dd2c56abeb1",
+      "mtimeMs": 1778108077280.242
+    },
+    ".agent-context/prompts/review-code.md": {
+      "action": "restore",
+      "hash": "6f323f78870d52f7fa3635b0f410847fc24ad4780629488a2bc4a0b8eb6d172f",
+      "mtimeMs": 1778108077284.2266
+    },
+    ".agent-context/review-checklists/architecture-review.md": {
+      "action": "restore",
+      "hash": "ca31bd7dbb9ed07ac3dcad0092334d59acb7fbce9d540f529db42d22a220c198",
+      "mtimeMs": 1778108077284.2266
+    },
+    ".agent-context/review-checklists/pr-checklist.md": {
+      "action": "restore",
+      "hash": "26e945325af4524ee0139160690bc3c3ec4f2d026bf79317598f02b25c953957",
+      "mtimeMs": 1778108077284.2266
+    },
+    ".agent-context/rules/api-docs.md": {
+      "action": "restore",
+      "hash": "70dc04005e7552209e966dadbdebf5d122fa5ac79bedabcd3763fdff6641f962",
+      "mtimeMs": 1778108077284.2266
+    },
+    ".agent-context/rules/architecture.md": {
+      "action": "restore",
+      "hash": "a5656a687db7f018a1618559fa1f48e64a88363229b901c871e97e55623e2c04",
+      "mtimeMs": 1778108077288.2112
+    },
+    ".agent-context/rules/database-design.md": {
+      "action": "restore",
+      "hash": "c10937ce985f0f874973a0271c732ddda1c9609f8c5af9b84d522d7abfa9995a",
+      "mtimeMs": 1778108077288.2112
+    },
+    ".agent-context/rules/docker-runtime.md": {
+      "action": "restore",
+      "hash": "2c175df44e081422a60cbe5247ece3967e0dc06d4d8daccbcd5a2caa469e9841",
+      "mtimeMs": 1778165772668.2126
+    },
+    ".agent-context/rules/efficiency-vs-hype.md": {
+      "action": "restore",
+      "hash": "33f519c4d95bdec13af458f3932934139e5f24b0e169a0e85e85c621b086e01e",
+      "mtimeMs": 1778108077288.2112
+    },
+    ".agent-context/rules/error-handling.md": {
+      "action": "restore",
+      "hash": "31e8fb6c3c2e18407c7d7458eabb082e82eceadef2110b66d6a97a04a9e04afa",
+      "mtimeMs": 1778108077292.1958
+    },
+    ".agent-context/rules/event-driven.md": {
+      "action": "restore",
+      "hash": "3afe4234552f5a0d56081c8af714167d9afd902ccb3a953ee946df24ccccb12f",
+      "mtimeMs": 1778108077292.1958
+    },
+    ".agent-context/rules/frontend-architecture.md": {
+      "action": "restore",
+      "hash": "1af96e6a4b620f9f8525614c860d07add7bd264a87d9ea34f03816d79a31d82c",
+      "mtimeMs": 1778165772676.598
+    },
+    ".agent-context/rules/git-workflow.md": {
+      "action": "restore",
+      "hash": "8892737bf1d3676f46e266c79aa2fc1e62aa1fda2e9498475d6408a6ed8ca4df",
+      "mtimeMs": 1778108077292.1958
+    },
+    ".agent-context/rules/microservices.md": {
+      "action": "restore",
+      "hash": "5182722ad3bb2b1f508a15b6bfc1ac62342f229a19581a84a4a0a9176367fd89",
+      "mtimeMs": 1778108077292.1958
+    },
+    ".agent-context/rules/naming-conv.md": {
+      "action": "restore",
+      "hash": "e1e26774ab05cde65badfdb4d5cdd56bb630430aa62068b8b48f295aabb27f4f",
+      "mtimeMs": 1778108077296.1804
+    },
+    ".agent-context/rules/performance.md": {
+      "action": "restore",
+      "hash": "e9b4f1d6af6dda4864f19cfb5a41bfb1ebc26d050bf0b4a6087f9f18ec5dfd5d",
+      "mtimeMs": 1778108077296.1804
+    },
+    ".agent-context/rules/realtime.md": {
+      "action": "restore",
+      "hash": "483765dcad6cb69d9dea2340cfb4c59901f6f19acce764e12e396c018264dae1",
+      "mtimeMs": 1778108077296.1804
+    },
+    ".agent-context/rules/security.md": {
+      "action": "restore",
+      "hash": "6e0f9401f3933a18aedfc5e04bab90aa16bfb0ce4aaf0fbc25dd06e86556c4d7",
+      "mtimeMs": 1778108077296.1804
+    },
+    ".agent-context/rules/testing.md": {
+      "action": "restore",
+      "hash": "1cef8b988a02af8eba7885478b1a3f5c0246249f3f3485240c5fb90f813c7def",
+      "mtimeMs": 1778108077296.1804
+    },
+    ".agent-context/state/README.md": {
+      "action": "restore",
+      "hash": "7fd5d3595502ca7e001a7f3bfc15e08e50f44d19302bf6175bb1a0892683968e",
+      "mtimeMs": 1778108077300.165
+    },
+    ".agent-context/state/active-memory.json": {
+      "action": "restore",
+      "hash": "14ba22f8d889d0ff6759514ca52f01e242003973e41aae9c99c8290e14197339",
+      "mtimeMs": 1778169683236.87
+    },
+    ".agent-context/state/architecture-map.md": {
+      "action": "restore",
+      "hash": "7ec865abfbb9e20de68b1db9a48744b565f6021ae661e5b31ef68c8deb911743",
+      "mtimeMs": 1778108077300.165
+    },
+    ".agent-context/state/benchmark-comparison-schema.json": {
+      "action": "restore",
+      "hash": "ac1fe32eae3513be9413ce2d13ffe6b818c3a0d12a695aa2c6043ecde58847bc",
+      "mtimeMs": 1778108077300.165
+    },
+    ".agent-context/state/benchmark-reproducibility.json": {
+      "action": "restore",
+      "hash": "bdd864d2c52af66b6cc727ed551fa6b25783b0276b5457580f1ae5a7246b612f",
+      "mtimeMs": 1778108077300.165
+    },
+    ".agent-context/state/benchmark-thresholds.json": {
+      "action": "restore",
+      "hash": "bf4c3342cc1b109535e921e8a330606aa7cd1817e9109a59a8bbfa4ab66a1db3",
+      "mtimeMs": 1778108077300.165
+    },
+    ".agent-context/state/benchmark-writer-judge-config.json": {
+      "action": "restore",
+      "hash": "75b6eb12f924c722144e1d503a3cda1aa581217ff523eb55989f86276274ce20",
+      "mtimeMs": 1778108077304.1497
+    },
+    ".agent-context/state/dependency-map.md": {
+      "action": "restore",
+      "hash": "f1ac3649146bbfde11602512d93a23532a2e473be29e89f0b72fd420f1184bb0",
+      "mtimeMs": 1778108077304.1497
+    },
+    ".agent-context/state/memory-adapter-contract.json": {
+      "action": "restore",
+      "hash": "a679d37c7b63c0234a64d7b2e4ac54560b7e0ace594949d7690bb043498ca429",
+      "mtimeMs": 1778108077304.1497
+    },
+    ".agent-context/state/memory-continuity.json": {
+      "action": "restore",
+      "hash": "f7f7ab1dec5cba12d0ed670461320e5f53985edc0cd3d4f287ab9c97e3ac5b9a",
+      "mtimeMs": 1778108077336.0264
+    },
+    ".agent-context/state/memory-schema-v1.json": {
+      "action": "restore",
+      "hash": "5fc94586255d52514c442c99dc5202b3c5a8cb731aa72f3d529c7c89a7435703",
+      "mtimeMs": 1778108077304.1497
+    },
+    ".agent-context/state/onboarding-report.json": {
+      "action": "restore",
+      "hash": "ab179d4faf31ac3e884d2c2c307f9db2a8f5b789c5b79f9140a7c545104f3276",
+      "mtimeMs": 1778165772739.4883
+    },
+    ".agent-context/state/token-optimization.json": {
+      "action": "restore",
+      "hash": "c03d8ae79e82229518f4ed49b8d178f4ca5d5ef17dc90e3aaa8dc02ebaf62ab5",
+      "mtimeMs": 1778108077371.888
+    }
+  }
+}

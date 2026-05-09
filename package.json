@@ -1,0 +1,22 @@
+{
+  "name": "imglab",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Browser-first digital image processing toolkit.",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "backend": ".venv/bin/uvicorn imglab_api.main:app --app-dir backend --reload --port 8000",
+    "docker:dev": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "test": "node tests/operation-contract.test.js",
+    "test:backend": "PYTHONPATH=backend .venv/bin/python -m unittest discover backend/tests",
+    "check:backend": "python3 -m compileall backend"
+  },
+  "keywords": [
+    "image-processing",
+    "opencv",
+    "toolkit"
+  ],
+  "license": "UNLICENSED"
+}

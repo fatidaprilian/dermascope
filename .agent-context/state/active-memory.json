@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "active-memory-v1",
+  "snapshotPurpose": "compact-cross-session-continuity",
+  "updatePolicy": {
+    "writeWhen": "natural-task-boundary",
+    "overwriteOnlyWithCurrentRepoEvidence": true,
+    "preserveUserOwnedContent": true
+  },
+  "project": {
+    "name": "imglab",
+    "currentFocus": "React/Vite frontend redesign aligned to the darkroom test-strip bench anchor and launch stability.",
+    "durableFacts": [
+      "ImgLab MVP is scoped to real image processing methods: restoration, enhancement, edge/threshold tools, upscaling, and optional morphology.",
+      "Architecture is a browser-first single page app using React + Vite + Tailwind CSS + DaisyUI, with optional OpenCV.js and FastAPI backend.",
+      "Optional backend is FastAPI plus OpenCV-Python, exposing health, goals, and process endpoints.",
+      "MVP excludes Wiener filter, inpainting, ESRGAN/Real-ESRGAN, accounts, server-side image storage, batch processing, and persistent project history.",
+      "Current implementation uses the React frontend in frontend/ with goal-first workflow and backend /api processing.",
+      "UI now exposes user goals first, with technical operations as secondary metadata."
+    ]
+  },
+  "progress": {
+    "lastAchievements": [
+      "Aligned design contract and design-intent to the darkroom test-strip bench anchor and updated runtime docs.",
+      "Refined the React UI with a test-strip wipe reveal, safelight backend status, and contact-sheet goal rail.",
+      "Fixed Tailwind config to ESM and added the imglab DaisyUI theme with custom typography.",
+      "Created required docs: project brief, ADR, flow overview, API/public contract, database/data model, design contract, and design intent.",
+      "Implemented static ImgLab MVP with upload, OpenCV.js operation registry, processing, compare slider, reset, and PNG export.",
+      "Added package.json, package-lock.json, static server, and operation contract test.",
+      "Reworked UI from raw method selection to goal-based selection and removed decorative line/grid backgrounds.",
+      "Added optional Python FastAPI backend scaffold with goal-based upload processing and frontend backend-mode switch.",
+      "Deferred OpenCV.js loading until the first process action to reduce initial UI freezes."
+    ],
+    "pendingIssues": [
+      "Confirm the Vite dev server launches and the frontend loads on port 5173.",
+      "Verify /api/health and /api/process work in Docker and local dev.",
+      "Manual browser testing with real sample images is still needed.",
+      "Redesigned UI needs visual QA for contrast, motion, and responsive layout.",
+      "Backend dependencies were not installed because pip network approval was rejected, so backend runtime tests were not executed."
+    ],
+    "nextBestActions": [
+      "Run npm run dev or docker compose up --build and open http://localhost:5173.",
+      "Test goal processing with real images and confirm the test-strip wipe behavior.",
+      "Review the redesigned UI across mobile, tablet, and desktop breakpoints.",
+      "Run npm run validate and npm run test:backend after installing backend dependencies."
+    ],
+    "validationState": [
+      "Validation pending after React UI and design contract updates.",
+      "Tailwind config now uses ESM and DaisyUI theme tokens; confirm Vite build succeeds.",
+      "Backend Python files have not been revalidated after UI changes."
+    ]
+  },
+  "designContinuity": {
+    "visualLanguageContinuity": "opt-in-only",
+    "currentConceptualAnchor": "silver-gelatin darkroom test-strip bench with optical enlarger, contact sheet, safelight, and calibration marks",
+    "forbiddenCarryover": [
+      "prior-project-style-memory",
+      "old-ui-visual-dna-without-user-approval",
+      "generic-dashboard-defaults"
+    ]
+  },
+  "privacy": {
+    "storeSecrets": false,
+    "storeRawChatLogs": false,
+    "redactSensitiveTextBeforeWriting": true
+  },
+  "generatedAt": "2026-05-06T22:54:37.341Z",
+  "lastUpdatedAt": "2026-05-09T09:30:00-05:00"
+}
