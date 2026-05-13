@@ -23,8 +23,13 @@ function App() {
   const [processingTime, setProcessingTime] = useState(null);
   const [backendStatus, setBackendStatus] = useState(DEFAULT_STATUS);
   const [analysis, setAnalysis] = useState(null);
+  const [inputMode, setInputMode] = useState("upload");
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isCameraStarting, setIsCameraStarting] = useState(false);
 
   const fileInputRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -51,19 +56,29 @@ function App() {
     };
   }, []);
 
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    setIsCameraActive(false);
+  }, []);
+
+  useEffect(() => stopCamera, [stopCamera]);
+
   const resetAll = useCallback(() => {
     if (image?.objectUrl) URL.revokeObjectURL(image.objectUrl);
     if (processedImage) URL.revokeObjectURL(processedImage);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    stopCamera();
     setImage(null);
     setProcessedImage(null);
     setAnalysis(null);
     setError(null);
     setProcessingTime(null);
-  }, [image, processedImage]);
+  }, [image, processedImage, stopCamera]);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
+  const acceptImageFile = useCallback((file) => {
     if (!file) return;
 
     const validTypes = ["image/png", "image/jpeg", "image/webp"];
@@ -86,6 +101,11 @@ function App() {
 
     const objectUrl = URL.createObjectURL(file);
     setImage({ file, objectUrl, name: file.name, size: file.size });
+  }, [image, processedImage]);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    acceptImageFile(file);
   };
 
   const handleDrop = (e) => {
@@ -97,6 +117,64 @@ function App() {
     } else {
       setError("Drop file gambar yang valid.");
     }
+  };
+
+  const startCamera = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError("Kamera tidak didukung oleh browser ini.");
+      return;
+    }
+    setIsCameraStarting(true);
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 960 }
+        },
+        audio: false
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setIsCameraActive(true);
+    } catch {
+      setError("Kamera tidak bisa dibuka. Cek izin kamera atau gunakan upload file.");
+    } finally {
+      setIsCameraStarting(false);
+    }
+  };
+
+  const captureCameraPhoto = async () => {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth || !video.videoHeight) {
+      setError("Preview kamera belum siap.");
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      setError("Browser tidak dapat mengambil gambar kamera.");
+      return;
+    }
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise((resolve) => {
+      canvas.toBlob(resolve, "image/jpeg", 0.92);
+    });
+    if (!blob) {
+      setError("Foto kamera gagal dibuat.");
+      return;
+    }
+    const file = new File([blob], `kamera-wajah-${Date.now()}.jpg`, { type: "image/jpeg" });
+    acceptImageFile(file);
+    stopCamera();
   };
 
   const processImage = async (goal) => {
@@ -210,39 +288,98 @@ function App() {
                     </span>
                   ))}
                 </div>
+                <div className="source-switch" aria-label="Pilih sumber foto">
+                  <button
+                    type="button"
+                    className={inputMode === "upload" ? "active" : ""}
+                    onClick={() => {
+                      stopCamera();
+                      setInputMode("upload");
+                    }}
+                  >
+                    Upload file
+                  </button>
+                  <button
+                    type="button"
+                    className={inputMode === "camera" ? "active" : ""}
+                    onClick={() => setInputMode("camera")}
+                  >
+                    Kamera
+                  </button>
+                </div>
               </div>
 
-              <div
-                className={`upload-card ${isDragOver ? "is-dragging" : ""}`}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDragOver(true);
-                }}
-                onDragLeave={() => setIsDragOver(false)}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
+              {inputMode === "upload" ? (
+                <div
+                  className={`upload-card ${isDragOver ? "is-dragging" : ""}`}
+                  onDragOver={(e) => {
                     e.preventDefault();
-                    fileInputRef.current?.click();
-                  }
-                }}
-              >
-                <div className="upload-symbol">+</div>
-                <h2 className="text-2xl font-semibold">Upload foto wajah</h2>
-                <p className="text-sm text-base-content/60">
-                  PNG, JPEG, atau WebP. Maksimum 10 MB. Gunakan foto wajah yang jelas dan cukup terang.
-                </p>
-                <input
-                  type="file"
-                  className="hidden"
-                  ref={fileInputRef}
-                  accept="image/png,image/jpeg,image/webp"
-                  onChange={handleFileUpload}
-                />
-              </div>
+                    setIsDragOver(true);
+                  }}
+                  onDragLeave={() => setIsDragOver(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                >
+                  <div className="upload-symbol">+</div>
+                  <h2 className="text-2xl font-semibold">Upload foto wajah</h2>
+                  <p className="text-sm text-base-content/60">
+                    PNG, JPEG, atau WebP. Maksimum 10 MB. Gunakan foto wajah yang jelas dan cukup terang.
+                  </p>
+                  <input
+                    type="file"
+                    className="hidden"
+                    ref={fileInputRef}
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={handleFileUpload}
+                  />
+                </div>
+              ) : (
+                <div className="camera-card">
+                  <div className="camera-preview">
+                    <video ref={videoRef} playsInline muted aria-label="Preview kamera wajah"></video>
+                    {!isCameraActive && (
+                      <div className="camera-empty">
+                        <span>Kamera belum aktif</span>
+                        <small>Gunakan pencahayaan rata dan hadapkan wajah ke kamera.</small>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={startCamera}
+                      disabled={isCameraStarting || isCameraActive}
+                    >
+                      {isCameraStarting ? "Membuka..." : "Aktifkan kamera"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm"
+                      onClick={captureCameraPhoto}
+                      disabled={!isCameraActive}
+                    >
+                      Ambil foto
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={stopCamera}
+                      disabled={!isCameraActive}
+                    >
+                      Matikan
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -322,7 +459,10 @@ function App() {
               { id: "pores", label: "Pori besar", score: 0, severity: "pending", count: 0, coverage: 0 }
             ]).map((category) => (
               <div key={category.id} className="condition-row">
-                <i style={{ backgroundColor: CONDITION_COLORS[category.id] }}></i>
+                <i
+                  className={`condition-marker marker-${category.id}`}
+                  style={{ backgroundColor: CONDITION_COLORS[category.id] }}
+                ></i>
                 <div>
                   <strong>{category.label}</strong>
                   <span>{analysis ? `${category.coverage}% area, ${category.count} titik` : "Menunggu analisis"}</span>

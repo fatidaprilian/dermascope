@@ -42,7 +42,7 @@ type SkinAnalysisResult = {
 };
 ```
 
-The app must frame the result as image-processing evidence, not diagnosis or treatment advice.
+The app must frame the result as image-processing evidence, not diagnosis or treatment advice. The frontend may create the file from either a local upload or one browser camera capture; the API still receives a normal multipart image file.
 
 ## Scope
 

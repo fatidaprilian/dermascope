@@ -3,14 +3,19 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 
 from .errors import ApiError
 from .processing import goal_payload, process_goal
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
 
 app = FastAPI(
     title="DermaScope API",
@@ -48,6 +53,11 @@ async def health() -> dict[str, str]:
     return {"status": "ok", "engine": "opencv-python"}
 
 
+@app.get("/kaithhealth", include_in_schema=False)
+async def leapcell_health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @app.get("/api/goals")
 async def goals() -> dict[str, list[dict[str, str]]]:
     return {"goals": goal_payload()}
@@ -81,3 +91,18 @@ async def process_image(
             "Content-Disposition": f'attachment; filename="dermascope-{goal_id}.png"',
         },
     )
+
+
+if FRONTEND_DIST.exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
+
+
+@app.get("/{path:path}", include_in_schema=False)
+async def serve_spa(path: str) -> FileResponse:
+    target = FRONTEND_DIST / path
+    if path and target.is_file():
+        return FileResponse(target)
+    index = FRONTEND_DIST / "index.html"
+    if index.exists():
+        return FileResponse(index)
+    raise ApiError("FRONTEND_NOT_BUILT", "Frontend build output is missing.", 500)

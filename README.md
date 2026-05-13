@@ -11,6 +11,7 @@ DermaScope is for students, instructors, and image-processing learners who need 
 ## Current Capabilities
 
 - Upload one PNG, JPEG, or WebP face photo up to 10 MB.
+- Choose file upload or browser camera capture as the photo source.
 - Detect a face region with OpenCV-Python and fall back to a centered face region when no face is found.
 - Split the face into forehead, left cheek, right cheek, nose, and chin zones.
 - Estimate acne, dark spots, wrinkles, redness, and enlarged pores with classical image-processing heuristics.
@@ -61,6 +62,14 @@ npm run build
 npm test
 npm run check:backend
 ```
+
+Run the production monolith container:
+
+```bash
+docker compose -f compose.prod.yaml up -d --build
+```
+
+Production runs as one service on `http://localhost:8080`: FastAPI serves both `/api/*` and the built React frontend.
 
 ## API
 

@@ -17,7 +17,8 @@
       "Current implementation uses the React frontend in frontend/ with backend /api processing.",
       "The active product direction is DermaScope: upload one face photo, analyze skin-condition signals, show an overlay, category scores, Skin Health Score, and zone breakdown.",
       "Backend analysis estimates acne, dark spots, wrinkles, redness, and pores with classical OpenCV heuristics.",
-      "The app remains database-free and does not persist uploaded image files."
+      "The app remains database-free and does not persist uploaded image files.",
+      "Production deployment is now a monolith: one FastAPI container serves both /api routes and the built React frontend."
     ]
   },
   "progress": {
@@ -32,16 +33,18 @@
       "Added optional Python FastAPI backend scaffold with goal-based upload processing and frontend backend-mode switch.",
       "Deferred OpenCV.js loading until the first process action to reduce initial UI freezes.",
       "Shifted frontend copy, package metadata, README, and design docs from ImgLab workbench framing to DermaScope skin-analysis framing.",
-      "Updated operation contract tests for the single skin-health analysis goal."
+      "Updated operation contract tests for the single skin-health analysis goal.",
+      "Added production monolith Dockerfile and converted compose.prod.yaml to a single app service on port 8080.",
+      "Added upload/camera source switching in the frontend intake flow.",
+      "Improved overlay readability with distinct condition marker shapes and short labels drawn into the image."
     ],
     "pendingIssues": [
-      "Verify /api/health and /api/process work with backend dependencies installed.",
+      "Verify /api/process quality with real face photos after threshold tuning.",
       "Manual browser testing with real face photos is still needed.",
-      "Tune face detection, skin mask thresholds, and score normalization across lighting and skin tones.",
-      "Backend tests were not executed because cv2 is missing and dependency installation was rejected."
+      "Tune face detection, skin mask thresholds, and score normalization across lighting and skin tones."
     ],
     "nextBestActions": [
-      "Install backend requirements in .venv, then run npm run test:backend.",
+      "Install backend requirements in .venv if local backend tests are needed outside Docker.",
       "Run the Vite dev server and review the DermaScope UI.",
       "Test skin analysis with varied face photos and compare overlay metadata to visible marks.",
       "Tune thresholds after manual photo review."
@@ -51,6 +54,9 @@
       "frontend npm run lint passed after DermaScope redesign.",
       "npm test passed for the skin analysis operation contract.",
       "npm run check:backend passed.",
+      "Production monolith Docker image build passed.",
+      "Production monolith container health checks passed on /api/health and /kaithhealth.",
+      "Backend tests passed inside the production monolith container with PYTHONPATH=backend.",
       "npm run validate is unavailable because the script is missing.",
       "npm run test:backend is blocked until cv2/opencv-python-headless is installed."
     ]

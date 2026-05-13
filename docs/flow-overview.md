@@ -6,16 +6,17 @@ The active flow is now facial skin analysis, not a general image processing work
 
 ## Facial Skin Analysis Flow
 
-1. User uploads one PNG, JPEG, or WebP face photo.
-2. App validates file type and size.
-3. App shows the photo in the analysis stage.
-4. User starts skin analysis.
-5. App sends the photo to `POST /api/process` with `goal_id=skin-health-analysis`.
-6. Backend validates and decodes the image.
-7. Backend detects a face with Haar cascade when available, with a centered fallback region when needed.
-8. Backend estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, and pores.
-9. Backend returns an overlay PNG and structured metadata in `X-DermaScope-Analysis`.
-10. App displays the overlay, Skin Health Score, category scores, and zone breakdown.
+1. User chooses upload mode or camera mode.
+2. User uploads one PNG, JPEG, or WebP face photo, or captures one browser camera frame.
+3. App validates file type and size.
+4. App shows the photo in the analysis stage.
+5. User starts skin analysis.
+6. App sends the photo to `POST /api/process` with `goal_id=skin-health-analysis`.
+7. Backend validates and decodes the image.
+8. Backend detects a face with Haar cascade when available, with a centered fallback region when needed.
+9. Backend estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, and pores.
+10. Backend returns an overlay PNG with distinct markers and structured metadata in `X-DermaScope-Analysis`.
+11. App displays the overlay, Skin Health Score, category scores, and zone breakdown.
 
 ## Primary User Flow
 

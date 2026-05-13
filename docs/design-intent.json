@@ -13,7 +13,8 @@
     "Frontend uses /api endpoints for face-photo analysis.",
     "UI must avoid grid or glow wallpaper and keep condition overlays tied to analysis meaning.",
     "Design contract follows the dermatology contact sheet anchor.",
-    "The app is an educational image-processing tool, not a medical diagnosis tool."
+    "The app is an educational image-processing tool, not a medical diagnosis tool.",
+    "The input flow supports file upload and browser camera capture."
   ],
   "motionPaletteDecision": "Motion: acetate overlay laydown after analysis with reduced-motion immediate swap. Palette: clinical porcelain shell, mint score accents, coral acne/redness marks, amber dark-spot marks, violet wrinkle marks, and teal pore marks.",
   "conceptualAnchor": {
@@ -23,7 +24,7 @@
     "specificReferencePoint": "A face photo is treated as the central evidence frame while condition marks and zone strips sit around it like annotated clinical review material.",
     "rationale": "The anchor supports a focused human-skin analysis product without falling back to a generic dashboard or medical-device overclaim.",
     "signatureMotion": "A translucent analysis overlay settles onto the face after processing.",
-    "signatureMove": "Condition colors map directly to acne, dark spots, wrinkles, redness, and pores.",
+    "signatureMove": "Condition colors, marker shapes, and short image labels map directly to acne, dark spots, wrinkles, redness, and pores.",
     "typographicDecision": "Compact score titles, plain Indonesian body copy, small condition labels, and monospaced counts and percentages."
   },
   "visualResetStrategy": "Reset the prior general image workbench into a single-purpose face analysis surface with one upload, one analysis action, overlay evidence, score stack, and zone breakdown.",
@@ -32,7 +33,7 @@
     "colorDerivationSource": "Clinical paper surface, skin-safe neutrals, mint score emphasis, coral/amber/violet/rose/teal condition marks.",
     "spacingDerivationSource": "Contact sheet margins around one central image with compact score and zone strips.",
     "typographyDerivationSource": "Clinical review labels: compact titles, plain body text, monospaced numbers.",
-    "motionDerivationSource": "Acetate overlay laydown, decisive status shifts, and short fades for state changes.",
+    "motionDerivationSource": "Acetate overlay laydown, camera preview readiness, decisive status shifts, and short fades for state changes.",
     "validationRule": "Every token must trace to facial skin analysis; no grid, glow, or generic dashboard tokens are allowed."
   },
   "tokenSystem": {
@@ -87,6 +88,7 @@
   },
   "componentMorphology": {
     "stage": "Central face image stage with original photo and overlay result.",
+    "sourceSwitch": "Upload file and camera capture modes before analysis.",
     "scoreStack": "Overall score plus five condition meters.",
     "statusPill": "Service indicator with backend readiness label.",
     "dropzone": "Clinical intake pad with clear face-photo copy.",
@@ -118,7 +120,7 @@
       "diagnosis or treatment recommendations"
     ],
     "requiredSignals": [
-      "face overlay result",
+      "face overlay result with distinct condition markers",
       "service status indicator",
       "overall Skin Health Score",
       "condition score stack",
@@ -147,7 +149,7 @@
     "driftSignals": [
       "UI reads as generic dashboard",
       "Score stack looks like a generic analytics dashboard",
-      "Overlay colors do not match category labels",
+      "Overlay colors or marker shapes do not match category labels",
       "Medical diagnosis language appears in the UI"
     ]
   },

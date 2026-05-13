@@ -15,6 +15,7 @@ Conceptual anchor: a dermatology contact sheet with translucent acetate annotati
 Distinctive moves:
 - One face image becomes the central evidence frame.
 - The overlay uses condition-specific translucent marks, not decorative background effects.
+- Each condition uses a distinct marker shape and short label on the image.
 - Skin Health Score is the first numeric signal after analysis.
 - Category scores use the same color language as the overlay.
 - Zone breakdown reads like a contact sheet margin, attached to forehead, cheeks, nose, and chin.
@@ -65,7 +66,9 @@ Interaction rules:
 ## 8. Component Language, States, and Morphology
 
 Components:
+- Source switch: upload file or camera capture.
 - Dropzone: clinical intake pad with clear file limits.
+- Camera preview: same intake flow with browser permission and capture controls.
 - Face stage: one image frame with overlay, fallback warning, and analysis state.
 - Score stack: overall score plus five condition meters.
 - Zone strips: forehead, left cheek, right cheek, nose, and chin summaries.

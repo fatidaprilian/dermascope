@@ -107,6 +107,47 @@
     border-radius: 8px;
   }
 
+  .source-switch {
+    @apply inline-flex border border-base-300 bg-base-100 p-1 text-sm font-semibold;
+    border-radius: 8px;
+  }
+
+  .source-switch button {
+    @apply px-4 py-2 transition;
+    border-radius: 6px;
+  }
+
+  .source-switch button.active {
+    @apply bg-primary text-primary-content;
+  }
+
+  .camera-card {
+    @apply flex min-h-[420px] flex-col gap-4 border border-base-300 bg-base-100 p-4 shadow-lg;
+    border-radius: 8px;
+    box-shadow: 0 22px 70px rgba(31, 41, 38, 0.1);
+  }
+
+  .camera-preview {
+    @apply relative flex min-h-[320px] items-center justify-center overflow-hidden bg-neutral;
+    border-radius: 8px;
+  }
+
+  .camera-preview video {
+    @apply h-full w-full object-cover;
+  }
+
+  .camera-empty {
+    @apply absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center text-neutral-content;
+  }
+
+  .camera-empty span {
+    @apply text-lg font-semibold;
+  }
+
+  .camera-empty small {
+    @apply max-w-xs text-sm opacity-70;
+  }
+
   .legend-row {
     @apply flex flex-wrap gap-2 text-xs font-semibold text-base-content;
     opacity: 0.72;
@@ -118,8 +159,30 @@
   }
 
   .legend-row i,
-  .condition-row i {
+  .condition-marker {
     @apply inline-block h-2.5 w-2.5 rounded-full;
+  }
+
+  .marker-dark_spots {
+    border-radius: 2px;
+  }
+
+  .marker-wrinkles {
+    width: 16px;
+    height: 3px;
+    border-radius: 999px;
+  }
+
+  .marker-redness {
+    width: 14px;
+    height: 10px;
+    border-radius: 999px;
+  }
+
+  .marker-pores {
+    background: transparent !important;
+    border: 2px solid currentColor;
+    color: #0f766e;
   }
 
   .stage-bar {

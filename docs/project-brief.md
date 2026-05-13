@@ -89,31 +89,31 @@ The current implementation uses React + Vite for a clearer component architectur
 
 ## Product Requirements
 
-1. Upload one image from the local device.
-2. Show original and processed views with a comparison control.
-3. Let users choose the image goal first, such as reduce noise, improve contrast, sharpen, enlarge, or detect edges.
-4. Map each goal to a real implemented method with safe defaults.
+1. Upload one face image from the local device.
+2. Capture one face image from the browser camera when permission is available.
+3. Show the original photo and the skin-analysis overlay.
+4. Use distinct marker shapes and short labels for acne, dark spots, wrinkles, redness, and pores.
 5. Show processing status and validation errors.
-6. Let users export the processed output as PNG, JPEG, or WebP when the browser supports the requested format.
+6. Show the overall Skin Health Score, category scores, and zone breakdown.
 7. Avoid accounts, project storage, and hidden cloud persistence.
-8. Explain each selected goal in short practical copy near the tool controls, with the technical method shown as secondary detail.
+8. Explain that results are image-processing evidence, not medical diagnosis.
 9. Present production-ready public copy with no visible homework, demo, MVP, placeholder, or scaffold language in the UI.
 
 ## Non-Functional Requirements
 
-- Keep processing responsive. Move heavier operations into a Web Worker when the local browser pipeline becomes the default.
+- Keep processing responsive on one uploaded or captured face image.
 - Limit maximum image size or downscale previews to avoid browser memory crashes.
 - Preserve accessibility: keyboard controls, visible focus, readable contrast, and status announcements.
-- Avoid hidden cloud uploads unless the user later approves server-side processing.
-- Keep the UI dense enough for repeated experimentation, but not a generic admin panel or a school-project demo.
+- Avoid persistent image storage.
+- Keep the UI dense enough for repeated analysis, but not a generic admin panel or a school-project demo.
 
 ## Assumptions to Validate
 
 - The current production direction remains a web app, not a Python desktop tool.
 - The project does not need login or persistent storage.
-- OpenCV.js covers the first method set well enough for coursework.
+- OpenCV-Python heuristics are good enough for an educational MVP but still need real-photo tuning.
 - The user wants formal docs in English, following repository governance, while day-to-day conversation can remain Indonesian.
 
 ## Next Validation Action
 
-Validate the public-facing UI manually in a browser with real sample images, then verify export output as PNG, JPEG, and WebP.
+Validate the public-facing UI manually in a browser with real face photos, then tune thresholds for varied lighting and skin tones.

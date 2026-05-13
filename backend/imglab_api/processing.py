@@ -440,11 +440,11 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
 
 
 CONDITION_META: dict[str, dict[str, Any]] = {
-    "acne": {"label": "Jerawat", "hex": "#ef5b63", "bgr": (99, 91, 239), "weight": 2.2, "count_weight": 1.8},
-    "dark_spots": {"label": "Noda gelap", "hex": "#b7791f", "bgr": (31, 121, 183), "weight": 2.0, "count_weight": 0.8},
-    "wrinkles": {"label": "Kerutan", "hex": "#7c3aed", "bgr": (237, 58, 124), "weight": 1.9, "count_weight": 0.2},
-    "redness": {"label": "Kemerahan", "hex": "#e11d48", "bgr": (72, 29, 225), "weight": 2.1, "count_weight": 0.4},
-    "pores": {"label": "Pori besar", "hex": "#0f766e", "bgr": (110, 118, 15), "weight": 1.5, "count_weight": 0.1},
+    "acne": {"label": "Jerawat", "short": "Acne", "hex": "#ef5b63", "bgr": (99, 91, 239), "weight": 2.2, "count_weight": 1.8},
+    "dark_spots": {"label": "Noda gelap", "short": "Spot", "hex": "#b7791f", "bgr": (31, 121, 183), "weight": 2.0, "count_weight": 0.8},
+    "wrinkles": {"label": "Kerutan", "short": "Line", "hex": "#7c3aed", "bgr": (237, 58, 124), "weight": 1.7, "count_weight": 0.15},
+    "redness": {"label": "Kemerahan", "short": "Red", "hex": "#e11d48", "bgr": (72, 29, 225), "weight": 1.6, "count_weight": 0.25},
+    "pores": {"label": "Pori besar", "short": "Pore", "hex": "#0f766e", "bgr": (110, 118, 15), "weight": 1.4, "count_weight": 0.08},
 }
 
 
@@ -466,20 +466,26 @@ def _detect_face(image: np.ndarray) -> tuple[tuple[int, int, int, int], bool]:
 
 def _skin_mask(face: np.ndarray) -> np.ndarray:
     ycrcb = cv.cvtColor(face, cv.COLOR_BGR2YCrCb)
-    lower = np.array([35, 130, 75], dtype=np.uint8)
-    upper = np.array([245, 185, 145], dtype=np.uint8)
-    mask = cv.inRange(ycrcb, lower, upper)
+    hsv = cv.cvtColor(face, cv.COLOR_BGR2HSV)
+    lower = np.array([30, 128, 75], dtype=np.uint8)
+    upper = np.array([245, 188, 148], dtype=np.uint8)
+    color_mask = cv.inRange(ycrcb, lower, upper)
+    hsv_mask = cv.inRange(hsv, np.array([0, 18, 45], dtype=np.uint8), np.array([35, 185, 255], dtype=np.uint8))
+    mask = cv.bitwise_and(color_mask, hsv_mask)
     kernel = np.ones((5, 5), dtype=np.uint8)
     mask = cv.morphologyEx(mask, cv.MORPH_OPEN, kernel)
     mask = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
     if np.count_nonzero(mask) < face.shape[0] * face.shape[1] * 0.12:
-        mask = np.full(face.shape[:2], 255, dtype=np.uint8)
+        mask = np.zeros(face.shape[:2], dtype=np.uint8)
+        center = (face.shape[1] // 2, int(face.shape[0] * 0.54))
+        axes = (int(face.shape[1] * 0.36), int(face.shape[0] * 0.42))
+        cv.ellipse(mask, center, axes, 0, 0, 360, 255, -1)
     return mask
 
 
 def _zone_rects(width: int, height: int) -> tuple[tuple[str, str, tuple[int, int, int, int]], ...]:
     return (
-        ("forehead", "Dahi", (int(width * 0.18), 0, int(width * 0.64), int(height * 0.28))),
+        ("forehead", "Dahi", (int(width * 0.20), int(height * 0.08), int(width * 0.60), int(height * 0.20))),
         ("left_cheek", "Pipi kiri", (0, int(height * 0.32), int(width * 0.42), int(height * 0.38))),
         ("right_cheek", "Pipi kanan", (int(width * 0.58), int(height * 0.32), int(width * 0.42), int(height * 0.38))),
         ("nose", "Hidung", (int(width * 0.38), int(height * 0.30), int(width * 0.24), int(height * 0.44))),
@@ -493,22 +499,29 @@ def _measure_zone(zone: np.ndarray, skin: np.ndarray) -> dict[str, dict[str, Any
     valid = skin > 0
     baseline = float(np.median(gray[valid])) if np.any(valid) else float(np.median(gray))
     red_dominance = r.astype(np.int16) - ((g.astype(np.int16) + b.astype(np.int16)) // 2)
+    red_base = float(np.median(red_dominance[valid])) if np.any(valid) else float(np.median(red_dominance))
+    red_strong = red_dominance > max(30, red_base + 24)
+    red_soft = red_dominance > max(24, red_base + 18)
 
-    acne = np.where(valid & (red_dominance > 28) & (gray < baseline + 38), 255, 0).astype(np.uint8)
-    acne = _small_blob_mask(acne, min_area=6, max_area=180)
+    acne = np.where(valid & red_strong & (gray < baseline + 28), 255, 0).astype(np.uint8)
+    acne = _small_blob_mask(acne, min_area=8, max_area=160)
 
-    dark = np.where(valid & (gray < baseline - 22), 255, 0).astype(np.uint8)
-    dark = _small_blob_mask(dark, min_area=10, max_area=420)
+    dark = np.where(valid & (gray < baseline - 26) & ~red_strong, 255, 0).astype(np.uint8)
+    dark = _small_blob_mask(dark, min_area=12, max_area=380)
 
-    redness = np.where(valid & (red_dominance > 18), 255, 0).astype(np.uint8)
-    redness = cv.morphologyEx(redness, cv.MORPH_OPEN, np.ones((3, 3), dtype=np.uint8))
+    redness = np.where(valid & red_soft & (gray > baseline - 18), 255, 0).astype(np.uint8)
+    redness = cv.morphologyEx(redness, cv.MORPH_OPEN, np.ones((5, 5), dtype=np.uint8))
+    redness = cv.morphologyEx(redness, cv.MORPH_CLOSE, np.ones((7, 7), dtype=np.uint8))
 
     edges = cv.Canny(cv.GaussianBlur(gray, (3, 3), 0), 45, 120)
-    wrinkles = np.where(valid & (edges > 0), 255, 0).astype(np.uint8)
+    line_kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 1))
+    wrinkles = np.where(valid & (edges > 0) & (gray < baseline + 24), 255, 0).astype(np.uint8)
+    wrinkles = cv.morphologyEx(wrinkles, cv.MORPH_OPEN, line_kernel)
 
     laplacian = cv.Laplacian(gray, cv.CV_16S, ksize=3)
     texture = cv.convertScaleAbs(laplacian)
-    pores = np.where(valid & (texture > 24) & (red_dominance < 34), 255, 0).astype(np.uint8)
+    texture_base = float(np.percentile(texture[valid], 68)) if np.any(valid) else float(np.percentile(texture, 68))
+    pores = np.where(valid & (texture > max(28, texture_base + 8)) & (red_dominance < red_base + 32), 255, 0).astype(np.uint8)
     pores = cv.morphologyEx(pores, cv.MORPH_OPEN, np.ones((2, 2), dtype=np.uint8))
 
     return {
@@ -547,12 +560,56 @@ def _render_overlay(image: np.ndarray, face: tuple[int, int, int, int], masks: d
     color_layer = np.zeros_like(result)
     for key, mask in masks.items():
         color_layer[mask > 0] = CONDITION_META[key]["bgr"]
-    result = cv.addWeighted(result, 0.78, color_layer, 0.42, 0)
+    blended = cv.addWeighted(result, 0.86, color_layer, 0.30, 0)
+    result[np.any(color_layer > 0, axis=2)] = blended[np.any(color_layer > 0, axis=2)]
     x, y, w, h = face
     cv.rectangle(result, (x, y), (x + w, y + h), (34, 176, 137), 2)
-    for _zone_id, _label, (zx, zy, zw, zh) in _zone_rects(w, h):
-        cv.rectangle(result, (x + zx, y + zy), (x + zx + zw, y + zy + zh), (34, 176, 137), 1)
+    _put_label(result, "Face ROI", (x + 8, max(18, y + 22)), (34, 176, 137))
+    for _zone_id, label, (zx, zy, zw, zh) in _zone_rects(w, h):
+        top_left = (x + zx, y + zy)
+        bottom_right = (x + zx + zw, y + zy + zh)
+        cv.rectangle(result, top_left, bottom_right, (34, 176, 137), 1)
+        _put_label(result, label, (top_left[0] + 4, top_left[1] + 16), (34, 176, 137), scale=0.38)
+    _draw_condition_annotations(result, masks)
     return result
+
+
+def _draw_condition_annotations(result: np.ndarray, masks: dict[str, np.ndarray]) -> None:
+    for key, mask in masks.items():
+        meta = CONDITION_META[key]
+        contours, _hierarchy = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        contours = sorted(contours, key=cv.contourArea, reverse=True)[:8]
+        for index, contour in enumerate(contours):
+            area = cv.contourArea(contour)
+            if area < 5:
+                continue
+            x, y, w, h = cv.boundingRect(contour)
+            color = meta["bgr"]
+            if key == "acne":
+                radius = max(4, min(13, int(max(w, h) / 2) + 2))
+                cv.circle(result, (x + w // 2, y + h // 2), radius, color, 2)
+            elif key == "dark_spots":
+                cv.rectangle(result, (x, y), (x + w, y + h), color, 2)
+            elif key == "wrinkles":
+                cv.drawContours(result, [contour], -1, color, 2)
+            elif key == "redness":
+                cv.ellipse(result, (x + w // 2, y + h // 2), (max(6, w // 2), max(5, h // 2)), 0, 0, 360, color, 2)
+            elif key == "pores":
+                cv.drawMarker(result, (x + w // 2, y + h // 2), color, markerType=cv.MARKER_CROSS, markerSize=12, thickness=1)
+
+            if index < 2 and area >= 18:
+                _put_label(result, meta["short"], (x, max(14, y - 4)), color, scale=0.38)
+
+
+def _put_label(image: np.ndarray, text: str, origin: tuple[int, int], color: tuple[int, int, int], scale: float = 0.45) -> None:
+    x, y = origin
+    font = cv.FONT_HERSHEY_SIMPLEX
+    thickness = 1
+    (width, height), baseline = cv.getTextSize(text, font, scale, thickness)
+    x = max(0, min(x, image.shape[1] - width - 6))
+    y = max(height + 4, min(y, image.shape[0] - baseline - 4))
+    cv.rectangle(image, (x, y - height - 5), (x + width + 6, y + baseline + 3), color, -1)
+    cv.putText(image, text, (x + 3, y), font, scale, (255, 255, 255), thickness, cv.LINE_AA)
 
 
 def _score_from_penalty(penalty: float) -> int:
