@@ -247,15 +247,15 @@ function App() {
 
   return (
     <div className="min-h-screen bg-derma-shell text-base-content">
-      <nav className="px-4 py-5 lg:px-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="space-y-1">
+      <nav className="app-nav">
+        <div className="nav-copy">
           <p className="kicker">DermaScope</p>
-          <h1 className="text-2xl sm:text-4xl font-semibold">Analisis kondisi kulit wajah</h1>
-          <p className="max-w-2xl text-sm text-base-content/65">
+          <h1>Analisis kondisi kulit wajah</h1>
+          <p>
             Upload satu foto wajah, lalu baca overlay area bermasalah, skor kategori, dan breakdown zona wajah.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="nav-status">
           <div className="clinical-chip">
             <span className={`h-2.5 w-2.5 rounded-full ${statusDot}`}></span>
             <span>{backendStatus.label}</span>
@@ -263,16 +263,16 @@ function App() {
         </div>
       </nav>
 
-      <main className="mx-auto grid w-full max-w-7xl flex-1 gap-5 px-4 pb-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-10">
+      <main className="app-main">
         <section className="analysis-stage">
           {!image ? (
             <div className="intake-grid">
-              <div className="space-y-5">
+              <div className="intro-copy">
                 <p className="kicker">Face photo intake</p>
-                <h2 className="max-w-xl text-4xl font-semibold leading-tight sm:text-5xl">
+                <h2>
                   Dari foto biasa jadi peta kondisi kulit.
                 </h2>
-                <p className="max-w-2xl text-base text-base-content/65">
+                <p>
                   Sistem membaca sinyal visual seperti jerawat, noda gelap, kerutan, kemerahan, dan pori besar di zona wajah.
                 </p>
                 <div className="legend-row">
@@ -347,7 +347,7 @@ function App() {
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="camera-actions">
                     <button
                       type="button"
                       className="btn btn-primary btn-sm"
@@ -380,22 +380,26 @@ function App() {
             <div className="space-y-4">
               <div className="clinical-panel overflow-hidden">
                 <div className="stage-bar">
-                  <div>
+                  <div className="stage-meta">
                     <p className="kicker">Face evidence</p>
-                    <p className="max-w-[260px] truncate font-medium">{image.name}</p>
+                    <p>{image.name}</p>
                   </div>
-                  <span>{formatBytes(image.size)}</span>
-                  {processingTime && <span className="font-mono text-success">{processingTime} ms</span>}
-                  <button
-                    className="btn btn-primary btn-sm ml-auto"
-                    onClick={() => processImage(primaryGoal)}
-                    disabled={!canAnalyze}
-                  >
-                    {isProcessing ? "Menganalisis..." : analysis ? "Analisis ulang" : "Mulai analisis"}
-                  </button>
-                  <button className="btn btn-ghost btn-sm" onClick={resetAll}>
-                    Foto baru
-                  </button>
+                  <div className="stage-stats">
+                    <span>{formatBytes(image.size)}</span>
+                    {processingTime && <span className="font-mono text-success">{processingTime} ms</span>}
+                  </div>
+                  <div className="stage-actions">
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => processImage(primaryGoal)}
+                      disabled={!canAnalyze}
+                    >
+                      {isProcessing ? "Menganalisis..." : analysis ? "Analisis ulang" : "Mulai analisis"}
+                    </button>
+                    <button className="btn btn-ghost btn-sm" onClick={resetAll}>
+                      Foto baru
+                    </button>
+                  </div>
                 </div>
 
                 <div className="face-frame">
@@ -432,7 +436,7 @@ function App() {
           )}
         </section>
 
-        <aside className="space-y-4">
+        <aside className="result-panel-stack">
           <div className="clinical-panel p-5">
             <p className="kicker">Skin Health Score</p>
             <div className="score-gauge">

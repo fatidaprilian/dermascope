@@ -71,6 +71,32 @@
       linear-gradient(180deg, #fbfffc 0%, #f5f7ef 56%, #e8efe6 100%);
   }
 
+  .app-nav {
+    @apply flex flex-col gap-4 px-4 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-10;
+  }
+
+  .nav-copy {
+    @apply max-w-3xl space-y-1;
+  }
+
+  .nav-copy h1 {
+    @apply text-2xl font-semibold leading-tight sm:text-4xl;
+    overflow-wrap: anywhere;
+  }
+
+  .nav-copy p {
+    @apply max-w-2xl text-sm;
+    color: color-mix(in srgb, var(--color-base-content) 66%, transparent);
+  }
+
+  .nav-status {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .app-main {
+    @apply mx-auto grid w-full max-w-7xl flex-1 gap-5 px-4 pb-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-10;
+  }
+
   .clinical-panel,
   .upload-card {
     @apply border border-base-300 bg-base-100 shadow-lg;
@@ -90,6 +116,20 @@
   .intake-grid {
     @apply grid min-h-[68vh] items-center gap-6;
     grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.72fr);
+  }
+
+  .intro-copy {
+    @apply max-w-2xl space-y-5;
+  }
+
+  .intro-copy h2 {
+    @apply max-w-xl text-4xl font-semibold leading-tight sm:text-5xl;
+    overflow-wrap: anywhere;
+  }
+
+  .intro-copy p {
+    @apply max-w-2xl text-base;
+    color: color-mix(in srgb, var(--color-base-content) 66%, transparent);
   }
 
   .upload-card {
@@ -125,6 +165,10 @@
     @apply flex min-h-[420px] flex-col gap-4 border border-base-300 bg-base-100 p-4 shadow-lg;
     border-radius: 8px;
     box-shadow: 0 22px 70px rgba(31, 41, 38, 0.1);
+  }
+
+  .camera-actions {
+    @apply flex flex-wrap gap-2;
   }
 
   .camera-preview {
@@ -186,11 +230,30 @@
   }
 
   .stage-bar {
-    @apply flex flex-wrap items-center gap-3 border-b border-base-300 px-4 py-3 text-sm;
+    @apply grid items-center gap-3 border-b border-base-300 px-4 py-3 text-sm;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .stage-meta {
+    @apply min-w-0;
+  }
+
+  .stage-meta p:last-child {
+    @apply truncate font-medium;
+  }
+
+  .stage-stats {
+    @apply flex flex-wrap items-center justify-end gap-3 text-base-content;
+    opacity: 0.66;
+  }
+
+  .stage-actions {
+    @apply flex flex-wrap justify-end gap-2;
   }
 
   .face-frame {
-    @apply relative flex min-h-[520px] items-center justify-center overflow-hidden bg-neutral;
+    @apply relative flex items-center justify-center overflow-hidden bg-neutral;
+    min-height: clamp(360px, 58vh, 620px);
   }
 
   .face-image {
@@ -271,6 +334,10 @@
     opacity: 0.58;
   }
 
+  .result-panel-stack {
+    @apply space-y-4;
+  }
+
   @keyframes overlay-laydown {
     from {
       opacity: 0;
@@ -285,6 +352,176 @@
   @media (prefers-reduced-motion: reduce) {
     .overlay-image {
       animation: none;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .app-main {
+      @apply max-w-3xl;
+    }
+
+    .result-panel-stack {
+      @apply grid gap-4 space-y-0 md:grid-cols-2;
+    }
+
+    .result-panel-stack > :last-child {
+      @apply md:col-span-2;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .intake-grid {
+      min-height: auto;
+      grid-template-columns: 1fr;
+    }
+
+    .intro-copy h2 {
+      @apply text-3xl;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .app-nav {
+      @apply gap-3 px-3 py-4;
+    }
+
+    .nav-copy h1 {
+      @apply text-[1.65rem];
+    }
+
+    .nav-status,
+    .clinical-chip,
+    .source-switch,
+    .source-switch button,
+    .camera-actions .btn {
+      @apply w-full;
+    }
+
+    .clinical-chip {
+      @apply justify-center;
+    }
+
+    .source-switch {
+      @apply grid grid-cols-2;
+    }
+
+    .source-switch button {
+      @apply px-2;
+    }
+
+    .app-main {
+      @apply gap-4 px-3 pb-6;
+    }
+
+    .analysis-stage {
+      min-height: auto;
+    }
+
+    .intro-copy {
+      @apply space-y-4;
+    }
+
+    .legend-row span {
+      @apply flex-1 justify-center px-2;
+      min-width: calc(50% - 0.25rem);
+    }
+
+    .upload-card {
+      @apply min-h-[300px] p-5;
+    }
+
+    .upload-symbol {
+      @apply h-14 w-14 text-3xl;
+    }
+
+    .camera-card {
+      @apply min-h-0 p-3;
+    }
+
+    .camera-preview {
+      min-height: 280px;
+    }
+
+    .camera-actions {
+      @apply grid grid-cols-1;
+    }
+
+    .stage-bar {
+      @apply px-3 py-3;
+      grid-template-columns: 1fr;
+    }
+
+    .stage-stats,
+    .stage-actions {
+      @apply justify-start;
+    }
+
+    .stage-actions {
+      @apply grid w-full grid-cols-2;
+    }
+
+    .stage-actions .btn {
+      @apply w-full;
+      min-height: 2.5rem;
+    }
+
+    .face-frame {
+      min-height: min(74vh, 430px);
+    }
+
+    .stage-empty {
+      @apply mx-4 text-center;
+    }
+
+    .zone-grid {
+      @apply grid-cols-1;
+    }
+
+    .zone-strip {
+      @apply grid grid-cols-[minmax(0,1fr)_auto] items-center;
+    }
+
+    .zone-strip strong {
+      @apply row-span-2 text-right text-xl;
+    }
+
+    .result-panel-stack {
+      @apply grid-cols-1;
+    }
+
+    .score-gauge {
+      @apply mt-3 py-4;
+    }
+
+    .score-gauge span {
+      @apply text-4xl;
+    }
+
+    .condition-row {
+      @apply gap-2 px-2.5;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .condition-row b {
+      @apply text-base;
+    }
+
+    .condition-row span {
+      white-space: normal;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .stage-actions {
+      @apply grid-cols-1;
+    }
+
+    .legend-row span {
+      min-width: 100%;
+    }
+
+    .face-frame {
+      min-height: 360px;
     }
   }
 

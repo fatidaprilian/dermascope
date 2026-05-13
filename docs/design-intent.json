@@ -74,8 +74,8 @@
     "nonTransferableBehavior": "The same color family is reused in overlay marks, category scores, and zone rows, which only works because this product maps visible skin-condition signals to face regions."
   },
   "crossViewportAdaptation": {
-    "mobile": "Upload or analyzed face first, overall score below the image, zone rows stacked.",
-    "tablet": "Stage and score stack split into two columns; zones regroup below the image.",
+    "mobile": "Upload or analyzed face first, source switch and camera/upload surfaces become one column, action buttons become full-width touch targets, overall score follows the image, and zone rows stack.",
+    "tablet": "Stage remains primary, score/category panels regroup into a two-column stack below the image when sidebar space is tight, and zones regroup below the image.",
     "desktop": "Stage dominates center-left, condition scores stay right, zone breakdown stays visible below the stage."
   },
   "motionSystem": {

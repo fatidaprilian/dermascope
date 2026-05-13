@@ -43,10 +43,13 @@ Mobile:
 - Prioritize upload or the analyzed face first.
 - Show the overall score directly below the image after analysis.
 - Collapse zone breakdown into stacked strips.
+- Recompose the action bar so analyze/reset controls sit below file metadata and remain full-width touch targets.
+- Keep upload and camera intake as one-column flows with source selection above the active input surface.
 
 Tablet:
 - Stage and condition scores split into two columns.
 - Zone breakdown moves below the stage as a horizontal strip set.
+- Score and category panels can become a two-column stack below the image when the viewport cannot hold the desktop sidebar.
 
 Desktop:
 - Stage dominates the center-left.
