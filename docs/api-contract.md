@@ -162,16 +162,24 @@ type ProcessingError = {
 
 ## Export Contract
 
-Supported export types for MVP:
+Supported export types:
 
 - PNG for lossless processed output.
-- JPEG for smaller files if the original workflow needs it.
+- JPEG for smaller photographic output.
+- WebP for compact modern browser output when supported.
 
 Export file names should use this pattern:
 
 ```text
 imglab-{operationId}-{yyyyMMdd-HHmmss}.{extension}
 ```
+
+Browser export rules:
+
+- PNG uses `image/png`.
+- JPEG uses `image/jpeg` with a quality hint.
+- WebP uses `image/webp` with a quality hint.
+- If the selected MIME type cannot be produced, the UI must show a safe `EXPORT_FAILED` message and preserve the processed preview.
 
 ## HTTP API Contract
 
@@ -238,4 +246,4 @@ Error response:
 
 ## Next Validation Action
 
-Keep `src/operations.js` synchronized with this contract. If a TypeScript or framework migration happens later, convert the same operation registry into typed runtime validation schemas.
+Keep `frontend/src/utils/operations.js` synchronized with this contract. If a TypeScript or framework migration happens later, convert the same operation registry into typed runtime validation schemas.

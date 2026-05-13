@@ -13,7 +13,8 @@
 9. App runs the processing request.
 10. App shows the processed image beside or over the original.
 11. User compares the result with a slider or split view.
-12. User downloads the processed image.
+12. User chooses PNG, JPEG, or WebP.
+13. User downloads the processed image.
 
 ## Processing Flow
 
@@ -88,6 +89,15 @@ Production:
 - Opening: erosion followed by dilation, useful for small noise.
 - Closing: dilation followed by erosion, useful for small gaps.
 
+## Export Flow
+
+1. App keeps the latest processed result as an object URL.
+2. User chooses an output format from PNG, JPEG, or WebP.
+3. App draws the processed result onto an export canvas.
+4. App requests a blob with the selected MIME type and quality where relevant.
+5. App downloads the file using `imglab-{goalId}-{yyyyMMdd-HHmmss}.{extension}`.
+6. If the browser cannot create the selected format, the app shows an export error and keeps the processed result visible.
+
 ## UI States
 
 - Empty: no image uploaded.
@@ -97,7 +107,7 @@ Production:
 - Processing: operation is running.
 - Success: processed image is visible.
 - Error: validation or processing failed.
-- Exporting: canvas output is being prepared for download.
+- Exporting: canvas output is being prepared for the selected format.
 
 ## Error and Recovery Flow
 
@@ -108,6 +118,7 @@ Production:
 | Decode failed | The image could not be read. | Let the user choose another file. |
 | Engine not ready | Image tools are still loading. | Disable processing controls until OpenCV.js is ready. |
 | Processing failed | This method could not process the current image. | Keep the original image and reset the failed result. |
+| Export failed | The selected output could not be prepared. | Keep the processed image visible and let the user choose another format. |
 
 ## Security and Privacy Flow
 
@@ -127,4 +138,4 @@ Production:
 
 ## Next Validation Action
 
-Test the implemented upload, original preview, operation processing, comparison slider, reset, and PNG export flow with real sample images.
+Test the implemented upload, original preview, operation processing, comparison slider, reset, and PNG/JPEG/WebP export flow with real sample images.

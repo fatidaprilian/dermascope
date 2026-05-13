@@ -2,21 +2,21 @@
 
 ## Purpose
 
-ImgLab is a digital image processing toolkit for coursework and demonstration. It helps users upload an image, apply visible processing methods, compare the result against the original, and export the processed image.
+ImgLab is a public-facing digital image processing workbench. It helps users upload an image, apply visible processing methods, compare the result against the original, and export the processed image in a suitable file format.
 
-The product should make the processing step easy to see. The first version must favor real, explainable algorithms over a long feature list.
+The product should make the processing step easy to see. The MVP is complete; the current direction is to refine ImgLab into a production-ready public web experience with trustworthy copy, resilient export choices, and a polished goal-first workflow.
 
 ## Confirmed Facts
 
 - Project name: ImgLab.
-- Current user goal: build a toolkit for image restoration, enhancement, upscaling, and optional morphology.
-- Current delivery request: complete the React + Vite frontend rebuild, align UX to the goal-first flow, and ensure the frontend launches reliably.
+- Current user goal: evolve the completed MVP into a public-ready toolkit for image restoration, enhancement, upscaling, analysis, and morphology.
+- Current delivery request: redesign the React + Vite frontend so it reads like a real public product, not a coursework submission, and add export format choices.
 - Repository state: project docs were not fully materialized before this task. `docs/design-intent.json` existed as a seed and needed project-specific refinement.
 - The first application slice now exists as a React + Vite frontend with Tailwind CSS and DaisyUI, with an optional FastAPI backend for processing.
 
-## MVP Feature Set
+## Current Feature Set
 
-The first implementation should include only methods that are practical for a coursework project and can show visible output in the browser.
+The current implementation keeps explainable operations as the core product value while presenting them through user goals instead of a raw algorithm list.
 
 ### Restoration
 
@@ -57,7 +57,7 @@ Deep-learning super-resolution such as ESRGAN or Real-ESRGAN is out of MVP scope
 
 Morphology can ship after the core upload, preview, and export flow works.
 
-## Explicitly Out of Scope for MVP
+## Explicitly Out of Scope
 
 - Wiener filter.
 - Inpainting for object or scratch removal.
@@ -67,7 +67,7 @@ Morphology can ship after the core upload, preview, and export flow works.
 - Batch processing.
 - Persistent project history.
 
-These can be added later after the browser processing pipeline is stable.
+These can be added later only when they have a clear product reason, operational budget, and privacy model.
 
 ## Recommended Runtime Direction
 
@@ -88,25 +88,26 @@ The current implementation uses React + Vite for a clearer component architectur
 3. Let users choose the image goal first, such as reduce noise, improve contrast, sharpen, enlarge, or detect edges.
 4. Map each goal to a real implemented method with safe defaults.
 5. Show processing status and validation errors.
-6. Let users download the processed output.
-7. Keep all image data local to the browser for MVP.
+6. Let users export the processed output as PNG, JPEG, or WebP when the browser supports the requested format.
+7. Avoid accounts, project storage, and hidden cloud persistence.
 8. Explain each selected goal in short practical copy near the tool controls, with the technical method shown as secondary detail.
+9. Present production-ready public copy with no visible homework, demo, MVP, placeholder, or scaffold language in the UI.
 
 ## Non-Functional Requirements
 
-- Keep processing responsive. Move heavier operations into a Web Worker when implementation begins.
+- Keep processing responsive. Move heavier operations into a Web Worker when the local browser pipeline becomes the default.
 - Limit maximum image size or downscale previews to avoid browser memory crashes.
 - Preserve accessibility: keyboard controls, visible focus, readable contrast, and status announcements.
 - Avoid hidden cloud uploads unless the user later approves server-side processing.
-- Keep the UI dense enough for repeated experimentation, but not a generic admin panel.
+- Keep the UI dense enough for repeated experimentation, but not a generic admin panel or a school-project demo.
 
 ## Assumptions to Validate
 
-- The first version is a web app, not a Python desktop tool.
+- The current production direction remains a web app, not a Python desktop tool.
 - The project does not need login or persistent storage.
 - OpenCV.js covers the first method set well enough for coursework.
 - The user wants formal docs in English, following repository governance, while day-to-day conversation can remain Indonesian.
 
 ## Next Validation Action
 
-Validate the static browser app manually in a browser with a real sample image, then refine the first UI and processing slice based on observed behavior.
+Validate the public-facing UI manually in a browser with real sample images, then verify export output as PNG, JPEG, and WebP.

@@ -2,12 +2,12 @@
 
 Adapter Mode: thin
 Adapter Source: .instructions.md
-Canonical Snapshot SHA256: 91efb30348194cff4f7a820caabeb60cd7ca59dea3982a7d3991c7b18991d225
+Canonical Snapshot SHA256: c66b5dfe48a25f0df297a1681aa6bab572da95d2201f09abf3767d38a2934591
 
 This repository is governed by a strict instruction contract.
 Use [.instructions.md](../../.instructions.md) as the canonical policy source.
 Use .agent-context/ for technical rules, prompts, checklists, policies, and state.
-Treat README.md as overview/install/user context only when governance files conflict.
+Treat README.md as public and developer overview, setup, usage, and user-facing context only when governance files conflict.
 
 ## Critical Bootstrap Floor
 
@@ -18,6 +18,7 @@ Treat README.md as overview/install/user context only when governance files conf
 - For UI scope, include a one-line Motion/Palette Decision in the Bootstrap Receipt; product categories are heuristics, not style presets.
 - For UI scope, create or refine `docs/DESIGN.md` and `docs/design-intent.json` before UI implementation.
 - For documentation-first requests, create or refine required project docs in English by default and do not write application, firmware, or UI code until the user asks or approves.
+- Create or refine root README.md as the public and developer entrypoint before implementation.
 - For backend, API, data, auth, error, event, queue, worker, or distributed-system requests, load only relevant global rules from .agent-context/rules/ ([link](../../.agent-context/rules)).
 - For ecosystem, framework, dependency, or Docker claims, perform live web research.
 - Resolve runtime choices from project evidence and live official documentation; resolve structural planning from constraints and architecture boundaries.

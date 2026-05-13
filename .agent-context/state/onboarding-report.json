@@ -1,6 +1,6 @@
 {
-  "cliVersion": "3.0.43",
-  "generatedAt": "2026-05-09T12:26:07.600Z",
+  "cliVersion": "3.0.46",
+  "generatedAt": "2026-05-13T07:27:42.678Z",
   "operationMode": "upgrade",
   "selectedProfile": "balanced",
   "projectScope": {
@@ -13,7 +13,7 @@
     "explicitStack": null,
     "detectedStackEvidence": "typescript.md",
     "detectedAdditionalStackEvidence": [
-      "python.md"
+      "typescript.md"
     ]
   },
   "architectureDecision": {
@@ -35,7 +35,7 @@
     "agentDecisionRequired": true
   },
   "ciGuardrailsEnabled": true,
-  "setupDurationMs": 205,
+  "setupDurationMs": 177,
   "runtimeEnvironment": {
     "selected": "linux-wsl",
     "selectedLabel": "Linux / WSL",
@@ -188,15 +188,23 @@
   "autoDetection": {
     "detectedStack": "typescript.md",
     "detectedAdditionalStacks": [
-      "python.md"
+      "typescript.md"
     ],
     "detectedBlueprint": null,
     "detectedAdditionalBlueprints": [],
     "confidenceLabel": "medium",
-    "confidenceScore": 0.82,
-    "confidenceGap": 0.04,
-    "detectionReasoning": "Top signal Typescript is close to Python (confidence gap 0.04).",
+    "confidenceScore": 0.8999999999999999,
+    "confidenceGap": 0.08,
+    "detectionReasoning": "Top signal Typescript won with confidence 0.90 from markers: frontend: package.json, frontend: Vite config.",
     "rankedCandidates": [
+      {
+        "stackFileName": "typescript.md",
+        "confidenceScore": 0.9,
+        "evidence": [
+          "frontend: package.json",
+          "frontend: Vite config"
+        ]
+      },
       {
         "stackFileName": "typescript.md",
         "confidenceScore": 0.82,
@@ -213,14 +221,14 @@
       }
     ],
     "evidence": [
-      "package.json",
-      "multiple stack signals detected"
+      "frontend: package.json",
+      "frontend: Vite config"
     ],
     "detectionTransparency": {
-      "declaredAt": "2026-05-09T12:26:07.446Z",
+      "declaredAt": "2026-05-13T07:27:42.546Z",
       "declarationType": "existing-project",
       "declarationShown": true,
-      "detectionSummary": "This folder looks like Typescript with medium confidence based on package.json, multiple stack signals detected. Confidence gap: 0.04. Secondary stack signals: Python.",
+      "detectionSummary": "This folder looks like Typescript with medium confidence based on frontend: package.json, frontend: Vite config. Confidence gap: 0.08. Secondary stack signals: Typescript.",
       "activeRulesSummary": {
         "canonicalSource": ".instructions.md",
         "compiledRulebook": ".agent-instructions.md",
@@ -269,9 +277,27 @@
       "isUiScopeLikely": true,
       "signalReasons": [
         "onboarding project scope: both",
-        "ui markers: src, index.html"
+        "ui markers: src, index.html",
+        "workspace frontend: ui markers: src, tailwind.config.js, vite.config.js, public, index.html",
+        "workspace frontend: ui dependencies: react, react-dom, tailwindcss"
       ],
-      "workspaceUiEntries": [],
+      "workspaceUiEntries": [
+        {
+          "relativePath": "frontend",
+          "detectedUiMarkers": [
+            "src",
+            "tailwind.config.js",
+            "vite.config.js",
+            "public",
+            "index.html"
+          ],
+          "detectedUiDependencies": [
+            "react",
+            "react-dom",
+            "tailwindcss"
+          ]
+        }
+      ],
       "frontendEvidenceMetrics": {
         "scannedFileCount": 4,
         "hardcodedColorCount": 50,

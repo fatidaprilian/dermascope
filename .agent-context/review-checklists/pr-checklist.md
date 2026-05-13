@@ -60,7 +60,7 @@ Run this before declaring a task done. Apply only the sections relevant to the c
 
 - [ ] Scope applied: This applies to documentation, release notes, onboarding text, review summaries, and agent-facing explanations
 - [ ] Style scope review is advisory and does not block merge when API docs are synced in the same commit and contract details are correct
-- [ ] Required docs exist before implementation: project brief, architecture decision, flow overview, API/public contract when relevant, data model when relevant, and UI design contract when relevant.
+- [ ] Required docs exist before implementation: public and developer root README; project brief; architecture decision; flow overview; API/public contract when relevant; data model when relevant; and UI design contract when relevant.
 - [ ] For docs-only or docs-first requests, implementation code was not changed unless the user explicitly asked for it or approved an implementation plan.
 - [ ] Formal project docs use English by default unless the user requested another language or existing docs established one.
 - [ ] Docs cover feature plan, architecture rationale, public contracts, data model, UI/design, security assumptions, testing strategy, delivery flow, and next validation actions where relevant.
@@ -70,6 +70,9 @@ Run this before declaring a task done. Apply only the sections relevant to the c
 - [ ] Facts, assumptions, and next actions are separated when context is incomplete.
 - [ ] No emoji in formal documentation or review summaries
 - [ ] Documentation uses plain English and avoids AI cliches
+- [ ] Root README is public and developer friendly, even for private projects, and does not contain secrets, internal agent notes, private reasoning, or governance policy dumps.
+- [ ] Documentation grows with the project: README and matching docs were updated when setup, runtime, architecture, public contracts, data shape, deployment, validation, or UI scope changed.
+- [ ] Documentation file count stayed intentional: new docs files were added only for stable, distinct, or long workflows.
 
 ## 7. UI And Accessibility
 
@@ -81,10 +84,13 @@ Run this before declaring a task done. Apply only the sections relevant to the c
 - [ ] Motion is treated as part of the design language for modern UI work, with reduced-motion and performance safeguards instead of defaulting to static screens.
 - [ ] Broad redesigns pass the old-design regression test: the result is not the previous composition with animation, depth, media, or interaction density removed.
 - [ ] UI work records an agent-chosen ambition level; broad screens and redesigns researched an expressive path first, and any downshift names a concrete blocker plus replacement interaction quality.
+- [ ] UI foundation choices are dynamic and product-fit; no shadcn, native-only, Tailwind-only, or component-kit default was selected by habit or avoided from dependency fear.
+- [ ] Design intent separates locked outcomes from flexible expression; candidate signature moves, exact token primitives, literal anchor artifacts, and component-kit skins were not treated as permanent requirements without evidence or user approval.
 
 ## 8. Dependencies And Runtime
 
 - [ ] New dependencies are justified by capability, maintenance health, bundle/runtime cost, and current official docs.
+- [ ] Dependency avoidance was not treated as a default virtue; lightweight maintained libraries were considered when they improve correctness, accessibility, UX, maintainability, or delivery speed.
 - [ ] Official setup flows are preferred when they produce better-supported current defaults.
 - [ ] Docker, framework, package, and ecosystem claims were checked live when they could be stale.
 - [ ] Token optimization and memory continuity defaults remain enabled unless the user explicitly opts out.
@@ -113,6 +119,7 @@ Run this before declaring a task done. Apply only the sections relevant to the c
 - [ ] `.agent-context/rules/` remains the default guidance source for implementation and review.
 - [ ] Security and testing requirements remain mandatory after static template purge.
 - [ ] Coding flow is blocked if `docs/architecture-decision-record.md` (or `docs/Architecture-Decision-Record.md`) is missing
+- [ ] Coding flow is blocked if root `README.md` is missing
 - [ ] UI implementation flow is blocked if `docs/DESIGN.md` or `docs/design-intent.json` is missing
 
 ## Verdict
