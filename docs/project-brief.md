@@ -1,4 +1,10 @@
-# ImgLab Project Brief
+# DermaScope Project Brief
+
+## Current Scope Reset
+
+DermaScope replaces the previous general ImgLab workbench direction. The current product is a facial skin condition analysis app: Upload one face photo -> detect visible skin signals -> generate an overlay -> show condition scores, a Skin Health Score, and zone breakdowns. The repository folder can remain `imglab` during the transition, but user-facing product copy should use DermaScope.
+
+The previous restoration, enhancement, edge, upscaling, and morphology workbench scope is legacy context only. Do not use it as the active product direction unless the user asks to restore the old workbench.
 
 ## Purpose
 

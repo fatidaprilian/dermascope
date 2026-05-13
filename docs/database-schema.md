@@ -1,4 +1,8 @@
-# ImgLab Data Model
+# DermaScope Data Model
+
+## Current Scope Reset
+
+DermaScope remains database-free. Uploaded face photos, overlay object URLs, and analysis metadata live only in browser memory for the current session. No image pixels, file names, or skin-analysis history should be stored without explicit user approval.
 
 ## Decision
 

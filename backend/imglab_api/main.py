@@ -1,4 +1,4 @@
-"""FastAPI transport layer for ImgLab."""
+"""FastAPI transport layer for DermaScope."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ from .errors import ApiError
 from .processing import goal_payload, process_goal
 
 app = FastAPI(
-    title="ImgLab API",
+    title="DermaScope API",
     version="0.1.0",
-    description="Goal-based backend image processing API for ImgLab.",
+    description="Facial skin analysis API for DermaScope.",
 )
 
 app.add_middleware(
@@ -77,6 +77,7 @@ async def process_image(
             "X-ImgLab-Width": str(processed.width),
             "X-ImgLab-Height": str(processed.height),
             "X-ImgLab-Warnings": json.dumps(processed.warnings),
-            "Content-Disposition": f'attachment; filename="imglab-{goal_id}.png"',
+            "X-DermaScope-Analysis": json.dumps(processed.analysis or {}),
+            "Content-Disposition": f'attachment; filename="dermascope-{goal_id}.png"',
         },
     )

@@ -8,54 +8,56 @@
   },
   "project": {
     "name": "imglab",
-    "currentFocus": "Post-MVP public-product ImgLab frontend using a light inspection studio concept, comparison wipe, and PNG/JPEG/WebP export choices.",
+    "currentFocus": "DermaScope facial skin analysis flow using one face photo, backend OpenCV-Python overlay generation, category scores, and zone breakdowns.",
     "durableFacts": [
       "ImgLab MVP is scoped to real image processing methods: restoration, enhancement, edge/threshold tools, upscaling, and optional morphology.",
       "Architecture is a browser-first single page app using React + Vite + Tailwind CSS + DaisyUI, with optional OpenCV.js and FastAPI backend.",
       "Optional backend is FastAPI plus OpenCV-Python, exposing health, goals, and process endpoints.",
       "MVP excludes Wiener filter, inpainting, ESRGAN/Real-ESRGAN, accounts, server-side image storage, batch processing, and persistent project history.",
-      "Current implementation uses the React frontend in frontend/ with goal-first workflow and backend /api processing.",
-      "UI now exposes user goals first, with technical operations as secondary metadata.",
-      "Post-MVP direction is a public-ready light inspection studio rather than coursework, MVP, or darkroom framing.",
-      "Processed results can be exported from the frontend as PNG, JPEG, or WebP when the browser supports the selected MIME type."
+      "Current implementation uses the React frontend in frontend/ with backend /api processing.",
+      "The active product direction is DermaScope: upload one face photo, analyze skin-condition signals, show an overlay, category scores, Skin Health Score, and zone breakdown.",
+      "Backend analysis estimates acne, dark spots, wrinkles, redness, and pores with classical OpenCV heuristics.",
+      "The app remains database-free and does not persist uploaded image files."
     ]
   },
   "progress": {
     "lastAchievements": [
-      "Replaced the darkroom/test-strip bench anchor with a light inspection studio design direction.",
-      "Refined the React UI with a comparison wipe reveal, service status, and inspection-goal rail.",
-      "Fixed Tailwind config to ESM and added the imglab DaisyUI theme with custom typography.",
+      "Replaced the previous general ImgLab workbench scope with the DermaScope facial skin analysis concept.",
+      "Redesigned the React UI around a face overlay stage, Skin Health Score, condition score stack, and zone breakdown.",
+      "Added backend facial skin analysis overlay generation with face detection fallback, skin mask, condition masks, and structured analysis metadata.",
       "Created required docs: project brief, ADR, flow overview, API/public contract, database/data model, design contract, and design intent.",
       "Implemented static ImgLab MVP with upload, OpenCV.js operation registry, processing, compare slider, reset, and PNG export.",
       "Added package.json, package-lock.json, static server, and operation contract test.",
       "Reworked UI from raw method selection to goal-based selection and removed decorative line/grid backgrounds.",
       "Added optional Python FastAPI backend scaffold with goal-based upload processing and frontend backend-mode switch.",
       "Deferred OpenCV.js loading until the first process action to reduce initial UI freezes.",
-      "Shifted frontend copy and design docs from MVP/coursework framing to public-product workbench framing.",
-      "Added frontend export format conversion for PNG, JPEG, and WebP."
+      "Shifted frontend copy, package metadata, README, and design docs from ImgLab workbench framing to DermaScope skin-analysis framing.",
+      "Updated operation contract tests for the single skin-health analysis goal."
     ],
     "pendingIssues": [
-      "Verify /api/health and /api/process work in Docker and local dev.",
-      "Manual browser testing with real sample images is still needed.",
-      "Public-product UI needs browser visual QA for contrast, motion, responsive layout, and export file correctness.",
-      "Backend dependencies were not installed because pip network approval was rejected, so backend runtime tests were not executed."
+      "Verify /api/health and /api/process work with backend dependencies installed.",
+      "Manual browser testing with real face photos is still needed.",
+      "Tune face detection, skin mask thresholds, and score normalization across lighting and skin tones.",
+      "Backend tests were not executed because cv2 is missing and dependency installation was rejected."
     ],
     "nextBestActions": [
-      "Open the Vite dev server and review the light inspection studio UI.",
-      "Test goal processing with real images and confirm the comparison wipe behavior.",
-      "Export one processed result as PNG, JPEG, and WebP and verify each file opens correctly.",
-      "Run npm run validate and npm run test:backend after installing backend dependencies."
+      "Install backend requirements in .venv, then run npm run test:backend.",
+      "Run the Vite dev server and review the DermaScope UI.",
+      "Test skin analysis with varied face photos and compare overlay metadata to visible marks.",
+      "Tune thresholds after manual photo review."
     ],
     "validationState": [
-      "npm run build passed after public-product frontend redesign.",
-      "frontend npm run lint passed after public-product frontend redesign.",
-      "npm test passed for operation contract.",
-      "Backend Python files have not been revalidated after UI changes."
+      "npm run build passed after DermaScope redesign.",
+      "frontend npm run lint passed after DermaScope redesign.",
+      "npm test passed for the skin analysis operation contract.",
+      "npm run check:backend passed.",
+      "npm run validate is unavailable because the script is missing.",
+      "npm run test:backend is blocked until cv2/opencv-python-headless is installed."
     ]
   },
   "designContinuity": {
     "visualLanguageContinuity": "opt-in-only",
-    "currentConceptualAnchor": "light inspection studio with calibrated review table, neutral paper panels, focused image stage, measurement controls, and export tray",
+    "currentConceptualAnchor": "dermatology contact sheet with translucent acetate annotations, condition-color marks, and zone strips around one face image",
     "forbiddenCarryover": [
       "prior-project-style-memory",
       "old-ui-visual-dna-without-user-approval",
@@ -68,5 +70,5 @@
     "redactSensitiveTextBeforeWriting": true
   },
   "generatedAt": "2026-05-06T22:54:37.341Z",
-  "lastUpdatedAt": "2026-05-12T14:45:00-05:00"
+  "lastUpdatedAt": "2026-05-13T16:10:00+07:00"
 }

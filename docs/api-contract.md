@@ -1,4 +1,48 @@
-# ImgLab Public Contract
+# DermaScope Public Contract
+
+## Current Scope Reset
+
+The active public contract is facial skin analysis. The previous multi-operation image workbench contract is legacy context only. Current UI and API work should target one primary goal: `skin-health-analysis`.
+
+## Facial Skin Analysis Contract
+
+Accepted image types remain PNG, JPEG, and WebP with a 10 MB upload limit.
+
+Primary goal:
+
+```ts
+type SkinAnalysisGoal = {
+  id: "skin-health-analysis";
+  label: "Analisis kondisi kulit";
+  operationId: "facial-skin-analysis";
+};
+```
+
+`POST /api/process` returns an overlay PNG. The `X-DermaScope-Analysis` header contains JSON with this shape:
+
+```ts
+type SkinAnalysisResult = {
+  overallScore: number;
+  faceDetected: boolean;
+  warning?: string;
+  categories: Array<{
+    id: "acne" | "dark_spots" | "wrinkles" | "redness" | "pores";
+    label: string;
+    score: number;
+    severity: "low" | "moderate" | "high";
+    count?: number;
+    coverage: number;
+  }>;
+  zones: Array<{
+    id: "forehead" | "left_cheek" | "right_cheek" | "nose" | "chin";
+    label: string;
+    score: number;
+    dominantConcern: string;
+  }>;
+};
+```
+
+The app must frame the result as image-processing evidence, not diagnosis or treatment advice.
 
 ## Scope
 

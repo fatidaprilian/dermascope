@@ -3,45 +3,45 @@
   "mode": "ui-redesign",
   "status": "active",
   "project": {
-    "name": "ImgLab",
-    "context": "Goal-first public image processing workbench with optional backend processing.",
-    "domain": "Browser-based public image inspection and export workbench",
-    "runtimeConstraint": "React + Vite + Tailwind CSS + DaisyUI frontend, FastAPI backend for processing.",
-    "architectureConstraint": "Client-side SPA with optional API backend for heavy processing."
+    "name": "DermaScope",
+    "context": "Focused facial skin condition analysis from one uploaded face photo.",
+    "domain": "Browser-based facial skin analysis and overlay visualization",
+    "runtimeConstraint": "React + Vite + Tailwind CSS + DaisyUI frontend, FastAPI backend for OpenCV-Python analysis.",
+    "architectureConstraint": "Client-side SPA with API-backed image upload analysis and no persistent image storage."
   },
   "assumptions": [
-    "Frontend uses /api endpoints for processing when backend is available.",
-    "UI must avoid grid or glow wallpaper and keep image color judgment intact.",
-    "Design contract follows the light inspection studio anchor.",
-    "MVP is complete; current UI must read as a production public product."
+    "Frontend uses /api endpoints for face-photo analysis.",
+    "UI must avoid grid or glow wallpaper and keep condition overlays tied to analysis meaning.",
+    "Design contract follows the dermatology contact sheet anchor.",
+    "The app is an educational image-processing tool, not a medical diagnosis tool."
   ],
-  "motionPaletteDecision": "Motion: comparison wipe reveal with a physical handle and reduced-motion fade fallback. Palette: light studio shell, warm paper panels, graphite text, blue primary actions, and cool cyan measurement accents.",
+  "motionPaletteDecision": "Motion: acetate overlay laydown after analysis with reduced-motion immediate swap. Palette: clinical porcelain shell, mint score accents, coral acne/redness marks, amber dark-spot marks, violet wrinkle marks, and teal pore marks.",
   "conceptualAnchor": {
     "mode": "agent-selected",
-    "name": "Light inspection studio",
-    "anchorReference": "public image inspection studio with calibrated review table, neutral paper panels, focused image stage, measurement controls, and export tray",
-    "specificReferencePoint": "A bright review table where the image sits in a controlled stage, goals are arranged as inspection choices, and export formats sit in a final output tray.",
-    "rationale": "Anchors the UI in a credible public product workflow without the heaviness of a darkroom interface or decorative wallpaper patterns.",
-    "signatureMotion": "A comparison wipe reveals processed pixels over the original image.",
-    "signatureMove": "A physical handle sits on the wipe line and can be dragged by the user.",
-    "typographicDecision": "Compact operation titles, plain body copy, small metadata labels, aligned numeric parameter and output format values."
+    "name": "Dermatology contact sheet",
+    "anchorReference": "clinical dermatology contact sheet with translucent acetate annotations, condition-color marks, and zone strips around one face image",
+    "specificReferencePoint": "A face photo is treated as the central evidence frame while condition marks and zone strips sit around it like annotated clinical review material.",
+    "rationale": "The anchor supports a focused human-skin analysis product without falling back to a generic dashboard or medical-device overclaim.",
+    "signatureMotion": "A translucent analysis overlay settles onto the face after processing.",
+    "signatureMove": "Condition colors map directly to acne, dark spots, wrinkles, redness, and pores.",
+    "typographicDecision": "Compact score titles, plain Indonesian body copy, small condition labels, and monospaced counts and percentages."
   },
-  "visualResetStrategy": "Shift the previous dark bench composition into a light public inspection studio with bright shell surfaces, a dark neutral image stage, stronger first-viewport hierarchy, production copy, explicit export tray, and no coursework or MVP framing.",
+  "visualResetStrategy": "Reset the prior general image workbench into a single-purpose face analysis surface with one upload, one analysis action, overlay evidence, score stack, and zone breakdown.",
   "derivedTokenLogic": {
-    "anchorReference": "public image inspection studio with calibrated review table, neutral paper panels, focused image stage, measurement controls, and export tray",
-    "colorDerivationSource": "Studio white shell, warm paper panels, graphite labels, blue action controls, and cool cyan measurement cues.",
-    "spacingDerivationSource": "Inspection studio table with clear stage separation, compact tool grouping, and attached export controls.",
-    "typographyDerivationSource": "Technical labeling from inspection equipment: compact titles, small metadata, monospaced output details.",
-    "motionDerivationSource": "Manual comparison wipe, decisive status shifts, and short fades for state changes.",
-    "validationRule": "Every token must trace to the light studio anchor; no grid or glow wallpaper tokens are allowed."
+    "anchorReference": "clinical dermatology contact sheet with translucent acetate annotations, condition-color marks, and zone strips around one face image",
+    "colorDerivationSource": "Clinical paper surface, skin-safe neutrals, mint score emphasis, coral/amber/violet/rose/teal condition marks.",
+    "spacingDerivationSource": "Contact sheet margins around one central image with compact score and zone strips.",
+    "typographyDerivationSource": "Clinical review labels: compact titles, plain body text, monospaced numbers.",
+    "motionDerivationSource": "Acetate overlay laydown, decisive status shifts, and short fades for state changes.",
+    "validationRule": "Every token must trace to facial skin analysis; no grid, glow, or generic dashboard tokens are allowed."
   },
   "tokenSystem": {
     "colorTokens": {
-      "primary": "inspection-blue",
-      "secondary": "cyan-measure",
-      "neutral": "graphite",
-      "surface": "studio-paper",
-      "focus": "cyan-measure"
+      "primary": "score-mint",
+      "secondary": "pore-teal",
+      "neutral": "clinical-ink",
+      "surface": "skin-paper",
+      "focus": "score-mint"
     },
     "typographyTokens": {
       "display": "Space Grotesk",
@@ -64,49 +64,49 @@
   },
   "colorTruth": {
     "functionalRoles": [
-      "inspection blue indicates primary actions and export readiness",
-      "cyan indicates measurement, focus, and wipe handle",
-      "format controls use paper surfaces with blue selected states",
-      "green indicates success",
-      "red indicates error"
+      "mint indicates the overall skin health score and primary action",
+      "coral indicates acne and inflamed spot marks",
+      "amber indicates dark spot marks",
+      "violet indicates wrinkle and line-density marks",
+      "teal indicates pore-density marks"
     ],
-    "nonTransferableBehavior": "A bright studio shell paired with a dark neutral image stage is specific to image inspection because the surrounding UI stays public and readable while the image area preserves contrast judgment."
+    "nonTransferableBehavior": "The same color family is reused in overlay marks, category scores, and zone rows, which only works because this product maps visible skin-condition signals to face regions."
   },
   "crossViewportAdaptation": {
-    "mobile": "Upload or stage first, goal rail follows, export tray stays directly under processed result.",
-    "tablet": "Stage and goal rail split into two columns; export controls remain attached to status metadata.",
-    "desktop": "Stage dominates left; goal rail is a vertical contact sheet on the right with a persistent export tray."
+    "mobile": "Upload or analyzed face first, overall score below the image, zone rows stacked.",
+    "tablet": "Stage and score stack split into two columns; zones regroup below the image.",
+    "desktop": "Stage dominates center-left, condition scores stay right, zone breakdown stays visible below the stage."
   },
   "motionSystem": {
-    "signature": "Comparison wipe reveal",
-    "reducedMotionFallback": "Immediate swap or short fade with no wipe animation.",
+    "signature": "Acetate overlay laydown",
+    "reducedMotionFallback": "Immediate overlay swap or short fade.",
     "durationsMs": {
       "stateTransition": 180,
-      "wipeReveal": 520
+      "overlayLaydown": 420
     }
   },
   "componentMorphology": {
-    "stage": "Focused dark-neutral image stage with a wipe line and handle.",
-    "goalRail": "Compact stacked buttons with intent summary.",
+    "stage": "Central face image stage with original photo and overlay result.",
+    "scoreStack": "Overall score plus five condition meters.",
     "statusPill": "Service indicator with backend readiness label.",
-    "dropzone": "Framed pad with dashed edge and clear action copy.",
-    "exportTray": "Segmented output format controls and a single decisive export button."
+    "dropzone": "Clinical intake pad with clear face-photo copy.",
+    "zoneStrips": "Forehead, cheeks, nose, and chin rows with compact measurements."
   },
   "aiSafeUiAudit": {
     "status": "active",
-    "failureDefinition": "Fails if grid, line, or glow wallpaper appears or if calibration marks become page background.",
+    "failureDefinition": "Fails if grid, line, or glow wallpaper appears, or if condition colors appear without analysis meaning.",
     "backgroundPatternRule": "No decorative grid, scanlines, or radial glow backgrounds.",
     "blockingByDefault": true
   },
   "productionContentPolicy": {
     "language": ["id", "en"],
     "noPlaceholderCopy": true,
-    "rule": "Goal copy must describe user intent and match real operations. Product UI must not use homework, demo, MVP, placeholder, or scaffold language."
+    "rule": "Skin analysis copy must describe visible image-processing signals and avoid diagnosis, treatment, homework, demo, MVP, placeholder, or scaffold language."
   },
   "accessibilityPolicy": {
     "standard": "WCAG 2.2 AA",
     "focusVisibility": "Visible focus ring on all interactive elements.",
-    "keyboardAccess": "Goal list and wipe slider must be keyboard operable."
+    "keyboardAccess": "Upload, analyze, reset, and dismiss actions must be keyboard operable."
   },
   "designExecutionPolicy": {
     "doNotShip": [
@@ -114,44 +114,48 @@
       "radial glow backdrops",
       "placeholder demo copy",
       "coursework-facing product copy",
-      "parameter-first UI"
+      "parameter-first UI",
+      "diagnosis or treatment recommendations"
     ],
     "requiredSignals": [
-      "comparison wipe",
+      "face overlay result",
       "service status indicator",
-      "inspection checklist style goal rail",
-      "explicit export format tray"
+      "overall Skin Health Score",
+      "condition score stack",
+      "zone breakdown"
     ]
   },
   "designExecutionHandoff": {
     "implementationOrder": [
       "Update design docs",
       "Apply DaisyUI theme tokens",
-      "Implement comparison wipe stage",
-      "Finalize goal rail, status pill, and export format tray"
+      "Implement face overlay stage",
+      "Finalize score stack, status pill, and zone breakdown"
     ],
-    "notes": "Keep backgrounds clean and avoid decorative lines or glows."
+    "notes": "Keep backgrounds clean, avoid decorative lines or glows, and keep medical disclaimer concise."
   },
   "reviewRubric": {
     "mustPass": [
       "No grid or glow wallpaper",
-      "Comparison wipe present with handle",
-      "Goal-first flow is intact",
-      "Export choices include PNG, JPEG, and WebP where browser support exists",
+      "Face overlay present after analysis",
+      "Single upload-to-analysis flow is intact",
+      "Overall and category scores are visible",
+      "Zone breakdown is visible",
       "Reduced-motion fallback works",
       "Focus and contrast meet WCAG 2.2 AA"
     ],
     "driftSignals": [
       "UI reads as generic dashboard",
-      "Goal rail looks like a default card list",
-      "Export feels like an afterthought or single-format MVP artifact",
-      "Calibration marks appear in the background"
+      "Score stack looks like a generic analytics dashboard",
+      "Overlay colors do not match category labels",
+      "Medical diagnosis language appears in the UI"
     ]
   },
   "contextHygiene": {
     "allowedSources": [
       "docs/DESIGN.md",
       "docs/design-intent.json",
+      "user-provided facial skin analysis concept",
       "official React, Vite, Tailwind CSS, DaisyUI docs"
     ],
     "forbiddenSources": [
@@ -207,7 +211,7 @@
     "parameter-first UI"
   ],
   "repoEvidence": {
-    "designEvidenceSummary": "Frontend exists under frontend/ with React + Vite + Tailwind + DaisyUI. Current UI uses goal-first buttons, backend /api processing, comparison wipe, and export format choices. The current design direction is light inspection studio.",
+    "designEvidenceSummary": "Frontend exists under frontend/ with React + Vite + Tailwind + DaisyUI. Current scope is now a focused facial skin analysis flow with backend /api processing, overlay output, condition scores, and zone breakdown.",
     "uiSurfaceFiles": [
       "frontend/src/App.jsx",
       "frontend/src/index.css",

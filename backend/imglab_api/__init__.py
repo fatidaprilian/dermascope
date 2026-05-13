@@ -1,1 +1,1 @@
-"""ImgLab backend package."""
+"""DermaScope backend package."""

@@ -8,8 +8,10 @@ from imglab_api.processing import GOALS, goal_by_id, goal_payload, process_goal
 
 
 def sample_png() -> bytes:
-    image = np.zeros((24, 24, 3), dtype=np.uint8)
-    image[6:18, 6:18] = (255, 255, 255)
+    image = np.full((180, 140, 3), (120, 150, 190), dtype=np.uint8)
+    cv.ellipse(image, (70, 86), (42, 58), 0, 0, 360, (135, 170, 215), -1)
+    cv.circle(image, (56, 70), 3, (40, 55, 210), -1)
+    cv.circle(image, (88, 88), 4, (50, 70, 160), -1)
     success, encoded = cv.imencode(".png", image)
     assert success
     return encoded.tobytes()
@@ -18,14 +20,18 @@ def sample_png() -> bytes:
 class ProcessingTests(unittest.TestCase):
     def test_goals_map_to_operations(self) -> None:
         payload = goal_payload()
-        self.assertGreaterEqual(len(payload), 8)
+        self.assertEqual(len(payload), 1)
         self.assertEqual(goal_by_id(GOALS[0].id).operation_id, GOALS[0].operation_id)
 
     def test_process_goal_returns_png(self) -> None:
-        result = process_goal(sample_png(), "image/png", "make-clear", {"amount": 1.2})
+        result = process_goal(sample_png(), "image/png", "skin-health-analysis", {})
         self.assertEqual(result.media_type, "image/png")
         self.assertGreater(len(result.data), 0)
-        self.assertEqual(result.operation_id, "sharpen")
+        self.assertEqual(result.operation_id, "facial-skin-analysis")
+        self.assertIsNotNone(result.analysis)
+        assert result.analysis is not None
+        self.assertIn("overallScore", result.analysis)
+        self.assertEqual(len(result.analysis["categories"]), 5)
 
     def test_rejects_unknown_goal(self) -> None:
         with self.assertRaises(ApiError) as context:
@@ -34,7 +40,7 @@ class ProcessingTests(unittest.TestCase):
 
     def test_rejects_wrong_file_type(self) -> None:
         with self.assertRaises(ApiError) as context:
-            process_goal(b"not an image", "text/plain", "make-clear", {})
+            process_goal(b"not an image", "text/plain", "skin-health-analysis", {})
         self.assertEqual(context.exception.code, "UNSUPPORTED_FILE_TYPE")
 
 

@@ -1,5 +1,17 @@
 # Architecture Decision Record
 
+## ADR-002: Focused Facial Skin Analysis Product
+
+Status: Proposed
+
+Date: 2026-05-13
+
+DermaScope replaces the previous general ImgLab workbench direction. The runtime remains React + Vite for the frontend and FastAPI + OpenCV-Python for the backend, but the product contract is now one focused analysis flow: upload a face photo, run skin-condition analysis, return an overlay PNG, and expose structured scores through `X-DermaScope-Analysis`.
+
+The app remains database-free. Uploaded files are validated at the API boundary, decoded in memory, analyzed with classical OpenCV heuristics, and returned without persistent storage. The backend uses Haar cascade face detection when available and a centered face-region fallback when needed.
+
+The previous general image processing ADR remains below as legacy context only.
+
 ## ADR-001: Browser-First Image Processing Toolkit
 
 Status: Proposed

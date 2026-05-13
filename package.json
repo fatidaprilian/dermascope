@@ -1,8 +1,8 @@
 {
-  "name": "imglab",
+  "name": "dermascope",
   "version": "0.2.0",
   "private": true,
-  "description": "Browser-first digital image processing toolkit.",
+  "description": "Browser-first facial skin analysis app.",
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
@@ -14,6 +14,7 @@
     "check:backend": "python3 -m compileall backend"
   },
   "keywords": [
+    "skin-analysis",
     "image-processing",
     "opencv",
     "toolkit"

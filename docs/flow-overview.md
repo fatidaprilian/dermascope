@@ -1,4 +1,21 @@
-# ImgLab Flow Overview
+# DermaScope Flow Overview
+
+## Current Scope Reset
+
+The active flow is now facial skin analysis, not a general image processing workbench. The primary journey is: upload one face photo, run analysis, view an overlay, read condition scores, and review per-zone breakdowns. Older export and multi-operation workbench flows are legacy context only.
+
+## Facial Skin Analysis Flow
+
+1. User uploads one PNG, JPEG, or WebP face photo.
+2. App validates file type and size.
+3. App shows the photo in the analysis stage.
+4. User starts skin analysis.
+5. App sends the photo to `POST /api/process` with `goal_id=skin-health-analysis`.
+6. Backend validates and decodes the image.
+7. Backend detects a face with Haar cascade when available, with a centered fallback region when needed.
+8. Backend estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, and pores.
+9. Backend returns an overlay PNG and structured metadata in `X-DermaScope-Analysis`.
+10. App displays the overlay, Skin Health Score, category scores, and zone breakdown.
 
 ## Primary User Flow
 

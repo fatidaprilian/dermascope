@@ -1,98 +1,99 @@
-# ImgLab Design Contract
+# DermaScope Design Contract
 
 ## 1. Design Intent and Product Personality
 
-ImgLab should feel like a focused public image inspection studio: calm, precise, and credible enough to ship as a real web product. The interface must prioritize intent over algorithm labels while keeping the processing flow visible and trustworthy. The core flow remains: Upload Image -> Select Goal -> Compare Result -> Export Format.
+DermaScope should feel like a dermatology contact sheet for visible skin signals: careful, human, and analytical without pretending to be a medical device. The interface must prioritize one decisive path: Upload Face Photo -> Analyze Skin -> Read Overlay -> Review Scores by Condition and Zone.
 
 ## 2. Audience and Use-Context Signals
 
-Primary users are students, instructors, and image-workflow users who want fast, explainable results without account setup. The UI must support repeated experimentation without exposing deep parameters upfront, and it must avoid homework, demo, scaffold, or MVP language in the product surface.
+Primary users are students, instructors, and image-processing learners who want a concrete computer-vision workflow for human facial skin analysis. The UI must make the analysis easy to inspect, avoid diagnosis language, and keep the result framed as image-processing evidence from a normal photo.
 
 ## 3. Visual Direction and Distinctive Moves
 
-Conceptual anchor: a light inspection studio with a calibrated review table, neutral paper panels, a focused image stage, measurement controls, and an export tray.
+Conceptual anchor: a dermatology contact sheet with translucent acetate annotations, clinical paper labels, condition-color marks, and zone strips around one face image.
 
 Distinctive moves:
-- Comparison wipe reveal with a physical handle on the wipe line.
-- Bright inspection surfaces that feel like a real public tool, not a dark control room.
-- Service status indicator that reflects backend readiness and processing state.
-- Goal rail that reads like an inspection checklist: compact labels, tight grouping, and short intent copy.
-- Export tray with explicit PNG, JPEG, and WebP choices after processing.
+- One face image becomes the central evidence frame.
+- The overlay uses condition-specific translucent marks, not decorative background effects.
+- Skin Health Score is the first numeric signal after analysis.
+- Category scores use the same color language as the overlay.
+- Zone breakdown reads like a contact sheet margin, attached to forehead, cheeks, nose, and chin.
 
-Authored visual bet: the first viewport feels like a real image lab where the uploaded image, comparison wipe, and export tray are the central instruments.
+Authored visual bet: the first viewport reads as a single-face analysis table, with upload and score context wrapped around the image rather than a generic dashboard grid.
 
 ## 4. Color, Typography, Spacing, and Density Decisions
 
-Palette logic: clean studio whites, warm paper panels, graphite text, blue primary actions, cyan measurement/focus cues, and restrained success/error colors. The image stage may stay dark neutral to preserve image contrast, but the page shell should feel bright and public. The palette must avoid glow or grid wallpaper and keep the image color judgment intact.
+Palette logic: clinical porcelain surfaces, soft mint analysis accents, coral acne/redness marks, amber dark-spot marks, violet wrinkle marks, and teal pore marks. The page shell stays light so the face and overlay remain the evidence. Overlay colors must carry condition meaning and never become wallpaper.
 
 Typography:
-- Display: Space Grotesk for compact, confident headings.
-- Body: IBM Plex Sans for legible UI copy.
-- Numeric metadata: JetBrains Mono for aligned numbers.
+- Display: Space Grotesk for compact score and section headings.
+- Body: IBM Plex Sans for calm explanatory UI copy.
+- Numeric metadata: JetBrains Mono for score values, counts, and percentages.
 
-Spacing and density: production-dense with clear separation between the stage, tool rail, export tray, and status line. Avoid loose whitespace that makes the UI feel like a class assignment or placeholder shell.
+Spacing and density: compact clinical-review spacing with one dominant image stage and dense side evidence. Avoid card-heavy admin dashboards and decorative hero layouts.
 
 ## 5. Token Architecture and Alias Strategy
 
-Use Tailwind utilities with DaisyUI semantic tokens. Alias palette tokens to the anchor (studio paper, graphite text, blue action, cyan measurement) and keep shared visual behavior in `frontend/src/index.css`.
+Use Tailwind utilities with DaisyUI semantic tokens. Alias palette tokens to condition meaning: skin surface, clinical ink, acne coral, spot amber, wrinkle violet, redness rose, pore teal, and score mint. Keep shared visual behavior in `frontend/src/index.css`.
 
 ## 6. Responsive Recomposition Plan
 
 Mobile:
-- Prioritize upload or the image stage first.
-- Place the goal rail after the stage and keep export choices directly below the processed result.
-- Comparison wipe slider sits directly under the image stage.
+- Prioritize upload or the analyzed face first.
+- Show the overall score directly below the image after analysis.
+- Collapse zone breakdown into stacked strips.
 
 Tablet:
-- Stage and goal rail split into two columns with compact metadata.
-- Export controls stay attached to the result status, not hidden in navigation.
+- Stage and condition scores split into two columns.
+- Zone breakdown moves below the stage as a horizontal strip set.
 
 Desktop:
-- Stage dominates left; tool rail becomes a vertical contact sheet on the right.
-- Status, output metadata, and export controls remain visible without becoming admin chrome.
+- Stage dominates the center-left.
+- Score stack and condition details stay on the right.
+- Zone breakdown remains visible below the stage without becoming admin chrome.
 
 ## 7. Motion, Interaction, and Feedback Rules
 
-Motion signature: a comparison wipe reveals the processed image over the original with a manual handle. Reduced-motion users see an immediate swap or a short fade.
+Motion signature: the overlay settles onto the face in a short acetate-laydown transition after analysis. Reduced-motion users see an immediate overlay swap with no sweeping motion.
 
 Interaction rules:
-- Primary transitions stay under 200ms except the comparison wipe.
+- Primary transitions stay under 200ms except the overlay laydown.
 - Processing state shows both a spinner and a clear status message.
-- Export format selection updates the filename and output MIME without reprocessing the image.
+- The analyze action is disabled while the backend is offline or processing.
 - Errors remain inline and dismissible.
 
 ## 8. Component Language, States, and Morphology
 
 Components:
-- Dropzone: framed pad with a dashed edge, subtle lift, and clear action copy.
-- Comparison stage: layered frame, wipe line, and handle.
-- Goal rail: compact button list with intent summary and category cues.
-- Status pill: service indicator with backend readiness text.
-- Export tray: segmented format choices plus a decisive export action.
+- Dropzone: clinical intake pad with clear file limits.
+- Face stage: one image frame with overlay, fallback warning, and analysis state.
+- Score stack: overall score plus five condition meters.
+- Zone strips: forehead, left cheek, right cheek, nose, and chin summaries.
+- Legend: condition colors mapped to overlay meaning.
 
 States: default, hover, focus-visible, active, disabled, loading, empty, error, success.
 
 ## 9. Source Boundaries and Context Hygiene
 
-Valid sources: repo evidence, this design contract, and official docs for React, Vite, Tailwind CSS, and DaisyUI. Do not copy unrelated product UI.
+Valid sources: repo evidence, this design contract, user-provided skin analysis concept, and official docs for the existing stack. Do not copy unrelated product UI.
 
 Invalid sources: dashboard templates, decorative grid wallpapers, soft glow backdrops, generic abstract backgrounds, and coursework/demo copy.
 
 ## 10. Accessibility Non-Negotiables
 
-Meet WCAG 2.2 AA. Maintain visible focus rings, keyboard navigation for goal selection and wipe slider, and text contrast that stays readable over bright studio surfaces and the dark image stage.
+Meet WCAG 2.2 AA. Maintain visible focus rings, keyboard access for upload/analyze/reset, readable score text, and non-color-only labels for overlay meanings.
 
 ## 11. Anti-Patterns to Avoid
 
 - Decorative grid, line, or glow backgrounds.
-- Calibration marks used as wallpaper rather than functional overlay.
+- Diagnosis or treatment recommendations.
 - Placeholder, demo, MVP, or coursework copy in production UI.
-- Parameter-heavy panels before the user selects a goal.
-- Export actions that force a single format when multiple browser-supported formats are practical.
+- Generic image editor controls from the old workbench.
+- Color-only condition meaning without text labels.
 
 ## 12. Implementation Notes for Future UI Tasks
 
 - Keep the React + Vite + Tailwind CSS + DaisyUI stack.
-- Preserve the comparison wipe as the signature interaction.
-- Preserve explicit PNG, JPEG, and WebP export choices unless browser capability checks prove a narrower set is required.
+- Treat the backend overlay and `X-DermaScope-Analysis` metadata as the primary product contract.
+- Keep medical-disclaimer copy visible but concise.
 - Update design-intent.json and this document in the same change when the UI shifts.

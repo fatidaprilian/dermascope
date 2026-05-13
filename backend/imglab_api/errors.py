@@ -1,4 +1,4 @@
-"""Safe API errors for ImgLab."""
+"""Safe API errors for DermaScope."""
 
 from dataclasses import dataclass
 from typing import Any

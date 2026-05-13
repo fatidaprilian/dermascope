@@ -4,33 +4,16 @@ const assert = require("node:assert/strict");
 const registry = require("../src/operations.js");
 
 const expectedIds = [
-  "gaussian-blur",
-  "median-filter",
-  "bilateral-filter",
-  "grayscale",
-  "histogram-equalization",
-  "brightness-contrast",
-  "gamma-correction",
-  "sharpen",
-  "canny-edge",
-  "otsu-threshold",
-  "adaptive-threshold",
-  "resize-bilinear",
-  "resize-bicubic",
-  "resize-lanczos",
-  "dilation",
-  "erosion",
-  "opening",
-  "closing"
+  "facial-skin-analysis"
 ];
 
 assert.deepEqual(
   registry.operations.map((operation) => operation.id),
   expectedIds,
-  "MVP operation IDs must match the documented public contract order."
+  "Skin analysis operation IDs must match the documented public contract order."
 );
 
-assert.ok(registry.goals.length >= 8, "Goal-based UI must expose practical user goals.");
+assert.equal(registry.goals.length, 1, "Skin analysis UI must expose one primary analysis goal.");
 
 for (const goal of registry.goals) {
   assert.ok(goal.label, `${goal.id} must have a label.`);
@@ -57,12 +40,7 @@ for (const operation of registry.operations) {
   }
 }
 
-const clamped = registry.validateParameters(registry.byId("gaussian-blur"), {
-  kernelSize: 30,
-  sigma: 99
-});
+assert.equal(registry.goals[0].id, "skin-health-analysis");
+assert.equal(registry.goals[0].operationId, "facial-skin-analysis");
 
-assert.equal(clamped.values.kernelSize, 31, "Odd kernel values should move to the nearest valid odd number.");
-assert.equal(clamped.values.sigma, 10, "Numeric parameters should clamp to max.");
-
-console.log("Operation contract OK");
+console.log("Skin analysis contract OK");

@@ -16,19 +16,19 @@ export default {
   daisyui: {
     themes: [
       {
-        imglab: {
-          "primary": "#235fd6",
+        dermascope: {
+          "primary": "#238c73",
           "primary-content": "#ffffff",
-          "secondary": "#0f9c9a",
+          "secondary": "#0f766e",
           "secondary-content": "#ffffff",
-          "accent": "#c05a82",
+          "accent": "#ef5b63",
           "accent-content": "#ffffff",
-          "neutral": "#223035",
-          "neutral-content": "#f8fbfb",
-          "base-100": "#ffffff",
-          "base-200": "#f4f0e8",
-          "base-300": "#e1dbcf",
-          "base-content": "#1d2527",
+          "neutral": "#1f2926",
+          "neutral-content": "#fbfffc",
+          "base-100": "#fffdf9",
+          "base-200": "#f4f6ee",
+          "base-300": "#dbe4d7",
+          "base-content": "#1f2926",
           "info": "#2d7bdc",
           "success": "#22885f",
           "warning": "#b66b00",
