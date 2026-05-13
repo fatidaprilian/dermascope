@@ -14,7 +14,7 @@ The active flow is now facial skin analysis, not a general image processing work
 6. App sends the photo to `POST /api/process` with `goal_id=skin-health-analysis`.
 7. Backend validates and decodes the image.
 8. Backend detects a face with Haar cascade when available, with a centered fallback region when needed.
-9. Backend estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, and pores.
+9. Backend normalizes lighting with CLAHE, estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, and pores.
 10. Backend returns an overlay PNG with distinct markers and structured metadata in `X-DermaScope-Analysis`.
 11. App displays the overlay, Skin Health Score, category scores, and zone breakdown.
 

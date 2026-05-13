@@ -367,7 +367,8 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
 
     x, y, w, h = face
     roi = image[y : y + h, x : x + w]
-    skin_mask = _skin_mask(roi)
+    normalized_roi = _normalize_lighting(roi)
+    skin_mask = _skin_mask(normalized_roi)
     zones = _zone_rects(w, h)
     condition_masks = {key: np.zeros(image.shape[:2], dtype=np.uint8) for key in CONDITION_META}
     zone_payload: list[dict[str, Any]] = []
@@ -375,7 +376,7 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
 
     for zone_id, label, rect in zones:
         zx, zy, zw, zh = rect
-        zone_img = roi[zy : zy + zh, zx : zx + zw]
+        zone_img = normalized_roi[zy : zy + zh, zx : zx + zw]
         zone_skin = skin_mask[zy : zy + zh, zx : zx + zw]
         zone_area = max(1, int(np.count_nonzero(zone_skin)))
         measurements = _measure_zone(zone_img, zone_skin)
@@ -481,6 +482,15 @@ def _skin_mask(face: np.ndarray) -> np.ndarray:
         axes = (int(face.shape[1] * 0.36), int(face.shape[0] * 0.42))
         cv.ellipse(mask, center, axes, 0, 0, 360, 255, -1)
     return mask
+
+
+def _normalize_lighting(face: np.ndarray) -> np.ndarray:
+    lab = cv.cvtColor(face, cv.COLOR_BGR2LAB)
+    l_channel, a_channel, b_channel = cv.split(lab)
+    clahe = cv.createCLAHE(clipLimit=1.8, tileGridSize=(8, 8))
+    normalized_l = clahe.apply(l_channel)
+    normalized_lab = cv.merge((normalized_l, a_channel, b_channel))
+    return cv.cvtColor(normalized_lab, cv.COLOR_LAB2BGR)
 
 
 def _zone_rects(width: int, height: int) -> tuple[tuple[str, str, tuple[int, int, int, int]], ...]:

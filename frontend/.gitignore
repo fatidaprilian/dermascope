@@ -8,9 +8,13 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
 dist-ssr
 *.local
+
+# Keep the built SPA in the repository for Python-only monolith hosts such as
+# Leapcell, where the selected runtime image may not include Node/npm.
+!dist/
+!dist/**
 
 # Editor directories and files
 .vscode/*

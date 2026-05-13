@@ -82,12 +82,12 @@ http://localhost:8080
 
 ## Leapcell Monolith Notes
 
-Leapcell deploys a service with a build command, start command, and serving port. For a one-service DermaScope deploy, use the monolith shape:
+Leapcell deploys a service with a build command, start command, and serving port. For a one-service DermaScope deploy on the Python runtime, keep `frontend/dist` committed and use the monolith shape below. This avoids requiring `npm` inside Leapcell's Python build image.
 
 Build command:
 
 ```bash
-apt-get update && apt-get install -y libglib2.0-0 libgomp1 && python -m pip install -r backend/requirements.txt && cd frontend && npm ci && npm run build
+apt-get update && apt-get install -y libglib2.0-0 libgomp1 && python -m pip install -r backend/requirements.txt
 ```
 
 Start command:
@@ -103,6 +103,12 @@ Serving port:
 ```
 
 Source: https://docs.leapcell.io/overview and https://docs.leapcell.io/service/, fetched 2026-05-13.
+
+Before deploying after frontend changes, build the frontend locally and commit the updated `frontend/dist` files:
+
+```bash
+npm run build
+```
 - Docker Compose Watch docs require Compose 2.22.0 or later. This project uses bind mounts for the current development lane because the source tree is small and explicit mounts are enough. Source: https://docs.docker.com/compose/how-tos/file-watch/, fetched 2026-05-07.
 
 ## Next Validation Action
