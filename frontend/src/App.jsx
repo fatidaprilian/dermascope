@@ -260,11 +260,6 @@ function App() {
             <span className={`h-2.5 w-2.5 rounded-full ${statusDot}`}></span>
             <span>{backendStatus.label}</span>
           </div>
-          {image && (
-            <button className="btn btn-ghost btn-sm" onClick={resetAll}>
-              Foto baru
-            </button>
-          )}
         </div>
       </nav>
 
@@ -397,6 +392,9 @@ function App() {
                     disabled={!canAnalyze}
                   >
                     {isProcessing ? "Menganalisis..." : analysis ? "Analisis ulang" : "Mulai analisis"}
+                  </button>
+                  <button className="btn btn-ghost btn-sm" onClick={resetAll}>
+                    Foto baru
                   </button>
                 </div>
 
