@@ -114,18 +114,50 @@ def process_goal(data: bytes, content_type: str | None, goal_id: str, parameters
     )
 
 
+def preprocess_face(data: bytes, content_type: str | None) -> ProcessedImage:
+    validate_file(content_type, data)
+    image = decode_image(data)
+    face, detected = _detect_face(image)
+    x, y, w, h = _expanded_face_rect(face, image.shape[1], image.shape[0])
+    roi = image[y : y + h, x : x + w]
+    normalized = _normalize_lighting(roi)
+    if not detected:
+        _put_label(normalized, "Fallback ROI", (8, 22), (0, 77, 138), scale=0.5)
+    success, encoded = cv.imencode(".png", normalized)
+    if not success:
+        raise ApiError("EXPORT_FAILED", "The preprocessed image could not be encoded.", 500)
+    height, width = normalized.shape[:2]
+    return ProcessedImage(
+        data=encoded.tobytes(),
+        media_type="image/png",
+        width=width,
+        height=height,
+        operation_id="face-preprocess",
+        output_mode="preprocess",
+        warnings=tuple(() if detected else ("Face detector used a centered fallback region.",)),
+        analysis={"faceDetected": detected, "crop": {"x": x, "y": y, "width": w, "height": h}},
+    )
+
+
 def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict[str, Any]]:
     warnings: list[str] = []
-    face, detected = _detect_face(image)
+    detected_face, detected = _detect_face(image)
     if not detected:
         warnings.append("Face detector used a centered fallback region.")
 
-    x, y, w, h = face
-    roi = image[y : y + h, x : x + w]
+    crop_x, crop_y, crop_w, crop_h = _expanded_face_rect(detected_face, image.shape[1], image.shape[0])
+    working_image = image[crop_y : crop_y + crop_h, crop_x : crop_x + crop_w]
+    x, y, w, h = (
+        detected_face[0] - crop_x,
+        detected_face[1] - crop_y,
+        detected_face[2],
+        detected_face[3],
+    )
+    roi = working_image[y : y + h, x : x + w]
     normalized_roi = _normalize_lighting(roi)
     skin_mask = _skin_mask(normalized_roi)
     zones = _zone_rects(w, h)
-    condition_masks = {key: np.zeros(image.shape[:2], dtype=np.uint8) for key in CONDITION_META}
+    condition_masks = {key: np.zeros(working_image.shape[:2], dtype=np.uint8) for key in CONDITION_META}
     zone_payload: list[dict[str, Any]] = []
     category_accumulator = {key: {"coverage": 0.0, "count": 0} for key in CONDITION_META}
 
@@ -180,7 +212,8 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
         )
 
     overall = round(sum(item["score"] for item in category_payload) / len(category_payload))
-    overlay = _render_overlay(image, face, condition_masks)
+    face = (x, y, w, h)
+    overlay = _render_overlay(working_image, face, condition_masks)
     analysis = {
         "overallScore": overall,
         "faceDetected": detected,
@@ -218,6 +251,18 @@ def _detect_face(image: np.ndarray) -> tuple[tuple[int, int, int, int], bool]:
     x = max(0, (width - size) // 2)
     y = max(0, int((height - size) * 0.42))
     return (x, y, min(size, width - x), min(size, height - y)), False
+
+
+def _expanded_face_rect(face: tuple[int, int, int, int], image_width: int, image_height: int) -> tuple[int, int, int, int]:
+    x, y, w, h = face
+    pad_x = int(w * 0.26)
+    pad_y_top = int(h * 0.30)
+    pad_y_bottom = int(h * 0.18)
+    left = max(0, x - pad_x)
+    top = max(0, y - pad_y_top)
+    right = min(image_width, x + w + pad_x)
+    bottom = min(image_height, y + h + pad_y_bottom)
+    return (left, top, max(1, right - left), max(1, bottom - top))
 
 
 def _skin_mask(face: np.ndarray) -> np.ndarray:

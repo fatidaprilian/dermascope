@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from .errors import ApiError
-from .processing import goal_payload, process_goal
+from .processing import goal_payload, preprocess_face, process_goal
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
@@ -62,6 +62,28 @@ async def leapcell_health() -> dict[str, str]:
 @app.get("/api/goals")
 async def goals() -> dict[str, list[dict[str, str]]]:
     return {"goals": goal_payload()}
+
+
+@app.post("/api/preprocess")
+async def preprocess_image(file: Annotated[UploadFile, File()]) -> Response:
+    image_bytes = await file.read()
+    started_at = time.perf_counter()
+    processed = preprocess_face(image_bytes, file.content_type)
+    elapsed_ms = round((time.perf_counter() - started_at) * 1000)
+    return Response(
+        content=processed.data,
+        media_type=processed.media_type,
+        headers={
+            "X-DermaScope-Operation": processed.operation_id,
+            "X-DermaScope-Output-Mode": processed.output_mode,
+            "X-DermaScope-Width": str(processed.width),
+            "X-DermaScope-Height": str(processed.height),
+            "X-DermaScope-Warnings": json.dumps(processed.warnings),
+            "X-DermaScope-Analysis": json.dumps(processed.analysis or {}),
+            "X-DermaScope-Processing-Time": str(elapsed_ms),
+            "Content-Disposition": 'attachment; filename="dermascope-preprocess.png"',
+        },
+    )
 
 
 @app.post("/api/process")

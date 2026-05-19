@@ -49,6 +49,9 @@ function parseAnalysisHeader(value) {
 
 function App() {
   const [image, setImage] = useState(null);
+  const [preprocessedImage, setPreprocessedImage] = useState(null);
+  const [isPreprocessing, setIsPreprocessing] = useState(false);
+  const [preprocessWarning, setPreprocessWarning] = useState(null);
   const [processedImage, setProcessedImage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
@@ -64,6 +67,7 @@ function App() {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const requestRef = useRef(null);
+  const preprocessRequestRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -102,16 +106,65 @@ function App() {
 
   const resetAll = useCallback(() => {
     if (image?.objectUrl) URL.revokeObjectURL(image.objectUrl);
+    if (preprocessedImage) URL.revokeObjectURL(preprocessedImage);
     if (processedImage) URL.revokeObjectURL(processedImage);
     if (fileInputRef.current) fileInputRef.current.value = "";
     requestRef.current = null;
+    preprocessRequestRef.current = null;
     stopCamera();
     setImage(null);
+    setPreprocessedImage(null);
+    setIsPreprocessing(false);
+    setPreprocessWarning(null);
     setProcessedImage(null);
     setAnalysis(null);
     setError(null);
     setProcessingTime(null);
-  }, [image, processedImage, stopCamera]);
+  }, [image, preprocessedImage, processedImage, stopCamera]);
+
+  const preprocessImage = useCallback(async (file) => {
+    const requestId = typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now());
+    preprocessRequestRef.current = requestId;
+    setIsPreprocessing(true);
+    setPreprocessWarning(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch("/api/preprocess", {
+        method: "POST",
+        body: formData
+      });
+      if (!response.ok) {
+        let msg = "Pra-pemrosesan wajah gagal. Foto asli tetap digunakan.";
+        try {
+          const payload = await response.json();
+          if (payload?.message) msg = payload.message;
+        } catch {
+          // Keep safe fallback when the backend returns non-JSON.
+        }
+        throw new Error(msg);
+      }
+
+      const blob = await response.blob();
+      if (preprocessRequestRef.current !== requestId) return;
+      const warnings = response.headers.get("X-DermaScope-Warnings");
+      const parsedWarnings = warnings ? JSON.parse(warnings) : [];
+      const nextPreprocessedImage = URL.createObjectURL(blob);
+      setPreprocessedImage((current) => {
+        if (current) URL.revokeObjectURL(current);
+        return nextPreprocessedImage;
+      });
+      setPreprocessWarning(parsedWarnings[0] || null);
+    } catch (err) {
+      if (preprocessRequestRef.current !== requestId) return;
+      setPreprocessWarning(err instanceof Error ? err.message : "Pra-pemrosesan wajah gagal.");
+    } finally {
+      if (preprocessRequestRef.current === requestId) setIsPreprocessing(false);
+    }
+  }, []);
 
   const acceptImageFile = useCallback((file) => {
     if (!file) return;
@@ -127,16 +180,20 @@ function App() {
     }
 
     if (image?.objectUrl) URL.revokeObjectURL(image.objectUrl);
+    if (preprocessedImage) URL.revokeObjectURL(preprocessedImage);
     if (processedImage) URL.revokeObjectURL(processedImage);
 
     setError(null);
+    setPreprocessedImage(null);
+    setPreprocessWarning(null);
     setProcessedImage(null);
     setAnalysis(null);
     setProcessingTime(null);
 
     const objectUrl = URL.createObjectURL(file);
     setImage({ file, objectUrl, name: file.name, size: file.size });
-  }, [image, processedImage]);
+    void preprocessImage(file);
+  }, [image, preprocessedImage, processedImage, preprocessImage]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
@@ -290,9 +347,19 @@ function App() {
     ? "Menginspeksi area wajah..."
     : processedImage
       ? "Peta kontur sudah siap."
+      : isPreprocessing
+        ? "Memotong area wajah..."
+        : preprocessedImage
+          ? "Pra-pemrosesan wajah siap."
       : image
         ? "Foto siap ditelusuri."
         : "Belum ada foto.";
+  const visibleImage = processedImage || preprocessedImage || image?.objectUrl;
+  const visibleImageAlt = processedImage
+    ? "Overlay hasil analisis"
+    : preprocessedImage
+      ? "Hasil pra-pemrosesan area wajah"
+      : "Foto wajah original";
 
   return (
     <div className="min-h-screen derma-shell text-base-content" aria-busy={isProcessing}>
@@ -464,17 +531,26 @@ function App() {
                 </div>
 
                 <div className={`face-frame ${processedImage ? "has-overlay" : ""}`}>
-                  <img src={image.objectUrl} alt="Foto wajah original" className="face-image" />
-                  {processedImage && (
-                    <img src={processedImage} alt="Overlay hasil analisis" className="face-image overlay-image" />
+                  {visibleImage && (
+                    <img src={visibleImage} alt={visibleImageAlt} className="face-image overlay-image" />
                   )}
-                  {!processedImage && (
+                  {!processedImage && !preprocessedImage && (
                     <div className="stage-empty">
-                      {isProcessing ? "Menelusuri kontur sinyal..." : "Mulai analisis untuk membuka overlay."}
+                      {isPreprocessing
+                        ? "Mendeteksi wajah dan menyiapkan crop..."
+                        : isProcessing
+                          ? "Menelusuri kontur sinyal..."
+                          : "Mulai analisis untuk membuka overlay."}
                     </div>
                   )}
                 </div>
               </div>
+
+              {preprocessWarning && !analysis && (
+                <div className="alert alert-warning evidence-alert">
+                  <span>{preprocessWarning}</span>
+                </div>
+              )}
 
               {analysis?.warning && (
                 <div className="alert alert-warning evidence-alert">

@@ -21,7 +21,10 @@ The API runs at `http://localhost:8000`.
 
 - `GET /api/health`
 - `GET /api/goals`
+- `POST /api/preprocess`
 - `POST /api/process`
+
+`POST /api/preprocess` accepts `multipart/form-data` with `file`. It returns a cropped, lighting-normalized face PNG.
 
 `POST /api/process` accepts `multipart/form-data` with `file`, `goal_id=skin-health-analysis`, and optional `parameters` JSON object string. It returns an overlay PNG with `X-DermaScope-*` metadata headers.
 

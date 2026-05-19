@@ -41,7 +41,9 @@
       "Removed the legacy root static ImgLab app and unused browser OpenCV image-processing utilities from the active codebase.",
       "Renamed the active frontend operation registry export to DermaScopeOperations.",
       "Added DermaScope X-DermaScope-* response headers including processing time.",
-      "Added npm run validate and installed backend requirements into .venv so backend tests can run locally."
+      "Added npm run validate and installed backend requirements into .venv so backend tests can run locally.",
+      "Added /api/preprocess so uploaded photos show a cropped, lighting-normalized face preview before analysis.",
+      "Changed analysis output to render the overlay on the cropped face region so distant photos stay focused on the face."
     ],
     "pendingIssues": [
       "Verify /api/process quality with real face photos after threshold tuning.",
@@ -59,7 +61,7 @@
       "npm test passed for the skin analysis operation contract.",
       "npm run check:backend passed.",
       "npm run test:backend passed locally after installing backend requirements in .venv.",
-      "npm run validate passed.",
+      "npm run validate passed after adding preprocessing preview.",
       "Production monolith Docker image build passed.",
       "Production monolith container health checks passed on /api/health and /kaithhealth.",
       "Backend tests passed inside the production monolith container with PYTHONPATH=backend."

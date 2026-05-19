@@ -13,6 +13,7 @@ DermaScope is for people who need a focused, explainable facial skin signal repo
 - Upload one PNG, JPEG, or WebP face photo up to 10 MB.
 - Choose file upload or browser camera capture as the photo source.
 - Detect a face region with OpenCV-Python and fall back to a centered face region when no face is found.
+- Show a cropped, lighting-normalized face preview after preprocessing.
 - Split the face into forehead, left cheek, right cheek, nose, and chin zones.
 - Estimate acne, dark spots, wrinkles, redness, and enlarged pores with classical image-processing heuristics.
 - Return an overlay PNG that highlights problem areas by condition.
@@ -75,7 +76,10 @@ The frontend calls:
 
 - `GET /api/health`
 - `GET /api/goals`
+- `POST /api/preprocess`
 - `POST /api/process`
+
+`POST /api/preprocess` accepts one image file and returns a cropped preprocessed face PNG.
 
 `POST /api/process` accepts one image file and returns an overlay PNG. Analysis metadata is returned in the `X-DermaScope-Analysis` response header as JSON.
 

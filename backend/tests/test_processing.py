@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 
 from imglab_api.errors import ApiError
-from imglab_api.processing import GOALS, goal_by_id, goal_payload, process_goal
+from imglab_api.processing import GOALS, goal_by_id, goal_payload, preprocess_face, process_goal
 
 
 def sample_png() -> bytes:
@@ -33,6 +33,16 @@ class ProcessingTests(unittest.TestCase):
         assert result.analysis is not None
         self.assertIn("overallScore", result.analysis)
         self.assertEqual(len(result.analysis["categories"]), 5)
+
+    def test_preprocess_face_returns_cropped_png(self) -> None:
+        result = preprocess_face(sample_png(), "image/png")
+        self.assertEqual(result.media_type, "image/png")
+        self.assertEqual(result.operation_id, "face-preprocess")
+        self.assertEqual(result.output_mode, "preprocess")
+        self.assertGreater(len(result.data), 0)
+        self.assertIsNotNone(result.analysis)
+        assert result.analysis is not None
+        self.assertIn("crop", result.analysis)
 
     def test_rejects_unknown_goal(self) -> None:
         with self.assertRaises(ApiError) as context:

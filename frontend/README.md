@@ -1,6 +1,6 @@
 # DermaScope Frontend
 
-This is the React + Vite frontend for DermaScope. The UI lets users upload or capture one face photo, send it to the backend analysis API, and inspect the returned overlay, Skin Health Score, condition categories, and zone breakdown.
+This is the React + Vite frontend for DermaScope. The UI lets users upload or capture one face photo, preview the backend preprocessed face crop, send the image to the backend analysis API, and inspect the returned overlay, Skin Health Score, condition categories, and zone breakdown.
 
 ## Commands
 

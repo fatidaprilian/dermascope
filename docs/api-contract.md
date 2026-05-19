@@ -12,6 +12,7 @@ The app must frame the result as image-processing evidence, not diagnosis, treat
 | --- | --- | --- |
 | `GET` | `/api/health` | Return backend liveness and engine metadata. |
 | `GET` | `/api/goals` | Return the single public analysis goal. |
+| `POST` | `/api/preprocess` | Return a preprocessed face crop preview PNG. |
 | `POST` | `/api/process` | Analyze one face photo and return an overlay PNG plus metadata headers. |
 
 ## Health Contract
@@ -50,6 +51,30 @@ type SkinAnalysisGoal = {
   id: "skin-health-analysis";
   label: "Analisis kondisi kulit";
   operationId: "facial-skin-analysis";
+};
+```
+
+## Preprocess Request
+
+`POST /api/preprocess` accepts `multipart/form-data`.
+
+| Field | Type | Required | Rules |
+| --- | --- | --- | --- |
+| `file` | file | yes | PNG, JPEG, or WebP image up to 10 MB. |
+
+The endpoint returns an `image/png` body containing a cropped and lighting-normalized face preview. If no face is detected, the backend uses a centered fallback region and returns a warning in `X-DermaScope-Warnings`.
+
+Response headers match the `X-DermaScope-*` pattern used by `/api/process`. `X-DermaScope-Analysis` includes:
+
+```ts
+type PreprocessResult = {
+  faceDetected: boolean;
+  crop: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 };
 ```
 
@@ -177,6 +202,7 @@ Contract validation must cover:
 
 1. The frontend registry exposes only `facial-skin-analysis`.
 2. `skin-health-analysis` maps to `facial-skin-analysis`.
-3. Backend processing returns a PNG plus analysis metadata for a valid image.
-4. Backend rejects unknown goals, wrong file types, empty uploads, and oversized uploads.
-5. Frontend handles offline backend, malformed metadata, and stale responses without replacing newer state.
+3. Backend preprocessing returns a cropped PNG for a valid image.
+4. Backend processing returns a PNG plus analysis metadata for a valid image.
+5. Backend rejects unknown goals, wrong file types, empty uploads, and oversized uploads.
+6. Frontend handles offline backend, malformed metadata, and stale responses without replacing newer state.
