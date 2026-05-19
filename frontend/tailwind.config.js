@@ -17,22 +17,22 @@ export default {
     themes: [
       {
         dermascope: {
-          "primary": "#238c73",
+          "primary": "#284f8f",
           "primary-content": "#ffffff",
-          "secondary": "#0f766e",
+          "secondary": "#127566",
           "secondary-content": "#ffffff",
-          "accent": "#ef5b63",
+          "accent": "#d44b35",
           "accent-content": "#ffffff",
-          "neutral": "#1f2926",
-          "neutral-content": "#fbfffc",
-          "base-100": "#fffdf9",
-          "base-200": "#f4f6ee",
-          "base-300": "#dbe4d7",
-          "base-content": "#1f2926",
-          "info": "#2d7bdc",
-          "success": "#22885f",
-          "warning": "#b66b00",
-          "error": "#c94141"
+          "neutral": "#17201d",
+          "neutral-content": "#fbfcf8",
+          "base-100": "#fbfcf8",
+          "base-200": "#eef4f0",
+          "base-300": "#ccd8d0",
+          "base-content": "#17201d",
+          "info": "#3656a6",
+          "success": "#127566",
+          "warning": "#9a6a13",
+          "error": "#b83352"
         }
       },
       "dark",

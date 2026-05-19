@@ -1,18 +1,51 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { ImgLabOperations } from "./utils/operations";
+import { DermaScopeOperations } from "./utils/operations";
 
 const CONDITION_COLORS = {
-  acne: "#ef5b63",
-  dark_spots: "#b7791f",
-  wrinkles: "#7c3aed",
-  redness: "#e11d48",
-  pores: "#0f766e"
+  acne: "#ff5a1f",
+  dark_spots: "#8a4d00",
+  wrinkles: "#007b8f",
+  redness: "#d1007f",
+  pores: "#617a1f"
 };
+
+const CONDITION_LABELS = {
+  acne: "Jerawat",
+  dark_spots: "Noda gelap",
+  wrinkles: "Kerutan",
+  redness: "Kemerahan",
+  pores: "Pori besar"
+};
+
+const EMPTY_CATEGORIES = [
+  { id: "acne", label: "Jerawat", score: 0, severity: "pending", count: 0, coverage: 0 },
+  { id: "dark_spots", label: "Noda gelap", score: 0, severity: "pending", count: 0, coverage: 0 },
+  { id: "wrinkles", label: "Kerutan", score: 0, severity: "pending", count: 0, coverage: 0 },
+  { id: "redness", label: "Kemerahan", score: 0, severity: "pending", count: 0, coverage: 0 },
+  { id: "pores", label: "Pori besar", score: 0, severity: "pending", count: 0, coverage: 0 }
+];
+
+const PIPELINE_STEPS = [
+  "Validasi file",
+  "Deteksi wajah",
+  "Isolasi area kulit",
+  "Pemetaan zona",
+  "Overlay dan skor"
+];
 
 const DEFAULT_STATUS = {
   state: "checking",
-  label: "Checking service"
+  label: "Menguji layanan"
 };
+
+function parseAnalysisHeader(value) {
+  if (!value) return null;
+  try {
+    return JSON.parse(value);
+  } catch {
+    throw new Error("Metadata analisis rusak. Coba proses ulang foto.");
+  }
+}
 
 function App() {
   const [image, setImage] = useState(null);
@@ -30,6 +63,7 @@ function App() {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
+  const requestRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -43,11 +77,11 @@ function App() {
       .then((data) => {
         if (!alive) return;
         const engine = data?.engine ? ` (${data.engine})` : "";
-        setBackendStatus({ state: "ready", label: `Ready${engine}` });
+        setBackendStatus({ state: "ready", label: `Siap ukur${engine}` });
       })
       .catch(() => {
         if (!alive) return;
-        setBackendStatus({ state: "error", label: "Service offline" });
+        setBackendStatus({ state: "error", label: "Layanan offline" });
       });
 
     return () => {
@@ -70,6 +104,7 @@ function App() {
     if (image?.objectUrl) URL.revokeObjectURL(image.objectUrl);
     if (processedImage) URL.revokeObjectURL(processedImage);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    requestRef.current = null;
     stopCamera();
     setImage(null);
     setProcessedImage(null);
@@ -87,7 +122,7 @@ function App() {
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      setError("File terlalu besar (maks 10 MB).");
+      setError("File terlalu besar. Batas maksimal 10 MB.");
       return;
     }
 
@@ -113,9 +148,9 @@ function App() {
     setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      handleFileUpload({ target: { files: [file] } });
+      acceptImageFile(file);
     } else {
-      setError("Drop file gambar yang valid.");
+      setError("Pilih file gambar yang valid.");
     }
   };
 
@@ -179,16 +214,20 @@ function App() {
 
   const processImage = async (goal) => {
     if (!image) return;
+    const requestId = typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : String(Date.now());
+    requestRef.current = requestId;
     setIsProcessing(true);
     setError(null);
     setProcessingTime(null);
 
     try {
-      const operation = ImgLabOperations.byId(goal.operationId);
+      const operation = DermaScopeOperations.byId(goal.operationId);
       if (!operation) {
-        throw new Error("Tool tidak ditemukan.");
+        throw new Error("Alat analisis tidak ditemukan.");
       }
-      const defaults = ImgLabOperations.defaultsFor(operation);
+      const defaults = DermaScopeOperations.defaultsFor(operation);
 
       const formData = new FormData();
       formData.append("file", image.file);
@@ -201,7 +240,7 @@ function App() {
       });
 
       if (!response.ok) {
-        let msg = "Processing service could not process this image.";
+        let msg = "Layanan analisis tidak dapat memproses gambar ini.";
         try {
           const payload = await response.json();
           if (payload?.message) msg = payload.message;
@@ -212,20 +251,23 @@ function App() {
       }
 
       const blob = await response.blob();
+      if (requestRef.current !== requestId) return;
       const elapsedHeader =
-        response.headers.get("X-ImgLab-Processing-Time") ||
+        response.headers.get("X-DermaScope-Processing-Time") ||
         response.headers.get("X-Processing-Time-Ms");
       const analysisHeader = response.headers.get("X-DermaScope-Analysis");
-      const parsedAnalysis = analysisHeader ? JSON.parse(analysisHeader) : null;
+      const parsedAnalysis = parseAnalysisHeader(analysisHeader);
       const elapsedMs = Number(elapsedHeader);
+      const nextProcessedImage = URL.createObjectURL(blob);
       if (processedImage) URL.revokeObjectURL(processedImage);
-      setProcessedImage(URL.createObjectURL(blob));
+      setProcessedImage(nextProcessedImage);
       setAnalysis(parsedAnalysis);
       setProcessingTime(Number.isFinite(elapsedMs) && elapsedMs > 0 ? Math.round(elapsedMs) : null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Processing failed.");
+      if (requestRef.current !== requestId) return;
+      setError(err instanceof Error ? err.message : "Analisis gagal.");
     } finally {
-      setIsProcessing(false);
+      if (requestRef.current === requestId) setIsProcessing(false);
     }
   };
 
@@ -235,55 +277,73 @@ function App() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const statusDot =
-    backendStatus.state === "ready"
-      ? "bg-success"
-      : backendStatus.state === "error"
-        ? "bg-error"
-        : "bg-warning";
-
-  const primaryGoal = ImgLabOperations.goals[0];
+  const primaryGoal = DermaScopeOperations.goals[0];
   const canAnalyze = image && backendStatus.state === "ready" && !isProcessing;
+  const visibleCategories = analysis?.categories || EMPTY_CATEGORIES;
+  const statusClass =
+    backendStatus.state === "ready"
+      ? "is-ready"
+      : backendStatus.state === "error"
+        ? "is-error"
+        : "is-pending";
+  const stageStatus = isProcessing
+    ? "Menginspeksi area wajah..."
+    : processedImage
+      ? "Peta kontur sudah siap."
+      : image
+        ? "Foto siap ditelusuri."
+        : "Belum ada foto.";
 
   return (
-    <div className="min-h-screen bg-derma-shell text-base-content">
-      <nav className="app-nav">
-        <div className="nav-copy">
-          <p className="kicker">DermaScope</p>
-          <h1>Analisis kondisi kulit wajah</h1>
-          <p>
-            Upload satu foto wajah, lalu baca overlay area bermasalah, skor kategori, dan breakdown zona wajah.
-          </p>
-        </div>
-        <div className="nav-status">
-          <div className="clinical-chip">
-            <span className={`h-2.5 w-2.5 rounded-full ${statusDot}`}></span>
-            <span>{backendStatus.label}</span>
+    <div className="min-h-screen derma-shell text-base-content" aria-busy={isProcessing}>
+      <header className="survey-masthead">
+        <div className="brand-block">
+          <div className="product-mark" aria-hidden="true">DS</div>
+          <div>
+            <p className="kicker">DermaScope / Face Signal Survey</p>
+            <h1>Peta kontur sinyal kulit wajah</h1>
           </div>
         </div>
-      </nav>
 
-      <main className="app-main">
-        <section className="analysis-stage">
+        <div className="status-cluster" aria-live="polite">
+          <div className={`status-pill ${statusClass}`}>
+            <span className="status-light"></span>
+            <span>{backendStatus.label}</span>
+          </div>
+          <div className="privacy-pill">Satu foto per sesi. Tidak ada riwayat tersimpan.</div>
+        </div>
+      </header>
+
+      <main className={`survey-main ${image ? "has-image" : "is-intake"}`}>
+        <section className={image ? "map-workbench" : "acquisition-layout"}>
           {!image ? (
-            <div className="intake-grid">
-              <div className="intro-copy">
-                <p className="kicker">Face photo intake</p>
-                <h2>
-                  Dari foto biasa jadi peta kondisi kulit.
-                </h2>
+            <>
+              <div className="intake-copy">
+                <p className="kicker">STN-00 / Akuisisi foto</p>
+                <h2>Satu wajah, dibaca sebagai permukaan sinyal.</h2>
                 <p>
-                  Sistem membaca sinyal visual seperti jerawat, noda gelap, kerutan, kemerahan, dan pori besar di zona wajah.
+                  DermaScope menelusuri jerawat, noda gelap, kerutan, kemerahan, dan pori besar dari foto yang jelas,
+                  lalu mengembalikannya sebagai overlay, skor, dan sektor wajah.
                 </p>
-                <div className="legend-row">
+
+                <div className="intake-facts" aria-label="Ringkasan batas analisis">
+                  <span>PNG, JPEG, WebP</span>
+                  <span>Maks 10 MB</span>
+                  <span>Tanpa arsip foto</span>
+                </div>
+
+                <div className="condition-legend" aria-label="Legenda kondisi">
                   {Object.entries(CONDITION_COLORS).map(([id, color]) => (
                     <span key={id}>
-                      <i style={{ backgroundColor: color }}></i>
-                      {id.replace("_", " ")}
+                      <i className={`condition-marker marker-${id}`} style={{ backgroundColor: color }}></i>
+                      {CONDITION_LABELS[id]}
                     </span>
                   ))}
                 </div>
-                <div className="source-switch" aria-label="Pilih sumber foto">
+              </div>
+
+              <div className="acquisition-ledger">
+                <div className="source-tabs" aria-label="Pilih sumber foto">
                   <button
                     type="button"
                     className={inputMode === "upload" ? "active" : ""}
@@ -292,7 +352,7 @@ function App() {
                       setInputMode("upload");
                     }}
                   >
-                    Upload file
+                    Upload
                   </button>
                   <button
                     type="button"
@@ -302,91 +362,92 @@ function App() {
                     Kamera
                   </button>
                 </div>
-              </div>
 
-              {inputMode === "upload" ? (
-                <div
-                  className={`upload-card ${isDragOver ? "is-dragging" : ""}`}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragOver(true);
-                  }}
-                  onDragLeave={() => setIsDragOver(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+                {inputMode === "upload" ? (
+                  <div
+                    className={`source-station ${isDragOver ? "is-dragging" : ""}`}
+                    onDragOver={(e) => {
                       e.preventDefault();
-                      fileInputRef.current?.click();
-                    }
-                  }}
-                >
-                  <div className="upload-symbol">+</div>
-                  <h2 className="text-2xl font-semibold">Upload foto wajah</h2>
-                  <p className="text-sm text-base-content/60">
-                    PNG, JPEG, atau WebP. Maksimum 10 MB. Gunakan foto wajah yang jelas dan cukup terang.
-                  </p>
-                  <input
-                    type="file"
-                    className="hidden"
-                    ref={fileInputRef}
-                    accept="image/png,image/jpeg,image/webp"
-                    onChange={handleFileUpload}
-                  />
-                </div>
-              ) : (
-                <div className="camera-card">
-                  <div className="camera-preview">
-                    <video ref={videoRef} playsInline muted aria-label="Preview kamera wajah"></video>
-                    {!isCameraActive && (
-                      <div className="camera-empty">
-                        <span>Kamera belum aktif</span>
-                        <small>Gunakan pencahayaan rata dan hadapkan wajah ke kamera.</small>
-                      </div>
-                    )}
+                      setIsDragOver(true);
+                    }}
+                    onDragLeave={() => setIsDragOver(false)}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        fileInputRef.current?.click();
+                      }
+                    }}
+                  >
+                    <span className="upload-symbol" aria-hidden="true">+</span>
+                    <div>
+                      <h2>Plot foto wajah</h2>
+                      <p>Gunakan foto depan dengan pencahayaan rata agar kontur sinyal lebih terbaca.</p>
+                    </div>
+                    <input
+                      type="file"
+                      className="hidden"
+                      ref={fileInputRef}
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={handleFileUpload}
+                    />
                   </div>
-                  <div className="camera-actions">
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      onClick={startCamera}
-                      disabled={isCameraStarting || isCameraActive}
-                    >
-                      {isCameraStarting ? "Membuka..." : "Aktifkan kamera"}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-success btn-sm"
-                      onClick={captureCameraPhoto}
-                      disabled={!isCameraActive}
-                    >
-                      Ambil foto
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-ghost btn-sm"
-                      onClick={stopCamera}
-                      disabled={!isCameraActive}
-                    >
-                      Matikan
-                    </button>
+                ) : (
+                  <div className="camera-ledger">
+                    <div className="camera-preview">
+                      <video ref={videoRef} playsInline muted aria-label="Preview kamera wajah"></video>
+                      {!isCameraActive && (
+                        <div className="camera-empty">
+                          <span>Kamera belum aktif</span>
+                          <small>Hadapkan wajah ke kamera dengan cahaya yang stabil.</small>
+                        </div>
+                      )}
+                    </div>
+                    <div className="camera-actions">
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={startCamera}
+                        disabled={isCameraStarting || isCameraActive}
+                      >
+                        {isCameraStarting ? "Membuka..." : "Aktifkan"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={captureCameraPhoto}
+                        disabled={!isCameraActive}
+                      >
+                        Ambil foto
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        onClick={stopCamera}
+                        disabled={!isCameraActive}
+                      >
+                        Matikan
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </>
           ) : (
-            <div className="space-y-4">
-              <div className="clinical-panel overflow-hidden">
-                <div className="stage-bar">
+            <>
+              <div className="map-panel">
+                <div className="stage-header">
                   <div className="stage-meta">
-                    <p className="kicker">Face evidence</p>
-                    <p>{image.name}</p>
+                    <p className="kicker">MAP-01 / Permukaan wajah</p>
+                    <h2>{image.name}</h2>
+                    <span>{stageStatus}</span>
                   </div>
                   <div className="stage-stats">
                     <span>{formatBytes(image.size)}</span>
-                    {processingTime && <span className="font-mono text-success">{processingTime} ms</span>}
+                    {processingTime && <span>{processingTime} ms</span>}
                   </div>
                   <div className="stage-actions">
                     <button
@@ -402,29 +463,29 @@ function App() {
                   </div>
                 </div>
 
-                <div className="face-frame">
+                <div className={`face-frame ${processedImage ? "has-overlay" : ""}`}>
                   <img src={image.objectUrl} alt="Foto wajah original" className="face-image" />
                   {processedImage && (
                     <img src={processedImage} alt="Overlay hasil analisis" className="face-image overlay-image" />
                   )}
                   {!processedImage && (
                     <div className="stage-empty">
-                      {isProcessing ? "Membaca zona wajah..." : "Tekan Mulai analisis untuk melihat overlay."}
+                      {isProcessing ? "Menelusuri kontur sinyal..." : "Mulai analisis untuk membuka overlay."}
                     </div>
                   )}
                 </div>
               </div>
 
               {analysis?.warning && (
-                <div className="alert alert-warning">
+                <div className="alert alert-warning evidence-alert">
                   <span>{analysis.warning}</span>
                 </div>
               )}
 
               {analysis && (
-                <div className="zone-grid">
+                <div className="zone-band" aria-label="Breakdown zona wajah">
                   {analysis.zones.map((zone) => (
-                    <div key={zone.id} className="zone-strip">
+                    <div key={zone.id} className="zone-record">
                       <span>{zone.label}</span>
                       <strong>{zone.score}</strong>
                       <small>{zone.dominantConcern}</small>
@@ -432,62 +493,75 @@ function App() {
                   ))}
                 </div>
               )}
-            </div>
+            </>
           )}
         </section>
 
-        <aside className="result-panel-stack">
-          <div className="clinical-panel p-5">
-            <p className="kicker">Skin Health Score</p>
-            <div className="score-gauge">
+        <aside className="evidence-register">
+          <section className="register-panel score-panel">
+            <p className="kicker">SCORE STATION</p>
+            <div className="score-value">
               <span>{analysis?.overallScore ?? "--"}</span>
               <small>/100</small>
             </div>
-            <p className="mt-3 text-sm text-base-content/65">
-              Skor dihitung dari sinyal visual pada foto. Ini analisis pengolahan citra, bukan diagnosis medis.
+            <p>
+              Skor berasal dari sinyal visual pada foto. Hasil ini adalah pemetaan citra, bukan diagnosis medis.
             </p>
-          </div>
+          </section>
 
-          <div className="clinical-panel p-5 space-y-3">
-            <div>
-              <p className="kicker">Kategori</p>
-              <h2 className="text-lg font-semibold">Area bermasalah</h2>
-            </div>
-            {(analysis?.categories || [
-              { id: "acne", label: "Jerawat", score: 0, severity: "pending", count: 0, coverage: 0 },
-              { id: "dark_spots", label: "Noda gelap", score: 0, severity: "pending", count: 0, coverage: 0 },
-              { id: "wrinkles", label: "Kerutan", score: 0, severity: "pending", count: 0, coverage: 0 },
-              { id: "redness", label: "Kemerahan", score: 0, severity: "pending", count: 0, coverage: 0 },
-              { id: "pores", label: "Pori besar", score: 0, severity: "pending", count: 0, coverage: 0 }
-            ]).map((category) => (
-              <div key={category.id} className="condition-row">
-                <i
-                  className={`condition-marker marker-${category.id}`}
-                  style={{ backgroundColor: CONDITION_COLORS[category.id] }}
-                ></i>
-                <div>
-                  <strong>{category.label}</strong>
-                  <span>{analysis ? `${category.coverage}% area, ${category.count} titik` : "Menunggu analisis"}</span>
-                </div>
-                <b>{analysis ? category.score : "--"}</b>
+          <section className="register-panel condition-panel">
+            <div className="panel-title-row">
+              <div>
+                <p className="kicker">Layer sinyal</p>
+                <h2>Simbol yang terbaca</h2>
               </div>
-            ))}
-          </div>
+              <span>{analysis ? "Terpetakan" : "Menunggu"}</span>
+            </div>
 
-          <div className="clinical-panel p-5 text-sm text-base-content/65">
-            <p className="kicker">Pipeline</p>
-            <ol className="mt-3 space-y-2">
-              <li>1. Deteksi wajah</li>
-              <li>2. Isolasi kulit</li>
-              <li>3. Bagi zona wajah</li>
-              <li>4. Analisis kondisi</li>
-              <li>5. Overlay + skor</li>
+            <div className="condition-list">
+              {visibleCategories.map((category) => {
+                const score = analysis ? category.score : 0;
+                return (
+                  <div
+                    key={category.id}
+                    className="condition-row"
+                    style={{ "--signal-color": CONDITION_COLORS[category.id] }}
+                  >
+                    <i
+                      className={`condition-marker marker-${category.id}`}
+                      style={{ backgroundColor: CONDITION_COLORS[category.id] }}
+                    ></i>
+                    <div className="condition-copy">
+                      <strong>{category.label}</strong>
+                      <span>
+                        {analysis ? `${category.coverage}% area, ${category.count} titik` : "Belum dipetakan"}
+                      </span>
+                      <div className="condition-meter" aria-hidden="true">
+                        <span style={{ width: `${Math.max(0, Math.min(100, score))}%` }}></span>
+                      </div>
+                    </div>
+                    <b>{analysis ? category.score : "--"}</b>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="register-panel process-panel">
+            <p className="kicker">Traverse</p>
+            <ol>
+              {PIPELINE_STEPS.map((step, index) => (
+                <li key={step}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  {step}
+                </li>
+              ))}
             </ol>
-          </div>
+          </section>
         </aside>
 
         {error && (
-          <div className="lg:col-span-2">
+          <div className="error-region" role="alert" aria-live="assertive">
             <div className="alert alert-error">
               <span>{error}</span>
               <button className="btn btn-ghost btn-xs" onClick={() => setError(null)}>

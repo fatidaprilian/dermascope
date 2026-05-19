@@ -1,14 +1,49 @@
 # DermaScope Public Contract
 
-## Current Scope Reset
+## Scope
 
-The active public contract is facial skin analysis. The previous multi-operation image workbench contract is legacy context only. Current UI and API work should target one primary goal: `skin-health-analysis`.
+DermaScope exposes one focused HTTP-backed analysis contract for one face photo. The frontend validates a local upload or one browser camera capture, submits it as a multipart image file, and receives a PNG overlay plus structured analysis metadata.
 
-## Facial Skin Analysis Contract
+The app must frame the result as image-processing evidence, not diagnosis, treatment advice, routine advice, or product recommendation.
 
-Accepted image types remain PNG, JPEG, and WebP with a 10 MB upload limit.
+## Endpoints
 
-Primary goal:
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/health` | Return backend liveness and engine metadata. |
+| `GET` | `/api/goals` | Return the single public analysis goal. |
+| `POST` | `/api/process` | Analyze one face photo and return an overlay PNG plus metadata headers. |
+
+## Health Contract
+
+`GET /api/health` returns:
+
+```ts
+type HealthResponse = {
+  status: "ok";
+  engine: "opencv-python";
+};
+```
+
+The current endpoint is a liveness/readiness-lite signal for this database-free service. If future critical dependencies are added, readiness must check them before returning `ok`.
+
+## Goal Contract
+
+`GET /api/goals` returns:
+
+```ts
+type GoalsResponse = {
+  goals: Array<{
+    id: "skin-health-analysis";
+    label: string;
+    summary: string;
+    operationId: "facial-skin-analysis";
+    intent: string;
+  }>;
+};
+```
+
+Only one user-facing goal is active:
 
 ```ts
 type SkinAnalysisGoal = {
@@ -18,19 +53,63 @@ type SkinAnalysisGoal = {
 };
 ```
 
-`POST /api/process` returns an overlay PNG. The `X-DermaScope-Analysis` header contains JSON with this shape:
+## Process Request
+
+`POST /api/process` accepts `multipart/form-data`.
+
+| Field | Type | Required | Rules |
+| --- | --- | --- | --- |
+| `file` | file | yes | PNG, JPEG, or WebP image up to 10 MB. |
+| `goal_id` | string | yes | Must be `skin-health-analysis`. |
+| `parameters` | JSON object string | no | Defaults to `{}`. Unknown values are ignored because the current operation has no user-tunable parameters. |
+
+Server limits:
+
+- Accepted media types: `image/png`, `image/jpeg`, `image/webp`.
+- Maximum upload size: 10 MB.
+- Maximum processing dimension: 4096 pixels on the longest side. Larger decoded images are downscaled in memory before analysis.
+- Images are processed in memory and are not persisted.
+
+Duplicate-submit behavior:
+
+- The endpoint is stateless and does not persist idempotency records.
+- Duplicate submissions may run duplicate analysis but do not create stored server resources.
+- The frontend must ignore stale responses from superseded requests.
+
+## Process Response
+
+`POST /api/process` returns an `image/png` body.
+
+Response headers:
+
+| Header | Meaning |
+| --- | --- |
+| `X-DermaScope-Operation` | Internal operation ID, currently `facial-skin-analysis`. |
+| `X-DermaScope-Output-Mode` | Output mode, currently `overlay`. |
+| `X-DermaScope-Width` | Overlay width in pixels. |
+| `X-DermaScope-Height` | Overlay height in pixels. |
+| `X-DermaScope-Warnings` | JSON array of safe warning strings. |
+| `X-DermaScope-Analysis` | JSON analysis metadata. |
+| `X-DermaScope-Processing-Time` | Processing time in milliseconds. |
+| `Content-Disposition` | Attachment filename for the generated PNG. |
+
+Legacy `X-ImgLab-*` headers are not part of the active public contract.
+
+## Analysis Metadata
+
+`X-DermaScope-Analysis` contains:
 
 ```ts
 type SkinAnalysisResult = {
   overallScore: number;
   faceDetected: boolean;
-  warning?: string;
+  warning?: string | null;
   categories: Array<{
     id: "acne" | "dark_spots" | "wrinkles" | "redness" | "pores";
     label: string;
     score: number;
     severity: "low" | "moderate" | "high";
-    count?: number;
+    count: number;
     coverage: number;
   }>;
   zones: Array<{
@@ -38,256 +117,66 @@ type SkinAnalysisResult = {
     label: string;
     score: number;
     dominantConcern: string;
+    skinPixels: number;
+  }>;
+  legend: Array<{
+    id: "acne" | "dark_spots" | "wrinkles" | "redness" | "pores";
+    label: string;
+    color: string;
   }>;
 };
 ```
 
-The app must frame the result as image-processing evidence, not diagnosis or treatment advice. The frontend may create the file from either a local upload or one browser camera capture; the API still receives a normal multipart image file.
-
-## Scope
-
-ImgLab does not expose an HTTP API in the MVP. This document defines the public web application contracts that future implementation must honor: user goals, operation IDs, parameter shapes, result shapes, errors, and UI command behavior.
-
-The UI should expose image goals first. Operation IDs remain the internal toolkit contract.
-
-The backend is present as an optional FastAPI service. Browser processing remains available as the default local mode.
-
-## File Input Contract
-
-Accepted image types:
-
-- `image/png`
-- `image/jpeg`
-- `image/webp`
-
-Recommended MVP limits:
-
-- Maximum upload size: 10 MB.
-- Maximum full-resolution processing dimension: 4096 pixels on the longest side.
-- Larger images may be downscaled for preview before processing.
-
-## Operation Definition Contract
-
-Each image operation must be registered with this shape:
-
-```ts
-type OperationDefinition = {
-  id: string;
-  category: "restoration" | "enhancement" | "edge-segmentation" | "upscaling" | "morphology";
-  label: string;
-  description: string;
-  parameters: ParameterDefinition[];
-  defaultParameters: Record<string, number | string | boolean>;
-  outputMode: "color" | "grayscale" | "binary" | "edge-map";
-};
-```
-
-Parameter definitions must use bounded values:
-
-```ts
-type ParameterDefinition = {
-  id: string;
-  label: string;
-  type: "number" | "select" | "boolean";
-  min?: number;
-  max?: number;
-  step?: number;
-  options?: string[];
-  defaultValue: number | string | boolean;
-};
-```
-
-## Goal Definition Contract
-
-Each user-facing goal must map to one real implemented operation:
-
-```ts
-type GoalDefinition = {
-  id: string;
-  label: string;
-  summary: string;
-  operationId: string;
-  intent: string;
-};
-```
-
-Rules:
-
-- A goal must point to a registered operation.
-- A goal label must describe what the user wants to do to the image.
-- Raw algorithm names may appear as implementation detail, but they should not be the main choice.
-
-## Processing Request Contract
-
-```ts
-type ProcessingRequest = {
-  requestId: string;
-  sourceImageId: string;
-  operationId: string;
-  parameters: Record<string, number | string | boolean>;
-  previewMode: "full" | "downscaled";
-};
-```
-
-Rules:
-
-- `requestId` must be unique for the current browser session.
-- `operationId` must match a registered operation.
-- Parameters must be validated before image processing starts.
-- The app must ignore stale results when a newer request has already started.
-
-## Processing Result Contract
-
-```ts
-type ProcessingResult = {
-  requestId: string;
-  operationId: string;
-  width: number;
-  height: number;
-  outputMode: "color" | "grayscale" | "binary" | "edge-map";
-  processingTimeMs: number;
-  warnings: ProcessingWarning[];
-};
-```
-
-The processed pixels may be held as a canvas, bitmap, or transferable image data. The implementation must not expose raw OpenCV.js `cv.Mat` objects outside the processing layer.
-
-## Warning Contract
-
-```ts
-type ProcessingWarning = {
-  code: "PREVIEW_DOWNSCALED" | "PARAMETER_CLAMPED" | "OUTPUT_GRAYSCALE" | "HIGH_MEMORY_RISK";
-  message: string;
-};
-```
-
-Warnings must be safe for users to read. They must not include internal stack traces.
-
 ## Error Contract
 
+Errors return a safe JSON shape:
+
 ```ts
-type ProcessingError = {
-  code:
-    | "UNSUPPORTED_FILE_TYPE"
-    | "FILE_TOO_LARGE"
-    | "IMAGE_DECODE_FAILED"
-    | "ENGINE_NOT_READY"
-    | "UNKNOWN_OPERATION"
-    | "INVALID_PARAMETER"
-    | "PROCESSING_FAILED"
-    | "EXPORT_FAILED";
+type ApiErrorResponse = {
+  code: string;
   message: string;
-  recoveryAction?: string;
 };
 ```
 
-## MVP Operation IDs
+Known error codes:
 
-| ID | Category | Required Parameters |
+| Code | HTTP Status | Meaning |
 | --- | --- | --- |
-| `gaussian-blur` | restoration | `kernelSize`, `sigma` |
-| `median-filter` | restoration | `kernelSize` |
-| `bilateral-filter` | restoration | `diameter`, `sigmaColor`, `sigmaSpace` |
-| `grayscale` | enhancement | none |
-| `histogram-equalization` | enhancement | none |
-| `brightness-contrast` | enhancement | `brightness`, `contrast` |
-| `gamma-correction` | enhancement | `gamma` |
-| `sharpen` | enhancement | `amount`, `radius` |
-| `canny-edge` | edge-segmentation | `threshold1`, `threshold2`, `apertureSize` |
-| `otsu-threshold` | edge-segmentation | `invert` |
-| `adaptive-threshold` | edge-segmentation | `blockSize`, `constant`, `method` |
-| `resize-bilinear` | upscaling | `scale` |
-| `resize-bicubic` | upscaling | `scale` |
-| `resize-lanczos` | upscaling | `scale` |
-| `dilation` | morphology | `kernelSize`, `iterations` |
-| `erosion` | morphology | `kernelSize`, `iterations` |
-| `opening` | morphology | `kernelSize`, `iterations` |
-| `closing` | morphology | `kernelSize`, `iterations` |
+| `UNSUPPORTED_FILE_TYPE` | `415` | File media type is not PNG, JPEG, or WebP. |
+| `EMPTY_FILE` | `400` | Uploaded file has no bytes. |
+| `FILE_TOO_LARGE` | `413` | Uploaded file exceeds 10 MB. |
+| `IMAGE_DECODE_FAILED` | `400` | OpenCV could not decode the image. |
+| `UNKNOWN_GOAL` | `400` | `goal_id` is not `skin-health-analysis`. |
+| `INVALID_PARAMETERS` | `400` | `parameters` is not a JSON object string. |
+| `EXPORT_FAILED` | `500` | The overlay PNG could not be encoded. |
+| `INTERNAL_ERROR` | `500` | Unexpected processing failure. |
+| `FRONTEND_NOT_BUILT` | `500` | The built React frontend is missing in production serving mode. |
 
-## Export Contract
+Errors must not include stack traces, file paths, raw upload data, or internal exception messages.
 
-Supported export types:
+## Frontend Operation Registry
 
-- PNG for lossless processed output.
-- JPEG for smaller photographic output.
-- WebP for compact modern browser output when supported.
+The frontend exposes one operation through `frontend/src/utils/operations.js`:
 
-Export file names should use this pattern:
-
-```text
-imglab-{operationId}-{yyyyMMdd-HHmmss}.{extension}
+```ts
+type DermaScopeOperation = {
+  id: "facial-skin-analysis";
+  category: "skin-analysis";
+  label: string;
+  description: string;
+  outputMode: "overlay";
+  parameters: [];
+};
 ```
 
-Browser export rules:
+The registry is a UI contract for the current app, not a general image-processing toolkit registry.
 
-- PNG uses `image/png`.
-- JPEG uses `image/jpeg` with a quality hint.
-- WebP uses `image/webp` with a quality hint.
-- If the selected MIME type cannot be produced, the UI must show a safe `EXPORT_FAILED` message and preserve the processed preview.
+## Validation
 
-## HTTP API Contract
+Contract validation must cover:
 
-In Docker production, the public frontend serves the API through same-origin `/api/` via Nginx. In local development, the backend is available at `http://localhost:8000`.
-
-### `GET /api/health`
-
-Returns backend readiness.
-
-```json
-{
-  "status": "ok",
-  "engine": "opencv-python"
-}
-```
-
-### `GET /api/goals`
-
-Returns user-facing goals that map to implemented operations.
-
-```json
-{
-  "goals": [
-    {
-      "id": "clean-noise",
-      "label": "Kurangi noise",
-      "summary": "Untuk foto yang kasar atau berbintik.",
-      "operationId": "bilateral-filter",
-      "intent": "Restorasi"
-    }
-  ]
-}
-```
-
-### `POST /api/process`
-
-Request type: `multipart/form-data`
-
-Fields:
-
-- `file`: required image file. Accepted types: PNG, JPEG, WebP.
-- `goal_id`: required goal ID.
-- `parameters`: optional JSON object string. Defaults to `{}`.
-
-Success response:
-
-- Status: `200`
-- Body: processed PNG bytes
-- Headers:
-  - `X-ImgLab-Operation`
-  - `X-ImgLab-Output-Mode`
-  - `X-ImgLab-Width`
-  - `X-ImgLab-Height`
-  - `X-ImgLab-Warnings`
-
-Error response:
-
-```json
-{
-  "code": "UNSUPPORTED_FILE_TYPE",
-  "message": "Choose a PNG, JPEG, or WebP image."
-}
-```
-
-## Next Validation Action
-
-Keep `frontend/src/utils/operations.js` synchronized with this contract. If a TypeScript or framework migration happens later, convert the same operation registry into typed runtime validation schemas.
+1. The frontend registry exposes only `facial-skin-analysis`.
+2. `skin-health-analysis` maps to `facial-skin-analysis`.
+3. Backend processing returns a PNG plus analysis metadata for a valid image.
+4. Backend rejects unknown goals, wrong file types, empty uploads, and oversized uploads.
+5. Frontend handles offline backend, malformed metadata, and stale responses without replacing newer state.

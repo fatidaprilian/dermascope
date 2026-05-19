@@ -13,12 +13,15 @@ This contract is a decision scaffold, not a style preset. We guide the agent; we
 - Keep external references non-copying; extract constraints only.
 - Before choosing a new UI, animation, scroll, 3D, canvas, chart, icon, styling, or component library, research current official docs.
 ## Required Order
-1. Read `AGENTS.md`, this prompt, `../rules/frontend-architecture.md`, current UI code, current project docs, and existing design docs.
+1. Read `AGENTS.md`, this prompt, `research-design.md`, `../rules/frontend-architecture.md`, current UI code, current project docs, and existing design docs.
 2. Refine existing `docs/DESIGN.md` and `docs/design-intent.json`; do not replace them blindly.
 3. If either design doc is missing, create it before UI implementation.
 4. Record `motionPaletteDecision` before UI code; product categories are heuristics, not style presets.
 5. Encode `repoEvidence.designEvidenceSummary` when onboarding or detector evidence exists.
 6. Keep both design docs synchronized after implementation.
+7. Complete the Section 3-5 gates from `research-design.md` before UI implementation: `conceptualAnchor.categoryCodes.candidateEntries`, `conceptualAnchor.morphologicalExploration` (selected and uncomfortable combinations), and `conceptualAnchor.anchorCandidates.candidates` (exactly five, each with the strengthened rename test recorded).
+8. Set `derivedTokenLogic.tokenContinuityClassification` for each of typography, palette, motion, and spacing. Use `anchor-derived` only when the token choice is causally tied to the anchor's real-world reality. Use `continuity-retained` when the token is kept from a previous design iteration without re-derivation. Use `newly-introduced` when the token is fresh but not anchor-derived. If any token category is `continuity-retained`, the typography, palette, or motion entry in `researchDossier.metadata.antiRepeatLedger` stays as historical record, and the classification declares the retention is intentional with explicit rationale recorded in the matching `derivationSource` field.
+9. After agent and user select an anchor, set `researchDossier.metadata.researchVerifiedAt` to today's ISO date and flip `status` from any seed value to `active`. This closes the freshness window for additive UI tasks within `freshnessWindowDays`.
 ## Creative Commitment Gate
 Before broad compliance review or UI implementation, record an agent-chosen visual direction in both design docs:
 - one concrete real-world anchor reference
@@ -56,9 +59,7 @@ If the expressive path needs a new motion, 3D, canvas, scroll, or interaction li
 
 Only downshift ambition after naming the concrete blocker: product fit, content density, measured performance budget, accessibility, device support, package conflict, security risk, or missing runtime capability. A new dependency, package count, or vague performance concern is not a blocker by itself. Pair every downshift with a replacement interaction quality that still changes composition, hierarchy, feedback, or memorability.
 ## Design Flexibility Layer
-`docs/design-intent.json` must separate locked outcomes from flexible expression. The machine contract keeps review invariants stable; it must not freeze exact aesthetic implementation unless repo evidence, accessibility validation, implementation constraints, or explicit user approval locks it.
-
-Record `designFlexibilityPolicy`: lock user goals, runtime constraints, accessibility, production readiness, forbidden patterns, and approved continuity; keep exact palette primitives, font families, radius/shadow values, component-kit theme mapping, signature move implementation, literal anchor artifacts, and spatial metaphors flexible until validated or approved. Semantic roles are required; exact primitives are not automatically locked. Required experience outcomes are separate from candidate implementation moves. Libraries supply behavior, accessibility, primitives, and delivery speed; the project supplies final composition, theme, morphology, and visual language.
+`docs/design-intent.json` must separate locked outcomes from flexible expression. The machine contract keeps review invariants stable; it must not freeze exact aesthetic implementation unless repo evidence, accessibility validation, implementation constraints, or explicit user approval locks it. Record `designFlexibilityPolicy`: lock user goals, runtime constraints, accessibility, production readiness, forbidden patterns, and approved continuity; keep exact palette primitives, font families, radius/shadow values, component-kit theme mapping, signature move implementation, literal anchor artifacts, and spatial metaphors flexible until validated or approved. Semantic roles are required; exact primitives are not automatically locked.
 ## External Inspiration Boundary
 Using outside websites, benchmark apps, galleries, or component examples is useful for constraint discovery, interaction mechanics, and implementation options, but never as a style source to imitate. Extract why a pattern works, then translate it into a current-project rule. Do not copy layout rhythm, palette, component skin, visual metaphor, or brand posture from a reference unless the user explicitly approves that continuity and it passes product fit.
 
@@ -83,15 +84,16 @@ If rich motion or spatial UI is omitted, record the product, content-density, pe
 If 3D or canvas is used, record product role, interaction model, fallback path, runtime/library choice, loading state, keyboard path, and reduced-motion behavior.
 
 ## Token Derivation Audit
-Before implementation, `docs/design-intent.json` must include top-level `derivedTokenLogic`:
-- `anchorReference`
-- `colorDerivationSource`
-- `spacingDerivationSource`
-- `typographyDerivationSource`
-- `motionDerivationSource`
-- `validationRule`
+Before implementation, `docs/design-intent.json` must include top-level `derivedTokenLogic`: `anchorReference`, `colorDerivationSource`, `spacingDerivationSource`, `typographyDerivationSource`, `motionDerivationSource`, `colorSpace`, `spatialBaseUnit`, `typeScaleMethod`, `motionBudget`, and `validationRule`.
 
 Every semantic token role must trace to `anchorReference`. Exact primitive values stay flexible until repo evidence, accessibility validation, implementation constraints, or explicit user approval locks them. If the rationale is "looks good", "common practice", "modern default", or "framework default", derive the token again before UI code.
+
+## Implementation Craft Layer
+Before accepting the design contract, record explicit CSS craft decisions:
+- Color: prefer OKLCH tokens and tinted neutrals for new CSS when supported, preserve existing token formats, name color commitment level, derive scales as a perceptual lightness curve (not linear) with semantic role layers (surface, foreground, border, focus, status, data) before primary/secondary/accent, record one accessible text-on-color pair per interactive step, and treat dark mode as a second derived palette with its own lightness curve; record `color-scheme`, prefer `light-dark()` for theme-switch tokens, and record the no-flash and persistence strategy.
+- Typography: prefer fluid `clamp()` scales with explicit role contrast, `text-wrap: balance`, and numeric typography decisions; treat type as a system rather than a font choice, recording one variable-axis decision (`wght`/`wdth`/`opsz` when available), one `font-feature-settings` choice tied to product role (tabular numerals for data, stylistic alternates or `case` for editorial voice), one measure (line-length budget), and an FOUT/FOIT strategy with `font-display` plus metric override when web fonts are loaded.
+- Spatial/motion: name `spatialBaseUnit`, major multiples, optical exceptions, and `motionBudget`; prefer transform/opacity choreography, explicit easing, bounded stagger, and reduced-motion behavior.
+- Implementation anti-attractor: list three default CSS reflexes this task might trigger, reject the most likely one, and choose one distinctive implementation move tied to the product.
 
 ## Library Research Protocol
 If web search is available:

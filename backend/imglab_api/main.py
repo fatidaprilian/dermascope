@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -77,17 +78,20 @@ async def process_image(
         raise ApiError("INVALID_PARAMETERS", "Parameters must be a JSON object.", 400)
 
     image_bytes = await file.read()
+    started_at = time.perf_counter()
     processed = process_goal(image_bytes, file.content_type, goal_id, parsed_parameters)
+    elapsed_ms = round((time.perf_counter() - started_at) * 1000)
     return Response(
         content=processed.data,
         media_type=processed.media_type,
         headers={
-            "X-ImgLab-Operation": processed.operation_id,
-            "X-ImgLab-Output-Mode": processed.output_mode,
-            "X-ImgLab-Width": str(processed.width),
-            "X-ImgLab-Height": str(processed.height),
-            "X-ImgLab-Warnings": json.dumps(processed.warnings),
+            "X-DermaScope-Operation": processed.operation_id,
+            "X-DermaScope-Output-Mode": processed.output_mode,
+            "X-DermaScope-Width": str(processed.width),
+            "X-DermaScope-Height": str(processed.height),
+            "X-DermaScope-Warnings": json.dumps(processed.warnings),
             "X-DermaScope-Analysis": json.dumps(processed.analysis or {}),
+            "X-DermaScope-Processing-Time": str(elapsed_ms),
             "Content-Disposition": f'attachment; filename="dermascope-{goal_id}.png"',
         },
     )

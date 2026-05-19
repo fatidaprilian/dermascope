@@ -1,223 +1,678 @@
 {
   "schemaVersion": "design-intent-v1",
-  "mode": "ui-redesign",
+  "mode": "zero-based-ui-redesign",
   "status": "active",
   "project": {
     "name": "DermaScope",
-    "context": "Focused facial skin condition analysis from one uploaded face photo.",
-    "domain": "Browser-based facial skin analysis and overlay visualization",
-    "runtimeConstraint": "React + Vite + Tailwind CSS + DaisyUI frontend, FastAPI backend for OpenCV-Python analysis.",
-    "architectureConstraint": "Client-side SPA with API-backed image upload analysis and no persistent image storage."
+    "context": "Browser-first facial skin signal mapping from one uploaded or captured face photo.",
+    "domain": "Single-photo face-skin signal mapping with overlay, category scores, Skin Health Score, and zone breakdown.",
+    "runtimeConstraint": "React + Vite + Tailwind CSS + DaisyUI frontend with FastAPI-backed OpenCV-Python analysis.",
+    "architectureConstraint": "Client-side SPA submits one image to /api/process and receives overlay PNG plus X-DermaScope-Analysis metadata without persistent image storage."
   },
   "assumptions": [
-    "Frontend uses /api endpoints for face-photo analysis.",
-    "UI must avoid grid or glow wallpaper and keep condition overlays tied to analysis meaning.",
-    "Design contract follows the dermatology contact sheet anchor.",
-    "The app is an educational image-processing tool, not a medical diagnosis tool.",
-    "The input flow supports file upload and browser camera capture."
+    "DermaScope is production-facing, not coursework or a generic image-processing workbench.",
+    "The app reports visible image-processing signals and must not present diagnosis, treatment, or product recommendations.",
+    "The input flow supports file upload and browser camera capture.",
+    "The backend may be offline, so service readiness must remain visible.",
+    "Previous conservation condition-map direction is blocked by the anti-repeat ledger."
   ],
-  "motionPaletteDecision": "Motion: acetate overlay laydown after analysis with reduced-motion immediate swap. Palette: clinical porcelain shell, mint score accents, coral acne/redness marks, amber dark-spot marks, violet wrinkle marks, and teal pore marks.",
-  "conceptualAnchor": {
-    "mode": "agent-selected",
-    "name": "Dermatology contact sheet",
-    "anchorReference": "clinical dermatology contact sheet with translucent acetate annotations, condition-color marks, and zone strips around one face image",
-    "specificReferencePoint": "A face photo is treated as the central evidence frame while condition marks and zone strips sit around it like annotated clinical review material.",
-    "rationale": "The anchor supports a focused human-skin analysis product without falling back to a generic dashboard or medical-device overclaim.",
-    "signatureMotion": "A translucent analysis overlay settles onto the face after processing.",
-    "signatureMove": "Condition colors, marker shapes, and short image labels map directly to acne, dark spots, wrinkles, redness, and pores.",
-    "typographicDecision": "Compact score titles, plain Indonesian body copy, small condition labels, and monospaced counts and percentages."
-  },
-  "visualResetStrategy": "Reset the prior general image workbench into a single-purpose face analysis surface with one upload, one analysis action, overlay evidence, score stack, and zone breakdown.",
-  "derivedTokenLogic": {
-    "anchorReference": "clinical dermatology contact sheet with translucent acetate annotations, condition-color marks, and zone strips around one face image",
-    "colorDerivationSource": "Clinical paper surface, skin-safe neutrals, mint score emphasis, coral/amber/violet/rose/teal condition marks.",
-    "spacingDerivationSource": "Contact sheet margins around one central image with compact score and zone strips.",
-    "typographyDerivationSource": "Clinical review labels: compact titles, plain body text, monospaced numbers.",
-    "motionDerivationSource": "Acetate overlay laydown, camera preview readiness, decisive status shifts, and short fades for state changes.",
-    "validationRule": "Every token must trace to facial skin analysis; no grid, glow, or generic dashboard tokens are allowed."
-  },
-  "tokenSystem": {
-    "colorTokens": {
-      "primary": "score-mint",
-      "secondary": "pore-teal",
-      "neutral": "clinical-ink",
-      "surface": "skin-paper",
-      "focus": "score-mint"
-    },
-    "typographyTokens": {
-      "display": "Space Grotesk",
-      "body": "IBM Plex Sans",
-      "mono": "JetBrains Mono"
-    },
-    "spacingTokens": {
-      "railGap": "10px",
-      "panelPadding": "18px",
-      "stageGap": "16px"
-    },
-    "radiusTokens": {
-      "panel": "16px",
-      "control": "12px"
-    },
-    "shadowTokens": {
-      "panel": "soft studio lift",
-      "focus": "high-contrast ring"
-    }
-  },
-  "colorTruth": {
-    "functionalRoles": [
-      "mint indicates the overall skin health score and primary action",
-      "coral indicates acne and inflamed spot marks",
-      "amber indicates dark spot marks",
-      "violet indicates wrinkle and line-density marks",
-      "teal indicates pore-density marks"
+  "productReading": {
+    "productTypeAndCoreVerb": "DermaScope is a browser-first facial skin signal mapping app; the user submits one face photo and inspects mapped visible signals.",
+    "highestStakesUserMoments": [
+      "Intake must make file limits, privacy, camera permission, and face-photo requirements clear before the user shares an image.",
+      "Processing must show service readiness and a non-diagnostic status while the backend analyzes the photo.",
+      "Results must connect overlay marks, category scores, and zones so users understand what the algorithm measured."
     ],
-    "nonTransferableBehavior": "The same color family is reused in overlay marks, category scores, and zone rows, which only works because this product maps visible skin-condition signals to face regions."
+    "dominantDataShapes": "The screen is dominated by one spatial image, five condition categories, and five face zones.",
+    "latencyProfile": "Analysis is soft real-time: a single request returns a PNG overlay and metadata after processing.",
+    "failureModes": "The UI must absorb offline backend, invalid image, oversized image, camera permission failure, processing failure, fallback face detection, stale result risk, and missing or malformed analysis metadata.",
+    "contextOfUse": "The app is a sustained single-task inspection flow, not a feed, stored history product, or admin monitor.",
+    "knownConstraints": "React + Vite + Tailwind CSS + DaisyUI are present; WCAG 2.2 AA, no persistent image storage, safe errors, and no medical diagnosis are hard constraints."
   },
-  "crossViewportAdaptation": {
-    "mobile": "Upload or analyzed face first, source switch and camera/upload surfaces become one column, action buttons become full-width touch targets, overall score follows the image, and zone rows stack.",
-    "tablet": "Stage remains primary, score/category panels regroup into a two-column stack below the image when sidebar space is tight, and zones regroup below the image.",
-    "desktop": "Stage dominates center-left, condition scores stay right, zone breakdown stays visible below the stage."
+  "referenceIntake": [
+    {
+      "source": "https://gloapp.nl/",
+      "borrowed": "Face zones, metric grouping, and category-code evidence for score/routine defaults.",
+      "notBorrowed": "Beauty tone, streaks, product recommendations, pricing rhythm, and app-store landing posture."
+    },
+    {
+      "source": "https://www.nature.com/articles/s41598-024-63274-7",
+      "borrowed": "Objective image-assessment framing, full-face/regional analysis distinction, and common measured aspects.",
+      "notBorrowed": "Clinical validation claims, diagnostic language, and controlled-device authority."
+    },
+    {
+      "source": "https://www.usgs.gov/faqs/what-a-topographic-map",
+      "borrowed": "Contour lines as a shape-reading mechanism for a surface.",
+      "notBorrowed": "USGS brand, literal terrain imagery, and map-as-wallpaper."
+    },
+    {
+      "source": "https://www.usgs.gov/media/files/topographic-map-symbols",
+      "borrowed": "Symbol-sheet discipline, line/area/point differentiation, and marginalia logic.",
+      "notBorrowed": "Government visual identity and literal map reproduction."
+    },
+    {
+      "source": "https://oceanservice.noaa.gov/facts/sounding.html",
+      "borrowed": "Numeric soundings as compact measurements attached to a surface.",
+      "notBorrowed": "Maritime route planning, vessel safety language, and nautical palette as brand."
+    },
+    {
+      "source": "https://www.nauticalcharts.noaa.gov/publications/us-chart-1.html",
+      "borrowed": "Chart legend discipline for symbols, abbreviations, and terms.",
+      "notBorrowed": "Nautical chart layout rhythm and electronic chart UI conventions."
+    }
+  ],
+  "motionPaletteDecision": {
+    "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
+    "signatureMotionBehavior": "A contour trace passes across the face result when overlay metadata arrives, then category rows and zone sectors snap into survey-station positions.",
+    "paletteDecision": "Survey paper and hard black ink carry structure; safety orange, cyan, magenta, brown, and olive carry condition-symbol layers.",
+    "typographicRoleContrast": "Archivo Black carries blunt survey titles, Inter carries Indonesian UI copy, and IBM Plex Mono carries station labels, scores, counts, coverage, file size, and timing."
   },
-  "motionSystem": {
-    "signature": "Acetate overlay laydown",
-    "reducedMotionFallback": "Immediate overlay swap or short fade.",
-    "durationsMs": {
-      "stateTransition": 180,
-      "overlayLaydown": 420
+  "visualResetStrategy": {
+    "resetReason": "The user explicitly requested a redesign with a concept that must differ from the previous direction.",
+    "discardedContinuity": [
+      "conservation condition-map anchor",
+      "raking-light sweep",
+      "archival paper and graphite/blue register palette",
+      "artifact conservation language"
+    ],
+    "retainedEvidenceOnly": [
+      "single-photo upload/camera flow",
+      "service readiness",
+      "face overlay result",
+      "five condition categories",
+      "five face zones",
+      "non-diagnostic product copy"
+    ]
+  },
+  "conceptualAnchor": {
+    "mode": "agent-selected-after-redesign-research",
+    "name": "Brutal topographic survey plate",
+    "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
+    "specificReferencePoint": "Topographic maps use contour lines to show surface shape and marginal information to explain scale, symbols, and measured locations.",
+    "rationale": "The anchor supports one spatial image, condition-symbol layers, scores, and zone readings without repeating skincare, clinical, dashboard, or conservation defaults.",
+    "signatureMotion": "Contour trace and station snap",
+    "signatureMove": "The face photo behaves like a measured surface with marginal stations attached to condition and zone evidence.",
+    "typographicDecision": "A heavy survey-title face is paired with plain UI copy and monospaced station numerics.",
+    "categoryCodes": {
+      "typographyClusters": [
+        {
+          "code": "beauty-app default typography: rounded geometric sans for friendly headlines, soft medium-weight body copy, and oversized circular-score numerals.",
+          "defaultReason": "Consumer scan apps commonly turn analysis into coaching and progress language.",
+          "rejectionNote": "I will not ship this because it turns evidence into lifestyle coaching."
+        },
+        {
+          "code": "clinical-device default typography: restrained neo-grotesk labels, small grey metadata, and medical chart numerals in calm panels.",
+          "defaultReason": "Dermatology devices often borrow medical chart calm to imply authority.",
+          "rejectionNote": "I will not ship this because it suggests diagnosis and repeats dermatology-device tropes."
+        },
+        {
+          "code": "image-processing coursework typography: monospace-heavy controls, algorithm names as headings, and tiny parameter labels.",
+          "defaultReason": "Image-processing projects often foreground algorithms instead of user evidence.",
+          "rejectionNote": "I will not ship this because it foregrounds implementation instead of user evidence."
+        }
+      ],
+      "paletteClusters": [
+        {
+          "code": "AI skincare pastel palette: lavender/pink glow, mint secondary, cream cards, and coral concern badges.",
+          "defaultReason": "Consumer skin tools commonly use friendly wellness colors.",
+          "rejectionNote": "I will not ship this because it reads as routine/product recommendation."
+        },
+        {
+          "code": "clinical skin-analysis palette: white shell, mint/coral status, pale blue overlay, and low-contrast grey copy.",
+          "defaultReason": "Clinical-facing skin products commonly borrow clean clinic color systems.",
+          "rejectionNote": "I will not ship this because it borrows medical-device authority."
+        },
+        {
+          "code": "conservation-map palette: archival paper, graphite ink, oxidized green, vermilion, ochre, lapis, and carmine.",
+          "defaultReason": "The previous design used conservation condition-reporting signals.",
+          "rejectionNote": "I will not ship this because it is the previous blocked direction."
+        }
+      ],
+      "layoutClusters": [
+        {
+          "code": "beauty scan layout: selfie hero, circular score above routine cards, progress history, and product modules below.",
+          "defaultReason": "Skincare products commonly sell recurring coaching after the scan.",
+          "rejectionNote": "I will not ship this because DermaScope has no history or routine engine."
+        },
+        {
+          "code": "clinical contact-sheet layout: before/after face panels, side metric list, small legend, and device-like header.",
+          "defaultReason": "Skin-analysis devices often use contact-sheet comparison and clinic controls.",
+          "rejectionNote": "I will not ship this because it overstates clinical authority."
+        },
+        {
+          "code": "SaaS dashboard layout: top bar, three KPI cards, neutral table, and side navigation.",
+          "defaultReason": "Metric-heavy apps often collapse into admin chrome.",
+          "rejectionNote": "I will not ship this because a single face image is the primary evidence object."
+        }
+      ],
+      "motionClusters": [
+        {
+          "code": "beauty coaching motion: soft fades, sparkle reveals, and score count-up celebration.",
+          "defaultReason": "Consumer wellness apps often use celebratory motion.",
+          "rejectionNote": "I will not ship this because it implies improvement coaching."
+        },
+        {
+          "code": "clinical scanner motion: slow blue sweep, contact-sheet swap, and device-console loading bar.",
+          "defaultReason": "Clinical imaging products often stage analysis as machine scanning.",
+          "rejectionNote": "I will not ship this because it is too close to medical-device theater."
+        },
+        {
+          "code": "conservation raking-light motion: luminous sweep over artifact and register rows.",
+          "defaultReason": "The previous design used artifact-inspection motion.",
+          "rejectionNote": "I will not ship this because it repeats the old redesign."
+        }
+      ],
+      "imageryClusters": [
+        {
+          "code": "AI skincare imagery: polished selfie mockups, glowing skin overlays, and product shelf shots.",
+          "defaultReason": "Skincare apps often use aspirational selfie and product imagery.",
+          "rejectionNote": "I will not ship this because it points toward ecommerce."
+        },
+        {
+          "code": "dermatology-device imagery: clinical face capture rigs, examination-room context, and medical chart screenshots.",
+          "defaultReason": "Clinical tools often use device imagery to signal precision.",
+          "rejectionNote": "I will not ship this because it implies a validated device."
+        },
+        {
+          "code": "student demo imagery: generic before/after canvas, sample image placeholders, and algorithm screenshots.",
+          "defaultReason": "Coursework projects often show technical demos instead of production flows.",
+          "rejectionNote": "I will not ship this because it fails production posture."
+        }
+      ]
+    },
+    "morphologicalExploration": {
+      "dimensions": [
+        "hierarchy",
+        "density",
+        "typeRoleContrast",
+        "motionLanguage",
+        "stateVocabulary",
+        "compositionRhythm"
+      ],
+      "matrix": [
+        {
+          "dimension": "hierarchy",
+          "values": [
+            "Mapped face surface first",
+            "Score-first report",
+            "Intake-first field form",
+            "Zone-sector atlas",
+            "Algorithm audit trail"
+          ]
+        },
+        {
+          "dimension": "density",
+          "values": [
+            "Brutal station rows",
+            "Spacious health brochure",
+            "Dense technical ledger",
+            "Minimal coaching cards",
+            "Split legend ribbons"
+          ]
+        },
+        {
+          "dimension": "typeRoleContrast",
+          "values": [
+            "Black survey title plus mono station readings",
+            "Friendly rounded headline plus soft metrics",
+            "Mono-only technical console",
+            "Humanist report plus small data",
+            "Narrow condensed labels plus big score"
+          ]
+        },
+        {
+          "dimension": "motionLanguage",
+          "values": [
+            "Contour trace and station snap",
+            "Soft wellness fade",
+            "Device scan shutter",
+            "Region stitch-in",
+            "Static report print"
+          ]
+        },
+        {
+          "dimension": "stateVocabulary",
+          "values": [
+            "Unmapped, acquiring, tracing, mapped, fallback, exception",
+            "Ready, glow, improve, routine",
+            "Pending, running, passed, failed",
+            "Captured, archived, released",
+            "Empty, loading, success, error"
+          ]
+        },
+        {
+          "dimension": "compositionRhythm",
+          "values": [
+            "Survey sheet with marginal stations",
+            "Marketing hero then cards",
+            "Split before/after bench",
+            "Radial score orbit",
+            "Long report document"
+          ]
+        }
+      ],
+      "selectedCombination": {
+        "hierarchy": "Mapped face surface first",
+        "density": "Brutal station rows",
+        "typeRoleContrast": "Black survey title plus mono station readings",
+        "motionLanguage": "Contour trace and station snap",
+        "stateVocabulary": "Unmapped, acquiring, tracing, mapped, fallback, exception",
+        "compositionRhythm": "Survey sheet with marginal stations"
+      },
+      "uncomfortableCombination": {
+        "combinationLabel": "Algorithm audit trail as long static report",
+        "discomfortReason": "It feels wrong because public users should not need implementation internals to trust the result.",
+        "productLogicJustification": "It could work for a regulated operator console where reproducibility and audit review matter more than public upload ergonomics. That is outside the current product scope."
+      }
+    },
+    "anchorCandidates": {
+      "selectedAnchor": "USGS 7.5-minute topographic quadrangle marginalia",
+      "candidates": [
+        {
+          "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
+          "conceptualFamily": "Measured surface mapping",
+          "jobFit": "Converts one face photo into a mapped surface with condition symbols, contour-like signal bands, and station rows.",
+          "hierarchyImplication": "The face map is primary; score, categories, and zones become marginal station readings.",
+          "densityImplication": "Compact brutal rows carry authority while preserving a large mapped surface.",
+          "typeImplication": "Heavy survey title pairs with plain body and monospaced station numerics.",
+          "stateLanguage": "Unmapped, acquiring, tracing, mapped, fallback, exception.",
+          "motionImplication": "Contour trace reveals analysis completion; station rows snap into measured positions.",
+          "whatItRulesOut": "Rules out beauty coaching, clinical contact sheets, conservation registers, and generic dashboard chrome.",
+          "renameTest": {
+            "testCategories": [
+              "subscription billing",
+              "music discovery",
+              "recipe planning"
+            ],
+            "results": [
+              "incoherent",
+              "incoherent",
+              "incoherent"
+            ],
+            "verdict": "STRONG PASS"
+          },
+          "categoryCodeOverlap": []
+        },
+        {
+          "anchorReference": "NOAA U.S. Chart No. 1 sounding and depth-contour chart",
+          "conceptualFamily": "Compact measurement and symbol legend",
+          "jobFit": "Attaches numeric readings to a surface and separates condition layers with legend discipline.",
+          "hierarchyImplication": "Surface map plus sounding labels, with legend rows carrying the score language.",
+          "densityImplication": "High density is acceptable when symbols remain explained.",
+          "typeImplication": "Plain chart labels pair with tabular soundings.",
+          "stateLanguage": "Unsurveyed, sounded, shoal, safe contour, warning.",
+          "motionImplication": "Depth contour lines resolve into category meters.",
+          "whatItRulesOut": "Rules out routine cards and lifestyle copy.",
+          "renameTest": {
+            "testCategories": [
+              "fitness streaks",
+              "classroom quiz app",
+              "fleet routing"
+            ],
+            "results": [
+              "incoherent",
+              "incoherent",
+              "coherent"
+            ],
+            "verdict": "PASS"
+          },
+          "categoryCodeOverlap": []
+        },
+        {
+          "anchorReference": "geologic field notebook strike-and-dip station log",
+          "conceptualFamily": "Field survey station record",
+          "jobFit": "Supports numbered observations and zone records, but is less visually tied to the overlay.",
+          "hierarchyImplication": "Station rows dominate, with the image behaving as supporting evidence.",
+          "densityImplication": "Dense readings are expected, but the face could lose primacy.",
+          "typeImplication": "Handbook-like headings pair with mono station coordinates.",
+          "stateLanguage": "Observed, sampled, uncertain, recheck, exception.",
+          "motionImplication": "Rows appear as field observations after capture.",
+          "whatItRulesOut": "Rules out app-store wellness softness.",
+          "renameTest": {
+            "testCategories": [
+              "ecommerce catalog",
+              "meditation app",
+              "ticket booking"
+            ],
+            "results": [
+              "incoherent",
+              "incoherent",
+              "incoherent"
+            ],
+            "verdict": "STRONG PASS"
+          },
+          "categoryCodeOverlap": [
+            {
+              "code": "image-processing coursework typography",
+              "reasoning": "If made mono-only it could become a technical ledger, so role contrast must stay stronger than mono labels."
+            }
+          ]
+        },
+        {
+          "anchorReference": "meteorological synoptic surface analysis chart",
+          "conceptualFamily": "Isobar and front analysis",
+          "jobFit": "Good for layered signal fronts such as redness and texture, but risks overdramatizing skin signals.",
+          "hierarchyImplication": "The image can host fronts and bands; rows explain system state.",
+          "densityImplication": "Moderate density with strong symbol explanation.",
+          "typeImplication": "Weather-station numerics pair with plain labels.",
+          "stateLanguage": "Stable, front, pressure, watch, advisory.",
+          "motionImplication": "Signal fronts drift into place.",
+          "whatItRulesOut": "Rules out conservation motion and beauty celebration.",
+          "renameTest": {
+            "testCategories": [
+              "banking dashboard",
+              "recipe planner",
+              "logistics monitoring"
+            ],
+            "results": [
+              "incoherent",
+              "incoherent",
+              "coherent"
+            ],
+            "verdict": "PASS"
+          },
+          "categoryCodeOverlap": []
+        },
+        {
+          "anchorReference": "seismic intensity shake map with station readings",
+          "conceptualFamily": "Intensity field and station reporting",
+          "jobFit": "Good for severity bands and uncertainty, but the disaster association is too severe for a personal face analysis surface.",
+          "hierarchyImplication": "Intensity bands surround a central surface with station rows attached.",
+          "densityImplication": "High-impact severity bands may overpower normal result states.",
+          "typeImplication": "Emergency-map numerics pair with high-contrast labels.",
+          "stateLanguage": "Recorded, intensity, estimated, uncertainty, advisory.",
+          "motionImplication": "Intensity bands expand from measured stations.",
+          "whatItRulesOut": "Rules out soft wellness and generic dashboard rhythm.",
+          "renameTest": {
+            "testCategories": [
+              "skincare ecommerce",
+              "music library",
+              "emergency operations"
+            ],
+            "results": [
+              "incoherent",
+              "incoherent",
+              "coherent"
+            ],
+            "verdict": "PASS with caution"
+          },
+          "categoryCodeOverlap": []
+        }
+      ]
     }
   },
-  "componentMorphology": {
-    "stage": "Central face image stage with original photo and overlay result.",
-    "sourceSwitch": "Upload file and camera capture modes before analysis.",
-    "scoreStack": "Overall score plus five condition meters.",
-    "statusPill": "Service indicator with backend readiness label.",
-    "dropzone": "Clinical intake pad with clear face-photo copy.",
-    "zoneStrips": "Forehead, cheeks, nose, and chin rows with compact measurements."
+  "derivedTokenLogic": {
+    "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
+    "colorDerivationSource": "Cartographic symbol separation: paper and black ink for structure, high-chroma symbol colors only for condition layers and focus.",
+    "spacingDerivationSource": "Map marginalia and survey station rows, with a 12px base and accessible 44px minimum target treatment.",
+    "typographyDerivationSource": "Map title, marginal labels, and station numerics drive display/body/mono roles.",
+    "motionDerivationSource": "Contour tracing and station snapping drive result reveal and row settlement.",
+    "colorSpace": "sRGB CSS variables with OKLCH-safe contrast checks by visual audit where supported.",
+    "spatialBaseUnit": "12px",
+    "typeScaleMethod": "Fixed role sizes with clamp only for major display labels; no viewport-width font scaling.",
+    "motionBudget": "150-300ms for interaction states, 420ms maximum for result contour trace, reduced-motion fallback required.",
+    "validationRule": "Tokens must preserve WCAG 2.2 AA contrast, non-color-only condition meaning, and must not recreate the previous conservation palette.",
+    "tokenContinuityClassification": {
+      "typography": "newly-introduced",
+      "palette": "anchor-derived",
+      "motion": "anchor-derived",
+      "spacing": "anchor-derived"
+    },
+    "derivationSource": {
+      "typography": "New roles replace Space Grotesk/IBM Plex Sans/JetBrains Mono with a survey-title/body/station system.",
+      "palette": "New cartographic layer colors replace conservation inks.",
+      "motion": "Contour trace replaces raking-light sweep.",
+      "spacing": "Survey stations replace conservation register rows."
+    }
+  },
+  "designFlexibilityPolicy": {
+    "locked": [
+      "single-photo face analysis goal",
+      "no diagnosis or treatment claims",
+      "no persistent image storage",
+      "WCAG 2.2 AA floor",
+      "topographic survey anchor",
+      "previous conservation direction blocklist"
+    ],
+    "flexibleUntilValidated": [
+      "exact color primitives",
+      "exact font family substitutions",
+      "exact contour trace implementation",
+      "exact row density",
+      "literal map references"
+    ]
   },
   "aiSafeUiAudit": {
-    "status": "active",
-    "failureDefinition": "Fails if grid, line, or glow wallpaper appears, or if condition colors appear without analysis meaning.",
-    "backgroundPatternRule": "No decorative grid, scanlines, or radial glow backgrounds.",
-    "blockingByDefault": true
+    "paletteEvidence": "The palette maps condition signals to cartographic symbol layers rather than mood, beauty, or clinic tone.",
+    "semanticColorRoles": [
+      "surface",
+      "foreground",
+      "focus",
+      "service status",
+      "five condition signals",
+      "zone stations"
+    ],
+    "nonTransferableBehavior": "Contour and station colors attach to face-signal mapping and would not make sense in a shopping or routine product.",
+    "rejectedResidue": [
+      "purple-pink gradients",
+      "mint clinic calm",
+      "archival conservation paper",
+      "decorative grid wallpaper",
+      "generic card dashboard"
+    ]
   },
   "productionContentPolicy": {
-    "language": ["id", "en"],
-    "noPlaceholderCopy": true,
-    "rule": "Skin analysis copy must describe visible image-processing signals and avoid diagnosis, treatment, homework, demo, MVP, placeholder, or scaffold language."
+    "language": "Indonesian UI copy may be used, but formal docs stay English.",
+    "forbiddenCopy": [
+      "diagnosis",
+      "treatment",
+      "cure",
+      "routine recommendation",
+      "demo",
+      "MVP",
+      "placeholder",
+      "coursework"
+    ],
+    "requiredCopy": [
+      "image-processing evidence",
+      "no persistent photo history",
+      "file type and size limits",
+      "service readiness"
+    ]
+  },
+  "tokenSystem": {
+    "surface": [
+      "sheet",
+      "field",
+      "ink",
+      "border"
+    ],
+    "signals": [
+      "acne",
+      "spot",
+      "wrinkle",
+      "redness",
+      "pore"
+    ],
+    "state": [
+      "checking",
+      "ready",
+      "offline",
+      "processing",
+      "mapped",
+      "warning",
+      "error"
+    ]
+  },
+  "colorTruth": {
+    "conditionColorsMustHaveTextLabels": true,
+    "conditionColorsMustHaveDistinctMarkers": true,
+    "theme": "light survey sheet",
+    "darkMode": "not in current scope"
+  },
+  "crossViewportAdaptation": {
+    "mobile": "Source action and service state first; face surface before register after image exists; no shrunken sidebars.",
+    "tablet": "Face surface wide, score and condition register below in two columns, zones as a compact station strip.",
+    "desktop": "Two-column survey sheet with mapped face left and evidence stations right."
+  },
+  "motionSystem": {
+    "signature": "Contour trace and station snap",
+    "reducedMotion": "Immediate overlay replacement and static rows.",
+    "allowedProperties": [
+      "transform",
+      "opacity",
+      "clip-path for bounded trace"
+    ],
+    "forbidden": [
+      "sparkle celebration",
+      "raking-light sweep",
+      "infinite background motion"
+    ]
+  },
+  "componentMorphology": {
+    "majorSurfaces": [
+      "survey masthead",
+      "source station",
+      "map surface",
+      "evidence stations",
+      "zone sectors"
+    ],
+    "radius": "0 to 4px for brutal survey surfaces; avoid soft wellness pills except compact status tags where required.",
+    "shadow": "Minimal; use borders, offset blocks, and surface contrast instead of soft card depth."
   },
   "accessibilityPolicy": {
     "standard": "WCAG 2.2 AA",
-    "focusVisibility": "Visible focus ring on all interactive elements.",
-    "keyboardAccess": "Upload, analyze, reset, and dismiss actions must be keyboard operable."
-  },
-  "designExecutionPolicy": {
-    "doNotShip": [
-      "decorative grid wallpaper",
-      "radial glow backdrops",
-      "placeholder demo copy",
-      "coursework-facing product copy",
-      "parameter-first UI",
-      "diagnosis or treatment recommendations"
-    ],
-    "requiredSignals": [
-      "face overlay result with distinct condition markers",
-      "service status indicator",
-      "overall Skin Health Score",
-      "condition score stack",
-      "zone breakdown"
+    "hardChecks": [
+      "keyboard access",
+      "visible focus",
+      "contrast",
+      "target size",
+      "status announcements",
+      "non-color-only condition meaning",
+      "reduced motion"
     ]
   },
+  "designExecutionPolicy": {
+    "implementationStack": "React + Vite + Tailwind CSS + DaisyUI",
+    "newUiLibraries": "none",
+    "reason": "Native CSS can deliver the selected contour trace, station snap, and responsive recomposition without adding runtime surface.",
+    "oldDesignRegressionTest": "Reject if the result preserves the conservation artifact/register composition, raking-light motion, or archival palette."
+  },
   "designExecutionHandoff": {
-    "implementationOrder": [
-      "Update design docs",
-      "Apply DaisyUI theme tokens",
-      "Implement face overlay stage",
-      "Finalize score stack, status pill, and zone breakdown"
+    "firstViewportSignals": [
+      "source/camera acquisition",
+      "five-condition symbol legend",
+      "service readiness",
+      "survey-station score language"
     ],
-    "notes": "Keep backgrounds clean, avoid decorative lines or glows, and keep medical disclaimer concise."
+    "implementationMove": "Use strong sheet borders, station rows, and contour trace as functional result affordances."
   },
   "reviewRubric": {
-    "mustPass": [
-      "No grid or glow wallpaper",
-      "Face overlay present after analysis",
-      "Single upload-to-analysis flow is intact",
-      "Overall and category scores are visible",
-      "Zone breakdown is visible",
-      "Reduced-motion fallback works",
-      "Focus and contrast meet WCAG 2.2 AA"
+    "failureSignals": [
+      "looks like a skincare routine app",
+      "looks like a clinic device",
+      "looks like the previous conservation condition map",
+      "uses contour or grid marks as decorative wallpaper",
+      "hides service readiness",
+      "shows color-only condition meaning",
+      "allows stale analysis responses to overwrite newer images",
+      "ships placeholder or demo language"
     ],
-    "driftSignals": [
-      "UI reads as generic dashboard",
-      "Score stack looks like a generic analytics dashboard",
-      "Overlay colors or marker shapes do not match category labels",
-      "Medical diagnosis language appears in the UI"
+    "successSignals": [
+      "one-photo evidence surface is dominant",
+      "condition colors and marker shapes are explained",
+      "zone and category data are readable at a glance",
+      "mobile flow prioritizes source action",
+      "result motion clarifies mapping completion"
     ]
   },
   "contextHygiene": {
-    "allowedSources": [
-      "docs/DESIGN.md",
-      "docs/design-intent.json",
-      "user-provided facial skin analysis concept",
-      "official React, Vite, Tailwind CSS, DaisyUI docs"
+    "validStyleContext": [
+      "current user brief",
+      "repo docs",
+      "current frontend and backend code",
+      "current official framework docs",
+      "current research references listed in referenceIntake"
     ],
-    "forbiddenSources": [
-      "generic dashboard templates",
-      "prior-project UI memory",
-      "unapproved external screenshots"
+    "taintedContext": [
+      "prior conservation redesign",
+      "unrelated project memory",
+      "generic AI skincare surfaces",
+      "component-kit defaults"
     ]
   },
   "libraryResearchStatus": "verified",
   "libraryDecisions": [
     {
-      "library": "React",
-      "purpose": "Component model for the frontend UI.",
-      "verifiedAt": "2026-05-09",
-      "sourceUrl": "https://react.dev/learn/start-a-new-react-project",
-      "stableVersion": "current",
-      "risk": "Low",
-      "fallback": "Use the existing static HTML build if React tooling fails."
+      "name": "React",
+      "sourceUrl": "https://react.dev/learn/creating-a-react-app",
+      "fetchedDate": "2026-05-19",
+      "stableCompatibleVersion": "19.2.6 from npm registry check",
+      "purpose": "Existing frontend runtime.",
+      "risk": "No new React APIs required for this redesign.",
+      "fallback": "Keep installed React 19.2.x if patch update is not needed."
     },
     {
-      "library": "Vite",
-      "purpose": "Frontend dev server and build tool.",
-      "verifiedAt": "2026-05-09",
+      "name": "Vite",
       "sourceUrl": "https://vite.dev/guide/",
-      "stableVersion": "current",
-      "risk": "Low",
-      "fallback": "Use the static server for local-only preview."
+      "fetchedDate": "2026-05-19",
+      "stableCompatibleVersion": "8.0.13 from npm registry check",
+      "purpose": "Existing dev/build tool.",
+      "risk": "Vite 8 requires modern Node versions; repo already uses Vite 8.",
+      "fallback": "Retain current minor if environment blocks patch update."
     },
     {
-      "library": "Tailwind CSS",
-      "purpose": "Utility styling and token mapping via DaisyUI.",
-      "verifiedAt": "2026-05-09",
-      "sourceUrl": "https://tailwindcss.com/docs/installation",
-      "stableVersion": "current",
-      "risk": "Low",
-      "fallback": "Use scoped CSS for critical layout if Tailwind config fails."
+      "name": "Tailwind CSS",
+      "sourceUrl": "https://tailwindcss.com/docs/installation/using-vite",
+      "fetchedDate": "2026-05-19",
+      "stableCompatibleVersion": "4.3.0 from npm registry check; repo remains on 3.4.x because the current config and DaisyUI plugin path are already working.",
+      "purpose": "Existing utility CSS and token bridge.",
+      "risk": "Major upgrade would be a separate migration, not required for this redesign.",
+      "fallback": "Keep Tailwind 3.4.x with current PostCSS config."
     },
     {
-      "library": "DaisyUI",
-      "purpose": "Semantic component styling and theme tokens.",
-      "verifiedAt": "2026-05-09",
+      "name": "DaisyUI",
       "sourceUrl": "https://daisyui.com/docs/install/",
-      "stableVersion": "current",
-      "risk": "Low",
-      "fallback": "Swap to base Tailwind utility styling."
+      "fetchedDate": "2026-05-19",
+      "stableCompatibleVersion": "5.5.20 from npm registry check",
+      "purpose": "Existing semantic component utility layer.",
+      "risk": "Default component skins must be overridden by DermaScope tokens.",
+      "fallback": "Use native CSS classes for custom surfaces."
     }
   ],
   "forbiddenPatterns": [
     "decorative grid wallpaper",
-    "decorative line backgrounds",
-    "radial glow backdrops",
-    "generic dashboard chrome",
-    "parameter-first UI"
+    "decorative contour wallpaper",
+    "purple-pink gradient hero",
+    "clinical contact sheet",
+    "conservation artifact report",
+    "generic KPI dashboard",
+    "placeholder copy",
+    "terminal-only core flow"
   ],
   "repoEvidence": {
-    "designEvidenceSummary": "Frontend exists under frontend/ with React + Vite + Tailwind + DaisyUI. Current scope is now a focused facial skin analysis flow with backend /api processing, overlay output, condition scores, and zone breakdown.",
-    "uiSurfaceFiles": [
-      "frontend/src/App.jsx",
-      "frontend/src/index.css",
-      "frontend/index.html"
-    ]
+    "designEvidenceSummary": "The repo contains a React + Vite frontend, FastAPI processing backend, one DermaScope goal, camera/upload intake, overlay PNG output, category scores, and zone breakdown docs. Legacy ImgLab static files and generic operation contracts are cleanup targets."
+  },
+  "researchDossier": {
+    "metadata": {
+      "researchVerifiedAt": "2026-05-19",
+      "freshnessWindowDays": 90,
+      "antiRepeatLedger": {
+        "previousAnchors": [
+          "portrait conservation condition map",
+          "Getty Conservation Institute mural condition documentation",
+          "Canadian Conservation Institute painting baseline condition report"
+        ],
+        "previousPalettes": [
+          "paper-white and pale cool surfaces with graphite ink, archival blue, oxidized green, vermilion, ochre, lapis, and carmine",
+          "dermatology contact sheet with translucent acetate annotations"
+        ],
+        "previousMotionSignatures": [
+          "raking-light inspection sweep",
+          "artifact register row reveal"
+        ]
+      },
+      "sourceSummary": "Live research checked current skin-analysis category defaults, an open skin-imaging study, and official USGS/NOAA mapping references."
+    }
   }
 }

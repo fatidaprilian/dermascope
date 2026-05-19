@@ -10,11 +10,10 @@
     "name": "imglab",
     "currentFocus": "DermaScope facial skin analysis flow using one face photo, backend OpenCV-Python overlay generation, category scores, and zone breakdowns.",
     "durableFacts": [
-      "ImgLab MVP is scoped to real image processing methods: restoration, enhancement, edge/threshold tools, upscaling, and optional morphology.",
-      "Architecture is a browser-first single page app using React + Vite + Tailwind CSS + DaisyUI, with optional OpenCV.js and FastAPI backend.",
-      "Optional backend is FastAPI plus OpenCV-Python, exposing health, goals, and process endpoints.",
-      "MVP excludes Wiener filter, inpainting, ESRGAN/Real-ESRGAN, accounts, server-side image storage, batch processing, and persistent project history.",
-      "Current implementation uses the React frontend in frontend/ with backend /api processing.",
+      "The active product direction is DermaScope, not the legacy ImgLab workbench.",
+      "Architecture is a React + Vite + Tailwind CSS + DaisyUI frontend with a FastAPI plus OpenCV-Python backend.",
+      "The active API exposes /api/health, /api/goals, and /api/process.",
+      "The active operation contract exposes one public goal: skin-health-analysis mapped to facial-skin-analysis.",
       "The active product direction is DermaScope: upload one face photo, analyze skin-condition signals, show an overlay, category scores, Skin Health Score, and zone breakdown.",
       "Backend analysis estimates acne, dark spots, wrinkles, redness, and pores with classical OpenCV heuristics.",
       "The app remains database-free and does not persist uploaded image files.",
@@ -36,7 +35,13 @@
       "Updated operation contract tests for the single skin-health analysis goal.",
       "Added production monolith Dockerfile and converted compose.prod.yaml to a single app service on port 8080.",
       "Added upload/camera source switching in the frontend intake flow.",
-      "Improved overlay readability with distinct condition marker shapes and short labels drawn into the image."
+      "Improved overlay readability with distinct condition marker shapes and short labels drawn into the image.",
+      "Redesigned DermaScope around a brutal topographic survey plate concept with contour trace motion and station-row evidence.",
+      "Created docs/doc-index.md to satisfy the required documentation routing map.",
+      "Removed the legacy root static ImgLab app and unused browser OpenCV image-processing utilities from the active codebase.",
+      "Renamed the active frontend operation registry export to DermaScopeOperations.",
+      "Added DermaScope X-DermaScope-* response headers including processing time.",
+      "Added npm run validate and installed backend requirements into .venv so backend tests can run locally."
     ],
     "pendingIssues": [
       "Verify /api/process quality with real face photos after threshold tuning.",
@@ -44,7 +49,6 @@
       "Tune face detection, skin mask thresholds, and score normalization across lighting and skin tones."
     ],
     "nextBestActions": [
-      "Install backend requirements in .venv if local backend tests are needed outside Docker.",
       "Run the Vite dev server and review the DermaScope UI.",
       "Test skin analysis with varied face photos and compare overlay metadata to visible marks.",
       "Tune thresholds after manual photo review."
@@ -54,20 +58,22 @@
       "frontend npm run lint passed after DermaScope redesign.",
       "npm test passed for the skin analysis operation contract.",
       "npm run check:backend passed.",
+      "npm run test:backend passed locally after installing backend requirements in .venv.",
+      "npm run validate passed.",
       "Production monolith Docker image build passed.",
       "Production monolith container health checks passed on /api/health and /kaithhealth.",
-      "Backend tests passed inside the production monolith container with PYTHONPATH=backend.",
-      "npm run validate is unavailable because the script is missing.",
-      "npm run test:backend is blocked until cv2/opencv-python-headless is installed."
+      "Backend tests passed inside the production monolith container with PYTHONPATH=backend."
     ]
   },
   "designContinuity": {
     "visualLanguageContinuity": "opt-in-only",
-    "currentConceptualAnchor": "dermatology contact sheet with translucent acetate annotations, condition-color marks, and zone strips around one face image",
+    "currentConceptualAnchor": "USGS 7.5-minute topographic quadrangle marginalia translated into a brutal face-signal survey plate",
     "forbiddenCarryover": [
       "prior-project-style-memory",
       "old-ui-visual-dna-without-user-approval",
-      "generic-dashboard-defaults"
+      "generic-dashboard-defaults",
+      "previous conservation condition-map direction",
+      "raking-light inspection sweep"
     ]
   },
   "privacy": {
@@ -76,5 +82,5 @@
     "redactSensitiveTextBeforeWriting": true
   },
   "generatedAt": "2026-05-06T22:54:37.341Z",
-  "lastUpdatedAt": "2026-05-13T16:10:00+07:00"
+  "lastUpdatedAt": "2026-05-19T00:00:00+07:00"
 }

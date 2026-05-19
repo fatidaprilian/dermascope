@@ -6,13 +6,13 @@ DermaScope remains database-free. Uploaded face photos, overlay object URLs, and
 
 ## Decision
 
-ImgLab does not need a database for MVP.
+DermaScope does not need a database for the current production scope.
 
-All images, processed previews, and operation parameters should live in browser memory during the session. The user can export the processed image as a local file.
+Uploaded images, overlay object URLs, and analysis metadata should live in browser memory during the session.
 
 ## Rationale
 
-The first version is a local image processing toolkit, not an account-based service. A database would add privacy risk and implementation work without helping the core coursework goal.
+The current product is a single-photo analysis flow, not an account-based service. A database would add privacy risk and retention obligations without helping the core inspection workflow.
 
 ## In-Memory Entities
 
@@ -29,24 +29,34 @@ type WorkspaceImage = {
 };
 ```
 
-### OperationState
+### AnalysisState
 
 ```ts
-type OperationState = {
-  activeOperationId: string | null;
-  parameters: Record<string, number | string | boolean>;
+type AnalysisState = {
+  goalId: "skin-health-analysis";
+  operationId: "facial-skin-analysis";
   lastRequestId: string | null;
 };
 ```
 
-### PreviewState
+### ResultState
 
 ```ts
-type PreviewState = {
+type ResultState = {
   originalImageId: string | null;
-  processedRequestId: string | null;
-  compareMode: "split" | "side-by-side";
-  zoom: number;
+  overlayObjectUrl: string | null;
+  overallScore: number | null;
+  categories: Array<{
+    id: "acne" | "dark_spots" | "wrinkles" | "redness" | "pores";
+    score: number;
+    coverage: number;
+    count?: number;
+  }>;
+  zones: Array<{
+    id: "forehead" | "left_cheek" | "right_cheek" | "nose" | "chin";
+    score: number;
+    dominantConcern: string;
+  }>;
 };
 ```
 
@@ -54,9 +64,9 @@ type PreviewState = {
 
 Future versions may store non-sensitive UI preferences in browser storage:
 
-- last selected category
-- compare mode
-- preferred export format
+- preferred input mode
+- reduced-motion preference mirror
+- last dismissed non-sensitive UI notice
 
 Do not store image pixels, file names, or processing history without user approval.
 
@@ -74,4 +84,4 @@ If that happens, create a new ADR and update this document with tables, ownershi
 
 ## Next Validation Action
 
-Keep MVP implementation database-free unless the user explicitly approves saved projects or server-side processing.
+Keep the implementation database-free unless the user explicitly approves saved projects, accounts, or retained scan history.

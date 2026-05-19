@@ -1,6 +1,6 @@
 {
-  "cliVersion": "3.0.46",
-  "generatedAt": "2026-05-13T07:27:42.678Z",
+  "cliVersion": "4.1.0",
+  "generatedAt": "2026-05-19T12:09:30.859Z",
   "operationMode": "upgrade",
   "selectedProfile": "balanced",
   "projectScope": {
@@ -26,7 +26,7 @@
   "selectedBlueprint": null,
   "selectedAdditionalBlueprints": [],
   "ruleLoadingPolicy": {
-    "canonicalSource": ".instructions.md",
+    "canonicalSource": "AGENTS.md",
     "stackLoadingMode": "lazy",
     "domainRuleLoadingMode": "lazy",
     "loadedOnDemand": true,
@@ -225,27 +225,17 @@
       "frontend: Vite config"
     ],
     "detectionTransparency": {
-      "declaredAt": "2026-05-13T07:27:42.546Z",
+      "declaredAt": "2026-05-19T12:09:30.735Z",
       "declarationType": "existing-project",
       "declarationShown": true,
       "detectionSummary": "This folder looks like Typescript with medium confidence based on frontend: package.json, frontend: Vite config. Confidence gap: 0.08. Secondary stack signals: Typescript.",
       "activeRulesSummary": {
-        "canonicalSource": ".instructions.md",
-        "compiledRulebook": ".agent-instructions.md",
-        "legacyThinAdapters": [
-          ".cursorrules",
-          ".windsurfrules",
-          ".clauderc"
-        ],
+        "canonicalSource": "AGENTS.md",
+        "compiledRulebook": null,
+        "legacyThinAdapters": [],
         "generatedBridgeAdapters": [
-          "AGENTS.md",
           "CLAUDE.md",
-          "GEMINI.md",
-          ".cursor/rules/agentic-senior-core.mdc",
-          ".windsurf/rules/agentic-senior-core.md",
-          ".github/copilot-instructions.md",
-          ".github/instructions/agentic-senior-core.instructions.md",
-          ".gemini/instructions.md"
+          "GEMINI.md"
         ],
         "stackLoadingMode": "lazy",
         "domainRuleLoadingMode": "lazy",

@@ -18,10 +18,10 @@ Development uses `compose.yaml`.
 
 Services:
 
-- `frontend`: Node 22 static server on port `4173`.
+- `frontend`: Vite dev server on port `5173`.
 - `backend`: FastAPI with reload on port `8000`.
 
-The development lane uses bind mounts for `index.html`, `src/`, `scripts/`, and `backend/` so local edits are visible without rebuilding everything.
+The development lane uses bind mounts for `frontend/src`, `frontend/index.html`, Vite/Tailwind config files, and `backend/` so local edits are visible without rebuilding everything.
 
 Expected command:
 

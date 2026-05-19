@@ -6,7 +6,7 @@ The repository folder may still be named `imglab` during the transition. The pro
 
 ## Who It Is For
 
-DermaScope is for students, instructors, and image-processing learners who need an explainable facial skin analysis demo without special hardware, accounts, or stored photos. It is not a medical diagnosis tool.
+DermaScope is for people who need a focused, explainable facial skin signal report from one photo without special hardware, accounts, or stored image history. It is a production-facing image-processing tool, not a medical diagnosis product.
 
 ## Current Capabilities
 
@@ -58,9 +58,7 @@ npm run backend
 Run validation checks:
 
 ```bash
-npm run build
-npm test
-npm run check:backend
+npm run validate
 ```
 
 Run the production monolith container:
@@ -84,6 +82,7 @@ The frontend calls:
 ## Documentation
 
 - `docs/project-brief.md`: product scope and requirements.
+- `docs/doc-index.md`: compact routing map for project docs.
 - `docs/architecture-decision-record.md`: runtime and architecture decisions.
 - `docs/flow-overview.md`: upload, analysis, scoring, overlay, and error flows.
 - `docs/api-contract.md`: public UI and HTTP API contracts.
@@ -95,8 +94,8 @@ The frontend calls:
 
 Before release, validate:
 
-1. Frontend build and lint pass.
-2. Backend compile and processing tests pass.
-3. Upload works with real face PNG, JPEG, and WebP samples.
-4. Overlay colors, score cards, and zone breakdowns match the analysis metadata.
+1. `npm run validate` passes.
+2. Upload works with real face PNG, JPEG, and WebP samples.
+3. Camera capture works in supported browsers.
+4. Overlay colors, score rows, and zone breakdowns match the analysis metadata.
 5. Keyboard focus, status messages, target sizes, and contrast meet WCAG 2.2 AA.

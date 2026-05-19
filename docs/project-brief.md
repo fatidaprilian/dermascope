@@ -1,119 +1,84 @@
 # DermaScope Project Brief
 
-## Current Scope Reset
+## Current Scope
 
-DermaScope replaces the previous general ImgLab workbench direction. The current product is a facial skin condition analysis app: Upload one face photo -> detect visible skin signals -> generate an overlay -> show condition scores, a Skin Health Score, and zone breakdowns. The repository folder can remain `imglab` during the transition, but user-facing product copy should use DermaScope.
+DermaScope is a production-facing facial skin signal mapping app. A user uploads or captures one face photo, the backend analyzes visible image-processing signals, and the frontend returns an overlay, category scores, a total Skin Health Score, and a zone-by-zone breakdown.
 
-The previous restoration, enhancement, edge, upscaling, and morphology workbench scope is legacy context only. Do not use it as the active product direction unless the user asks to restore the old workbench.
+The repository folder may still be named `imglab`. User-facing product copy and active contracts should use DermaScope.
 
 ## Purpose
 
-ImgLab is a public-facing digital image processing workbench. It helps users upload an image, apply visible processing methods, compare the result against the original, and export the processed image in a suitable file format.
-
-The product should make the processing step easy to see. The MVP is complete; the current direction is to refine ImgLab into a production-ready public web experience with trustworthy copy, resilient export choices, and a polished goal-first workflow.
+DermaScope helps users inspect visible facial skin-condition signals from a normal photo without accounts, stored photos, or special capture hardware. It explains what the image-processing pipeline measured while avoiding diagnosis, treatment, cure, or product-recommendation claims.
 
 ## Confirmed Facts
 
-- Project name: ImgLab.
-- Current user goal: evolve the completed MVP into a public-ready toolkit for image restoration, enhancement, upscaling, analysis, and morphology.
-- Current delivery request: redesign the React + Vite frontend so it reads like a real public product, not a coursework submission, and add export format choices.
-- Repository state: project docs were not fully materialized before this task. `docs/design-intent.json` existed as a seed and needed project-specific refinement.
-- The first application slice now exists as a React + Vite frontend with Tailwind CSS and DaisyUI, with an optional FastAPI backend for processing.
+- Project name: DermaScope.
+- Current delivery request: redesign the React + Vite frontend around a concept that differs from the previous conservation condition-map direction.
+- Active runtime: React + Vite frontend with Tailwind CSS and DaisyUI.
+- Active backend: FastAPI + OpenCV-Python for `/api/process`.
+- Active flow: upload or camera capture -> analyze -> overlay -> scores -> zone breakdown.
+- Persistence decision: no database and no stored image history.
 
 ## Current Feature Set
 
-The current implementation keeps explainable operations as the core product value while presenting them through user goals instead of a raw algorithm list.
-
-### Restoration
-
-1. Gaussian blur for mild noise reduction.
-2. Median filter for salt-and-pepper noise reduction.
-3. Bilateral filter for edge-preserving smoothing.
-
-### Enhancement
-
-1. Grayscale conversion as a base operation and teaching step.
-2. Histogram equalization for global contrast improvement.
-3. Brightness and contrast adjustment.
-4. Gamma correction.
-5. Sharpening with unsharp mask or a Laplacian-style kernel.
-
-### Edge and Segmentation Tools
-
-1. Canny edge detection.
-2. Otsu thresholding.
-3. Adaptive thresholding.
-
-These are grouped separately because they are analysis and segmentation tools, not pure enhancement.
-
-### Upscaling
-
-1. Bilinear interpolation.
-2. Bicubic interpolation.
-3. Lanczos interpolation.
-
-Deep-learning super-resolution such as ESRGAN or Real-ESRGAN is out of MVP scope. It adds model loading, compute cost, device limits, and dependency risk that are not needed for the first coursework version.
-
-### Morphology
-
-1. Dilation.
-2. Erosion.
-3. Opening.
-4. Closing.
-
-Morphology can ship after the core upload, preview, and export flow works.
+1. Upload one PNG, JPEG, or WebP face photo up to 10 MB.
+2. Capture one browser camera frame when permission is available.
+3. Send the image to `POST /api/process` with `goal_id=skin-health-analysis`.
+4. Detect a face region with OpenCV-Python and use a centered fallback if needed.
+5. Split the face into forehead, left cheek, right cheek, nose, and chin.
+6. Estimate acne, dark spots, wrinkles, redness, and enlarged pores with explainable image-processing heuristics.
+7. Return an overlay PNG plus structured metadata in `X-DermaScope-Analysis`.
+8. Show a Skin Health Score, category scores, condition counts/coverage, warnings, and zone breakdown.
 
 ## Explicitly Out of Scope
 
-- Wiener filter.
-- Inpainting for object or scratch removal.
-- ESRGAN or Real-ESRGAN.
+- Medical diagnosis or treatment recommendations.
+- Personalized skincare routines or product matching.
 - User accounts.
-- Server-side image storage.
+- Persistent image storage.
 - Batch processing.
-- Persistent project history.
-
-These can be added later only when they have a clear product reason, operational budget, and privacy model.
-
-## Recommended Runtime Direction
-
-Use a browser-first single page application with React + Vite and Tailwind CSS for the current frontend. Processing can be client-side with OpenCV.js or via the optional FastAPI backend when server-side compute is preferred.
-
-The current implementation uses React + Vite for a clearer component architecture and DaisyUI for consistent UI primitives. The static HTML version is now legacy.
-
-### Evidence
-
-- OpenCV.js official docs describe browser image loading, `cv.Mat` conversion, canvas display, and image processing tutorials for filtering, thresholding, morphology, histograms, Canny, and geometric transforms. Source: https://docs.opencv.org/4.x/d5/d10/tutorial_js_root.html, fetched 2026-05-07.
-- Vite official docs describe a dev server and production build pipeline for modern web projects, including React templates. This is retained as a future option, not the current MVP runtime. Source: https://vite.dev/guide/, fetched 2026-05-07.
-- React official docs recommend using a framework for new apps, and also document from-scratch React app options when a smaller setup is a better fit. This is retained as a future option, not the current MVP runtime. Source: https://react.dev/learn/start-a-new-react-project, fetched 2026-05-07.
+- Saved scan history.
+- Deep-learning model packaging unless future scope and operational budget are approved.
 
 ## Product Requirements
 
-1. Upload one face image from the local device.
-2. Capture one face image from the browser camera when permission is available.
-3. Show the original photo and the skin-analysis overlay.
-4. Use distinct marker shapes and short labels for acne, dark spots, wrinkles, redness, and pores.
-5. Show processing status and validation errors.
-6. Show the overall Skin Health Score, category scores, and zone breakdown.
-7. Avoid accounts, project storage, and hidden cloud persistence.
-8. Explain that results are image-processing evidence, not medical diagnosis.
-9. Present production-ready public copy with no visible homework, demo, MVP, placeholder, or scaffold language in the UI.
+1. Keep the first action obvious: provide a face photo through upload or camera.
+2. Show service readiness before analysis.
+3. Validate file type and file size before upload.
+4. Preserve the face image as the dominant evidence surface.
+5. Show the overlay result when processing succeeds.
+6. Use distinct marker shapes and labels for acne, dark spots, wrinkles, redness, and pores.
+7. Show the overall Skin Health Score, category measurements, and zone breakdown.
+8. Keep error recovery inline and understandable.
+9. State clearly that the result is image-processing evidence, not a diagnosis.
+10. Avoid visible homework, demo, MVP, placeholder, or scaffold language in production UI.
 
 ## Non-Functional Requirements
 
-- Keep processing responsive on one uploaded or captured face image.
-- Limit maximum image size or downscale previews to avoid browser memory crashes.
-- Preserve accessibility: keyboard controls, visible focus, readable contrast, and status announcements.
-- Avoid persistent image storage.
-- Keep the UI dense enough for repeated analysis, but not a generic admin panel or a school-project demo.
+- Keep processing responsive for one uploaded or captured face image.
+- Protect privacy by avoiding stored photo history.
+- Maintain keyboard access and visible focus for upload, source switch, camera, analyze, reset, and dismiss actions.
+- Maintain WCAG 2.2 AA contrast and non-color-only condition meaning.
+- Recompose layout across mobile, tablet, and desktop rather than only scaling the desktop view.
+- Keep the UI specific to face-signal inspection and avoid generic dashboard chrome.
 
-## Assumptions to Validate
+## Design Direction
 
-- The current production direction remains a web app, not a Python desktop tool.
-- The project does not need login or persistent storage.
-- OpenCV-Python heuristics are good enough for an educational MVP but still need real-photo tuning.
-- The user wants formal docs in English, following repository governance, while day-to-day conversation can remain Indonesian.
+The active redesign direction is a brutal topographic survey plate. The face photo is treated as a measured surface, condition signals are mapped as cartographic symbol layers, and measurements sit in station rows beside or below the surface depending on viewport.
+
+See `docs/DESIGN.md` and `docs/design-intent.json` for the full research dossier, anchor selection, anti-repeat ledger, token logic, responsive rules, and review rubric.
+
+## Runtime Direction
+
+Keep React + Vite + Tailwind CSS + DaisyUI for the current frontend. Keep FastAPI + OpenCV-Python for the current analysis backend.
+
+Evidence was refreshed on 2026-05-19:
+
+- React docs: https://react.dev/learn/creating-a-react-app
+- Vite docs: https://vite.dev/guide/
+- Tailwind CSS Vite installation docs: https://tailwindcss.com/docs/installation/using-vite
+- DaisyUI install docs: https://daisyui.com/docs/install/
 
 ## Next Validation Action
 
-Validate the public-facing UI manually in a browser with real face photos, then tune thresholds for varied lighting and skin tones.
+Manually test the redesigned frontend with real face photos across upload, camera capture, offline backend, successful analysis, fallback warning, and mobile viewport states.

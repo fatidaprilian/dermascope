@@ -11,13 +11,14 @@
     "docker:down": "docker compose down",
     "test": "node tests/operation-contract.test.js",
     "test:backend": "PYTHONPATH=backend .venv/bin/python -m unittest discover backend/tests",
-    "check:backend": "python3 -m compileall backend"
+    "check:backend": "python3 -m compileall backend",
+    "validate": "npm run build && cd frontend && npm run lint && cd .. && npm test && npm run check:backend && npm run test:backend"
   },
   "keywords": [
     "skin-analysis",
     "image-processing",
     "opencv",
-    "toolkit"
+    "face-signal-mapping"
   ],
   "license": "UNLICENSED"
 }

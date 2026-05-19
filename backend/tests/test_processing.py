@@ -28,6 +28,7 @@ class ProcessingTests(unittest.TestCase):
         self.assertEqual(result.media_type, "image/png")
         self.assertGreater(len(result.data), 0)
         self.assertEqual(result.operation_id, "facial-skin-analysis")
+        self.assertEqual(result.output_mode, "overlay")
         self.assertIsNotNone(result.analysis)
         assert result.analysis is not None
         self.assertIn("overallScore", result.analysis)
@@ -42,6 +43,17 @@ class ProcessingTests(unittest.TestCase):
         with self.assertRaises(ApiError) as context:
             process_goal(b"not an image", "text/plain", "skin-health-analysis", {})
         self.assertEqual(context.exception.code, "UNSUPPORTED_FILE_TYPE")
+
+    def test_rejects_empty_file(self) -> None:
+        with self.assertRaises(ApiError) as context:
+            process_goal(b"", "image/png", "skin-health-analysis", {})
+        self.assertEqual(context.exception.code, "EMPTY_FILE")
+
+    def test_rejects_oversized_file_before_decode(self) -> None:
+        oversized = b"0" * (10 * 1024 * 1024 + 1)
+        with self.assertRaises(ApiError) as context:
+            process_goal(oversized, "image/png", "skin-health-analysis", {})
+        self.assertEqual(context.exception.code, "FILE_TOO_LARGE")
 
 
 if __name__ == "__main__":

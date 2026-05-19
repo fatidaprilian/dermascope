@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
 import cv2 as cv
 import numpy as np
@@ -13,30 +13,8 @@ from .errors import ApiError
 MAX_FILE_SIZE = 10 * 1024 * 1024
 MAX_DIMENSION = 4096
 ACCEPTED_TYPES = {"image/png", "image/jpeg", "image/webp"}
-OutputMode = Literal["color", "grayscale", "binary", "edge-map"]
-
-
-@dataclass(frozen=True)
-class Parameter:
-    id: str
-    label: str
-    type: Literal["number", "select", "boolean"]
-    default: int | float | str | bool
-    min: int | float | None = None
-    max: int | float | None = None
-    step: int | float | None = None
-    options: tuple[str, ...] = ()
-    odd: bool = False
-
-
-@dataclass(frozen=True)
-class Operation:
-    id: str
-    category: str
-    label: str
-    description: str
-    output_mode: OutputMode
-    parameters: tuple[Parameter, ...]
+SKIN_ANALYSIS_GOAL_ID = "skin-health-analysis"
+SKIN_ANALYSIS_OPERATION_ID = "facial-skin-analysis"
 
 
 @dataclass(frozen=True)
@@ -55,147 +33,20 @@ class ProcessedImage:
     width: int
     height: int
     operation_id: str
-    output_mode: OutputMode
+    output_mode: str
     warnings: tuple[str, ...]
     analysis: dict[str, Any] | None = None
 
 
-OPERATIONS: tuple[Operation, ...] = (
-    Operation(
-        "facial-skin-analysis",
-        "skin-analysis",
-        "Facial skin analysis",
-        "Detects visible facial skin-condition signals and returns an overlay plus structured scores.",
-        "color",
-        (),
-    ),
-    Operation(
-        "gaussian-blur",
-        "restoration",
-        "Gaussian blur",
-        "Reduces mild noise with a weighted blur.",
-        "color",
-        (
-            Parameter("kernelSize", "Kernel size", "number", 5, 3, 31, 2, odd=True),
-            Parameter("sigma", "Sigma", "number", 1.5, 0, 10, 0.5),
-        ),
-    ),
-    Operation(
-        "median-filter",
-        "restoration",
-        "Median filter",
-        "Removes isolated bright or dark specks.",
-        "color",
-        (Parameter("kernelSize", "Kernel size", "number", 5, 3, 15, 2, odd=True),),
-    ),
-    Operation(
-        "bilateral-filter",
-        "restoration",
-        "Bilateral filter",
-        "Smooths color noise while preserving more edge detail.",
-        "color",
-        (
-            Parameter("diameter", "Diameter", "number", 7, 3, 15, 2, odd=True),
-            Parameter("sigmaColor", "Sigma color", "number", 75, 10, 150, 5),
-            Parameter("sigmaSpace", "Sigma space", "number", 75, 10, 150, 5),
-        ),
-    ),
-    Operation("grayscale", "enhancement", "Grayscale", "Converts the image to luminance.", "grayscale", ()),
-    Operation(
-        "histogram-equalization",
-        "enhancement",
-        "Histogram equalization",
-        "Improves global contrast on grayscale output.",
-        "grayscale",
-        (),
-    ),
-    Operation(
-        "brightness-contrast",
-        "enhancement",
-        "Brightness & contrast",
-        "Changes overall lightness and tonal separation.",
-        "color",
-        (
-            Parameter("brightness", "Brightness", "number", 0, -100, 100, 1),
-            Parameter("contrast", "Contrast", "number", 1.2, 0.25, 3, 0.05),
-        ),
-    ),
-    Operation(
-        "gamma-correction",
-        "enhancement",
-        "Gamma correction",
-        "Adjusts midtones.",
-        "color",
-        (Parameter("gamma", "Gamma", "number", 1.2, 0.2, 3, 0.05),),
-    ),
-    Operation(
-        "sharpen",
-        "enhancement",
-        "Sharpen",
-        "Uses unsharp masking to emphasize detail.",
-        "color",
-        (
-            Parameter("amount", "Amount", "number", 1, 0.2, 3, 0.1),
-            Parameter("radius", "Radius", "number", 5, 3, 21, 2, odd=True),
-        ),
-    ),
-    Operation(
-        "canny-edge",
-        "edge-segmentation",
-        "Canny edge",
-        "Detects strong image boundaries.",
-        "edge-map",
-        (
-            Parameter("threshold1", "Low threshold", "number", 60, 0, 255, 1),
-            Parameter("threshold2", "High threshold", "number", 150, 0, 255, 1),
-            Parameter("apertureSize", "Aperture", "select", "3", options=("3", "5", "7")),
-        ),
-    ),
-    Operation(
-        "otsu-threshold",
-        "edge-segmentation",
-        "Otsu threshold",
-        "Finds an automatic binary threshold.",
-        "binary",
-        (Parameter("invert", "Invert output", "boolean", False),),
-    ),
-    Operation(
-        "adaptive-threshold",
-        "edge-segmentation",
-        "Adaptive threshold",
-        "Builds a binary image from local neighborhoods.",
-        "binary",
-        (
-            Parameter("blockSize", "Block size", "number", 11, 3, 51, 2, odd=True),
-            Parameter("constant", "Constant", "number", 2, -20, 20, 1),
-            Parameter("method", "Method", "select", "gaussian", options=("mean", "gaussian")),
-        ),
-    ),
-    Operation("resize-bilinear", "upscaling", "Bilinear resize", "Fast interpolation baseline.", "color", (Parameter("scale", "Scale", "number", 2, 1, 4, 0.25),)),
-    Operation("resize-bicubic", "upscaling", "Bicubic resize", "Smoother interpolation.", "color", (Parameter("scale", "Scale", "number", 2, 1, 4, 0.25),)),
-    Operation("resize-lanczos", "upscaling", "Lanczos resize", "Sharper interpolation.", "color", (Parameter("scale", "Scale", "number", 2, 1, 4, 0.25),)),
-    Operation("dilation", "morphology", "Dilation", "Expands bright foreground regions.", "color", (Parameter("kernelSize", "Kernel size", "number", 5, 3, 21, 2, odd=True), Parameter("iterations", "Iterations", "number", 1, 1, 5, 1))),
-    Operation("erosion", "morphology", "Erosion", "Shrinks bright foreground regions.", "color", (Parameter("kernelSize", "Kernel size", "number", 5, 3, 21, 2, odd=True), Parameter("iterations", "Iterations", "number", 1, 1, 5, 1))),
-    Operation("opening", "morphology", "Opening", "Removes small bright noise.", "color", (Parameter("kernelSize", "Kernel size", "number", 5, 3, 21, 2, odd=True), Parameter("iterations", "Iterations", "number", 1, 1, 5, 1))),
-    Operation("closing", "morphology", "Closing", "Closes small gaps.", "color", (Parameter("kernelSize", "Kernel size", "number", 5, 3, 21, 2, odd=True), Parameter("iterations", "Iterations", "number", 1, 1, 5, 1))),
-)
-
 GOALS: tuple[Goal, ...] = (
     Goal(
-        "skin-health-analysis",
+        SKIN_ANALYSIS_GOAL_ID,
         "Analisis kondisi kulit",
         "Deteksi jerawat, noda gelap, kerutan, kemerahan, dan pori dari satu foto wajah.",
-        "facial-skin-analysis",
+        SKIN_ANALYSIS_OPERATION_ID,
         "Analisis Kulit",
     ),
 )
-
-
-def operation_by_id(operation_id: str) -> Operation:
-    for operation in OPERATIONS:
-        if operation.id == operation_id:
-            return operation
-    raise ApiError("UNKNOWN_OPERATION", "Unknown image operation.", 400)
 
 
 def goal_by_id(goal_id: str) -> Goal:
@@ -238,48 +89,15 @@ def decode_image(data: bytes) -> np.ndarray:
     return image
 
 
-def normalize_parameters(operation: Operation, incoming: dict[str, Any]) -> dict[str, Any]:
-    values: dict[str, Any] = {}
-    for parameter in operation.parameters:
-        raw = incoming.get(parameter.id, parameter.default)
-        if parameter.type == "number":
-            values[parameter.id] = _normalize_number(raw, parameter)
-        elif parameter.type == "select":
-            text = str(raw)
-            values[parameter.id] = text if text in parameter.options else parameter.default
-        elif parameter.type == "boolean":
-            values[parameter.id] = raw is True or str(raw).lower() in {"true", "1", "on", "yes"}
-    return values
-
-
-def _normalize_number(raw: Any, parameter: Parameter) -> int | float:
-    try:
-        value = float(raw)
-    except (TypeError, ValueError):
-        value = float(parameter.default)
-    if parameter.min is not None:
-        value = max(float(parameter.min), value)
-    if parameter.max is not None:
-        value = min(float(parameter.max), value)
-    if parameter.odd:
-        value = int(round(value))
-        if value % 2 == 0:
-            value += 1
-        if parameter.max is not None and value > parameter.max:
-            value -= 2
-        if parameter.min is not None and value < parameter.min:
-            value = int(parameter.min)
-        return value
-    return int(value) if parameter.step == 1 else value
-
-
 def process_goal(data: bytes, content_type: str | None, goal_id: str, parameters: dict[str, Any]) -> ProcessedImage:
     validate_file(content_type, data)
-    goal = goal_by_id(goal_id)
-    operation = operation_by_id(goal.operation_id)
+    goal_by_id(goal_id)
+    if parameters:
+        # The public DermaScope operation has no tunable parameters yet. Keep the
+        # field accepted for stable multipart shape, but do not let it affect output.
+        parameters = {}
     image = decode_image(data)
-    normalized = normalize_parameters(operation, parameters)
-    result, warnings, analysis = _apply_operation(image, operation, normalized)
+    result, warnings, analysis = _analyze_facial_skin(image)
     success, encoded = cv.imencode(".png", result)
     if not success:
         raise ApiError("EXPORT_FAILED", "The processed image could not be encoded.", 500)
@@ -289,74 +107,11 @@ def process_goal(data: bytes, content_type: str | None, goal_id: str, parameters
         media_type="image/png",
         width=width,
         height=height,
-        operation_id=operation.id,
-        output_mode=operation.output_mode,
+        operation_id=SKIN_ANALYSIS_OPERATION_ID,
+        output_mode="overlay",
         warnings=tuple(warnings),
         analysis=analysis,
     )
-
-
-def _apply_operation(image: np.ndarray, operation: Operation, p: dict[str, Any]) -> tuple[np.ndarray, list[str], dict[str, Any] | None]:
-    warnings: list[str] = []
-    if operation.id == "facial-skin-analysis":
-        return _analyze_facial_skin(image)
-    if operation.id == "gaussian-blur":
-        return cv.GaussianBlur(image, (p["kernelSize"], p["kernelSize"]), p["sigma"]), warnings, None
-    if operation.id == "median-filter":
-        return cv.medianBlur(image, p["kernelSize"]), warnings, None
-    if operation.id == "bilateral-filter":
-        return cv.bilateralFilter(image, p["diameter"], p["sigmaColor"], p["sigmaSpace"]), warnings, None
-    if operation.id == "grayscale":
-        warnings.append("Hasil dibuat grayscale.")
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        return cv.cvtColor(gray, cv.COLOR_GRAY2BGR), warnings, None
-    if operation.id == "histogram-equalization":
-        warnings.append("Histogram equalization memakai output grayscale di MVP.")
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        return cv.cvtColor(cv.equalizeHist(gray), cv.COLOR_GRAY2BGR), warnings, None
-    if operation.id == "brightness-contrast":
-        return cv.convertScaleAbs(image, alpha=p["contrast"], beta=p["brightness"]), warnings, None
-    if operation.id == "gamma-correction":
-        gamma = max(0.01, p["gamma"])
-        table = np.array([min(255, round(255 * ((i / 255) ** (1 / gamma)))) for i in range(256)], dtype=np.uint8)
-        return cv.LUT(image, table), warnings, None
-    if operation.id == "sharpen":
-        blur = cv.GaussianBlur(image, (p["radius"], p["radius"]), 0)
-        return cv.addWeighted(image, 1 + p["amount"], blur, -p["amount"], 0), warnings, None
-    if operation.id == "canny-edge":
-        warnings.append("Canny menghasilkan peta tepi.")
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        edges = cv.Canny(gray, p["threshold1"], p["threshold2"], apertureSize=int(p["apertureSize"]))
-        return cv.cvtColor(edges, cv.COLOR_GRAY2BGR), warnings, None
-    if operation.id == "otsu-threshold":
-        warnings.append("Otsu menghasilkan output biner.")
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        mode = cv.THRESH_BINARY_INV if p["invert"] else cv.THRESH_BINARY
-        _, binary = cv.threshold(gray, 0, 255, mode + cv.THRESH_OTSU)
-        return cv.cvtColor(binary, cv.COLOR_GRAY2BGR), warnings, None
-    if operation.id == "adaptive-threshold":
-        warnings.append("Adaptive threshold menghasilkan output biner.")
-        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-        method = cv.ADAPTIVE_THRESH_MEAN_C if p["method"] == "mean" else cv.ADAPTIVE_THRESH_GAUSSIAN_C
-        binary = cv.adaptiveThreshold(gray, 255, method, cv.THRESH_BINARY, p["blockSize"], p["constant"])
-        return cv.cvtColor(binary, cv.COLOR_GRAY2BGR), warnings, None
-    if operation.id in {"resize-bilinear", "resize-bicubic", "resize-lanczos"}:
-        interpolation = {
-            "resize-bilinear": cv.INTER_LINEAR,
-            "resize-bicubic": cv.INTER_CUBIC,
-            "resize-lanczos": cv.INTER_LANCZOS4,
-        }[operation.id]
-        return cv.resize(image, None, fx=p["scale"], fy=p["scale"], interpolation=interpolation), warnings, None
-    if operation.id in {"dilation", "erosion", "opening", "closing"}:
-        kernel = np.ones((p["kernelSize"], p["kernelSize"]), dtype=np.uint8)
-        if operation.id == "dilation":
-            return cv.dilate(image, kernel, iterations=p["iterations"]), warnings, None
-        if operation.id == "erosion":
-            return cv.erode(image, kernel, iterations=p["iterations"]), warnings, None
-        if operation.id == "opening":
-            return cv.morphologyEx(image, cv.MORPH_OPEN, kernel, iterations=p["iterations"]), warnings, None
-        return cv.morphologyEx(image, cv.MORPH_CLOSE, kernel, iterations=p["iterations"]), warnings, None
-    raise ApiError("UNKNOWN_OPERATION", "Unknown image operation.", 400)
 
 
 def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict[str, Any]]:
@@ -441,11 +196,11 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
 
 
 CONDITION_META: dict[str, dict[str, Any]] = {
-    "acne": {"label": "Jerawat", "short": "Acne", "hex": "#ef5b63", "bgr": (99, 91, 239), "weight": 2.2, "count_weight": 1.8},
-    "dark_spots": {"label": "Noda gelap", "short": "Spot", "hex": "#b7791f", "bgr": (31, 121, 183), "weight": 2.0, "count_weight": 0.8},
-    "wrinkles": {"label": "Kerutan", "short": "Line", "hex": "#7c3aed", "bgr": (237, 58, 124), "weight": 1.7, "count_weight": 0.15},
-    "redness": {"label": "Kemerahan", "short": "Red", "hex": "#e11d48", "bgr": (72, 29, 225), "weight": 1.6, "count_weight": 0.25},
-    "pores": {"label": "Pori besar", "short": "Pore", "hex": "#0f766e", "bgr": (110, 118, 15), "weight": 1.4, "count_weight": 0.08},
+    "acne": {"label": "Jerawat", "short": "Acne", "hex": "#ff5a1f", "bgr": (31, 90, 255), "weight": 2.2, "count_weight": 1.8},
+    "dark_spots": {"label": "Noda gelap", "short": "Spot", "hex": "#8a4d00", "bgr": (0, 77, 138), "weight": 2.0, "count_weight": 0.8},
+    "wrinkles": {"label": "Kerutan", "short": "Line", "hex": "#007b8f", "bgr": (143, 123, 0), "weight": 1.7, "count_weight": 0.15},
+    "redness": {"label": "Kemerahan", "short": "Red", "hex": "#d1007f", "bgr": (127, 0, 209), "weight": 1.6, "count_weight": 0.25},
+    "pores": {"label": "Pori besar", "short": "Pore", "hex": "#617a1f", "bgr": (31, 122, 97), "weight": 1.4, "count_weight": 0.08},
 }
 
 
@@ -573,13 +328,14 @@ def _render_overlay(image: np.ndarray, face: tuple[int, int, int, int], masks: d
     blended = cv.addWeighted(result, 0.86, color_layer, 0.30, 0)
     result[np.any(color_layer > 0, axis=2)] = blended[np.any(color_layer > 0, axis=2)]
     x, y, w, h = face
-    cv.rectangle(result, (x, y), (x + w, y + h), (34, 176, 137), 2)
-    _put_label(result, "Face ROI", (x + 8, max(18, y + 22)), (34, 176, 137))
+    survey_color = (180, 166, 0)
+    cv.rectangle(result, (x, y), (x + w, y + h), survey_color, 2)
+    _put_label(result, "Face ROI", (x + 8, max(18, y + 22)), survey_color)
     for _zone_id, label, (zx, zy, zw, zh) in _zone_rects(w, h):
         top_left = (x + zx, y + zy)
         bottom_right = (x + zx + zw, y + zy + zh)
-        cv.rectangle(result, top_left, bottom_right, (34, 176, 137), 1)
-        _put_label(result, label, (top_left[0] + 4, top_left[1] + 16), (34, 176, 137), scale=0.38)
+        cv.rectangle(result, top_left, bottom_right, survey_color, 1)
+        _put_label(result, label, (top_left[0] + 4, top_left[1] + 16), survey_color, scale=0.38)
     _draw_condition_annotations(result, masks)
     return result
 

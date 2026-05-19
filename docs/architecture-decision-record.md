@@ -1,141 +1,110 @@
 # Architecture Decision Record
 
-## ADR-002: Focused Facial Skin Analysis Product
+## ADR-002: Focused Facial Skin Signal Mapping Product
 
-Status: Proposed
+Status: Accepted
 
-Date: 2026-05-13
-
-DermaScope replaces the previous general ImgLab workbench direction. The runtime remains React + Vite for the frontend and FastAPI + OpenCV-Python for the backend, but the product contract is now one focused analysis flow: upload a face photo, run skin-condition analysis, return an overlay PNG, and expose structured scores through `X-DermaScope-Analysis`.
-
-The app remains database-free. Uploaded files are validated at the API boundary, decoded in memory, analyzed with classical OpenCV heuristics, and returned without persistent storage. The backend uses Haar cascade face detection when available and a centered face-region fallback when needed.
-
-The previous general image processing ADR remains below as legacy context only.
-
-## ADR-001: Browser-First Image Processing Toolkit
-
-Status: Proposed
-
-Date: 2026-05-07
+Date: 2026-05-19
 
 ## Context
 
-ImgLab needs to demonstrate digital image processing methods such as restoration, enhancement, upscaling, edge detection, thresholding, and morphology. The user asked for documentation first and asked that the project only list methods that will really be implemented.
+DermaScope is a production-facing facial skin signal mapping app. A user uploads or captures one face photo, the backend analyzes visible image-processing signals, and the frontend returns an overlay, category scores, a total Skin Health Score, and a zone-by-zone breakdown.
 
-The repository does not yet contain an application runtime, package metadata, backend code, or database schema. Technical decisions must therefore be explicit recommendations, not assumptions from existing code.
+The repository folder may still be named `imglab`, but the active product, public UI, and API contract are DermaScope.
 
 ## Decision
 
-Build ImgLab as a browser-first single page application.
+Use a focused fullstack monolith shape:
 
-Use OpenCV.js as the first client-side image processing engine, with a FastAPI backend available for server-side processing when preferred. Keep image files local in the browser for MVP unless backend mode is explicitly used.
+- Frontend runtime: React + Vite with Tailwind CSS and DaisyUI.
+- Backend runtime: FastAPI with OpenCV-Python.
+- Active UI: `frontend/index.html`, `frontend/src/App.jsx`, and `frontend/src/index.css`.
+- Active operation contract: `frontend/src/utils/operations.js`.
+- Active processing engine: `backend/imglab_api/processing.py`.
+- Active transport: `backend/imglab_api/main.py`.
+- Development lane: split frontend and backend services through `compose.yaml`.
+- Production lane: one FastAPI service serving both `/api/*` and built React assets through `compose.prod.yaml` and `docker/monolith.Dockerfile`.
 
-The current implementation uses React + Vite with Tailwind CSS and DaisyUI. The legacy static HTML build remains in the repo but is no longer the primary UI.
-
-The project includes a Python FastAPI backend for server-side image processing. This backend is optional at runtime: the UI can process locally or send the image to `POST /api/process` when backend mode is enabled.
-
-Recommended implementation shape:
-
-- UI shell: `frontend/index.html`, `frontend/src/App.jsx`, and `frontend/src/index.css`.
-- Operation contract: `frontend/src/utils/operations.js` and `src/operations.js` (legacy).
-- Processing engine: `frontend/src/utils/image-processing.js` (client) and `backend/imglab_api/processing.py` (server).
-- Backend processing engine: `backend/imglab_api/processing.py`, mapping goal IDs to OpenCV-Python operations.
-- Backend transport: `backend/imglab_api/main.py`, exposing health, goal metadata, and process endpoints.
-- Static server: `scripts/static-server.js` for local development without external npm packages.
-- Docker development lane: `compose.yaml`.
-- Docker production lane: `compose.prod.yaml`.
-- Export boundary: writes the processed canvas to a local downloadable file.
+Expose one user-facing goal: `skin-health-analysis`. Map it to one internal operation: `facial-skin-analysis`.
 
 ## Rationale
 
-This architecture matches the current project size and coursework goal.
+This architecture matches the current product evidence:
 
-- It avoids a backend before there is a real server-side need.
-- It keeps user images private by default because files stay on the local device.
-- It makes the processing result visible immediately through canvas previews.
-- It keeps deployment simple: static assets can be served by a basic web server or container.
-- It leaves room for a future server worker if deep-learning super-resolution is approved later.
-
-## Runtime Recommendation
-
-Use React + Vite for the current MVP frontend.
-
-Use OpenCV.js for client-side operations where needed, and FastAPI with OpenCV-Python for optional backend processing. The backend accepts multipart image uploads, validates file type and size, processes by `goal_id`, and returns PNG bytes.
-
-Use Docker Compose for development and production. The React frontend is the primary UI surface.
-
-Docker is now materialized:
-
-- Development uses `compose.yaml` with frontend port `4173` and backend port `8000`.
-- Production uses `compose.prod.yaml` with Nginx on port `8080` and backend-only internal exposure.
-- Production routes `/api/` through Nginx to the backend, so backend mode can use same-origin API calls.
-
-### Evidence
-
-- OpenCV.js official docs cover browser usage, `cv.imread`, `cv.imshow`, and image processing tutorials. Source: https://docs.opencv.org/4.x/d0/d84/tutorial_js_usage.html, fetched 2026-05-07.
-- OpenCV.js image processing docs list smoothing, thresholding, morphology, histograms, Canny edge detection, and geometric transforms. Source: https://docs.opencv.org/4.x/d2/df0/tutorial_js_table_of_contents_imgproc.html, fetched 2026-05-07.
-- FastAPI official docs document `UploadFile` for receiving uploaded files. Source: https://fastapi.tiangolo.com/reference/uploadfile/, fetched 2026-05-07.
-- OpenCV official docs document image decoding and encoding APIs used for server-side image bytes. Source: https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html, fetched 2026-05-07.
-- Vite official docs describe a dev server, production build command, and React template support. This remains a future option, not the current implementation. Source: https://vite.dev/guide/, fetched 2026-05-07.
-- Docker Compose official docs describe `compose.yaml` as the preferred Compose file and explain service-based app definitions. Source: https://docs.docker.com/compose/intro/compose-application-model/, fetched 2026-05-07.
-- Docker Dockerfile best practices recommend minimal trusted base images, multi-stage builds, `.dockerignore`, and avoiding unnecessary packages. Source: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/, fetched 2026-05-07.
-- Docker Compose file reference documents the Compose Specification as the current format and Compose V2 as the current CLI implementation. Source: https://docs.docker.com/reference/compose-file/, fetched 2026-05-07.
-- Docker multi-stage docs describe named build stages and copying only needed files into final stages. Source: https://docs.docker.com/build/building/multi-stage/, fetched 2026-05-07.
-
-## Public Boundaries
-
-ImgLab should expose these internal contracts before implementation:
-
-- `ImageInput`: validated local image file and decoded bitmap metadata.
-- `OperationDefinition`: method ID, category, parameter schema, default values, and processing handler.
-- `ProcessingRequest`: source image reference, operation ID, and parameter values.
-- `ProcessingResult`: processed bitmap or canvas data, timing metadata, warnings, and export metadata.
-- `ProcessingError`: stable error code, safe message, and optional recovery action.
+- The app needs one clear upload/camera-to-analysis flow.
+- OpenCV-Python is a better fit than browser-only processing for face detection, skin masks, condition masks, and overlay generation.
+- A database is unnecessary because the product does not store accounts, image history, overlays, or analysis records.
+- A single backend deploy remains simpler than splitting services for the current scope.
+- Keeping the frontend registry focused prevents the old general image-processing workbench from drifting back into the public contract.
 
 ## Data Decision
 
-Do not add a database for MVP. Store images and settings only in browser memory. Use optional local browser storage later only for non-sensitive UI preferences.
+Do not add a database for the current scope. Store selected images, object URLs, overlays, and metadata only in browser memory for the current session. Process uploads in backend memory and return the overlay immediately.
 
-## Auth Decision
+## API Decision
 
-Do not add authentication for MVP. There are no accounts, shared assets, or remote jobs in the first version.
+Expose:
+
+- `GET /api/health`
+- `GET /api/goals`
+- `POST /api/process`
+
+`POST /api/process` accepts one multipart file, `goal_id=skin-health-analysis`, and optional `parameters={}`. It returns an `image/png` body plus `X-DermaScope-*` headers. See `docs/api-contract.md`.
+
+## Security and Privacy Decision
+
+Do not add authentication for the current scope. There are no accounts, shared assets, stored records, or privileged resources.
+
+Protect the boundary by:
+
+- validating upload content type and size;
+- decoding images in memory;
+- returning safe `{ code, message }` errors;
+- avoiding raw upload logs;
+- avoiding stored image history.
+
+## Rejected Alternatives
+
+### Keep the General ImgLab Workbench
+
+Rejected. The user-facing product is now DermaScope. Keeping a parallel general workbench creates stale UI, stale docs, and a larger unsupported contract.
+
+### Browser-Only OpenCV Processing
+
+Rejected for the active scope. DermaScope needs server-side OpenCV processing for face detection, skin mask generation, condition masks, overlay rendering, and consistent API behavior.
+
+### Multi-Service Architecture
+
+Rejected for the current scope. There is no evidence for independent scaling, separate teams, hard fault isolation, or different deploy cadence.
+
+### Database-Backed History
+
+Rejected for privacy and scope. The product promise is one-photo, per-session analysis without stored image history.
+
+## Evidence
+
+- React official docs: https://react.dev/learn/creating-a-react-app, fetched 2026-05-19.
+- Vite official docs: https://vite.dev/guide/, fetched 2026-05-19.
+- Tailwind CSS Vite installation docs: https://tailwindcss.com/docs/installation/using-vite, fetched 2026-05-19.
+- DaisyUI install docs: https://daisyui.com/docs/install/, fetched 2026-05-19.
+- FastAPI `UploadFile` docs: https://fastapi.tiangolo.com/reference/uploadfile/, fetched 2026-05-07.
+- OpenCV image codec docs: https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html, fetched 2026-05-07.
 
 ## Consequences
 
 Positive:
 
-- The first version stays small and testable.
-- Users can try processing without account setup.
-- Privacy risk is lower because files are not uploaded.
-- The tool can run as a static site when backend mode is off.
-- The backend gives a path for heavier server-side processing without changing the goal-first UI.
+- The active contract is small and testable.
+- The UI can stay focused on one production workflow.
+- Privacy risk stays lower because images are not persisted.
+- The backend can tune image-processing heuristics without changing the frontend contract.
 
 Tradeoffs:
 
-- Very large images can stress browser or backend memory.
-- Deep-learning super-resolution is not practical in the first version.
-- Browser support must be tested with canvas, worker, and OpenCV.js loading behavior.
-
-## Rejected Alternatives
-
-### Python Backend First
-
-Rejected for MVP. Python with native OpenCV is strong for image processing, but it adds upload handling, storage risk, server setup, and deployment work before the project needs those pieces.
-
-### Deep-Learning Super-Resolution First
-
-Rejected for MVP. It would shift the project from explainable image processing methods into model packaging and compute constraints.
-
-### Multi-Service Architecture
-
-Rejected for MVP. There is no evidence for independent scaling, separate teams, or hard fault-isolation needs.
-
-## Assumptions to Validate
-
-- The current browser-first web app direction remains approved.
-- The first implementation can use OpenCV.js by default and OpenCV-Python when backend mode is enabled.
-- The first version does not need user accounts, a database, or cloud uploads.
+- Backend availability is required for analysis.
+- Heuristic quality must be tuned with real face photos across lighting and skin tones.
+- If saved history or model-backed analysis is added later, the architecture and privacy docs must be revisited.
 
 ## Next Validation Action
 
-Run the development and production Docker lanes, then manually test browser processing and backend processing with the same sample image.
+Run automated validation, then manually test upload, camera capture, service-offline state, successful analysis, fallback warning, reset, and mobile recomposition with real face photos.

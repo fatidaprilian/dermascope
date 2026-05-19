@@ -1,6 +1,6 @@
-# ImgLab Frontend
+# DermaScope Frontend
 
-This is the React + Vite frontend for ImgLab, a public-facing image processing workbench. The UI lets users upload an image, choose a goal-based operation, compare the processed result with a test-strip wipe, and export the result as PNG, JPEG, or WebP.
+This is the React + Vite frontend for DermaScope. The UI lets users upload or capture one face photo, send it to the backend analysis API, and inspect the returned overlay, Skin Health Score, condition categories, and zone breakdown.
 
 ## Commands
 
@@ -13,10 +13,10 @@ npm run lint
 
 ## Key Files
 
-- `src/App.jsx`: workbench UI, upload flow, processing calls, comparison wipe, and export format workflow.
-- `src/index.css`: shared tokens, layout primitives, and interaction states.
-- `src/utils/operations.js`: goal and operation registry.
+- `src/App.jsx`: upload/camera intake, backend calls, analysis result, overlay, scores, and zone UI.
+- `src/index.css`: DermaScope design tokens, responsive layout, motion, and component states.
+- `src/utils/operations.js`: single skin-analysis goal and operation registry.
 
 ## Runtime Notes
 
-The frontend expects the optional backend at same-origin `/api` in production or through the Vite proxy during local development. Product copy should avoid scaffold, MVP, demo, or coursework framing.
+The frontend expects the backend at same-origin `/api` in production or through the Vite proxy during local development. Product copy must avoid diagnosis, treatment, routine/product recommendations, scaffold language, demo language, and coursework framing.
