@@ -144,6 +144,14 @@ type SkinAnalysisResult = {
     dominantConcern: string;
     skinPixels: number;
   }>;
+  textureFeatures: Array<{
+    id: "forehead" | "left_cheek" | "right_cheek" | "nose" | "chin";
+    label: string;
+    contrast: number;
+    energy: number;
+    homogeneity: number;
+    correlation: number;
+  }>;
   legend: Array<{
     id: "acne" | "dark_spots" | "wrinkles" | "redness" | "pores";
     label: string;
@@ -203,6 +211,6 @@ Contract validation must cover:
 1. The frontend registry exposes only `facial-skin-analysis`.
 2. `skin-health-analysis` maps to `facial-skin-analysis`.
 3. Backend preprocessing returns a cropped PNG for a valid image.
-4. Backend processing returns a PNG plus analysis metadata for a valid image.
+4. Backend processing returns a PNG plus analysis metadata, including texture features, for a valid image.
 5. Backend rejects unknown goals, wrong file types, empty uploads, and oversized uploads.
 6. Frontend handles offline backend, malformed metadata, and stale responses without replacing newer state.

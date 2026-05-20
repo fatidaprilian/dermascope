@@ -12,10 +12,10 @@
     "durableFacts": [
       "The active product direction is DermaScope, not the legacy ImgLab workbench.",
       "Architecture is a React + Vite + Tailwind CSS + DaisyUI frontend with a FastAPI plus OpenCV-Python backend.",
-      "The active API exposes /api/health, /api/goals, and /api/process.",
+      "The active API exposes /api/health, /api/goals, /api/preprocess, and /api/process.",
       "The active operation contract exposes one public goal: skin-health-analysis mapped to facial-skin-analysis.",
       "The active product direction is DermaScope: upload one face photo, analyze skin-condition signals, show an overlay, category scores, Skin Health Score, and zone breakdown.",
-      "Backend analysis estimates acne, dark spots, wrinkles, redness, and pores with classical OpenCV heuristics.",
+      "Backend analysis estimates acne, dark spots, wrinkles, redness, pores, and GLCM texture features with classical image-processing heuristics.",
       "The app remains database-free and does not persist uploaded image files.",
       "Production deployment is now a monolith: one FastAPI container serves both /api routes and the built React frontend."
     ]
@@ -43,7 +43,9 @@
       "Added DermaScope X-DermaScope-* response headers including processing time.",
       "Added npm run validate and installed backend requirements into .venv so backend tests can run locally.",
       "Added /api/preprocess so uploaded photos show a cropped, lighting-normalized face preview before analysis.",
-      "Changed analysis output to render the overlay on the cropped face region so distant photos stay focused on the face."
+      "Changed analysis output to render the overlay on the cropped face region so distant photos stay focused on the face.",
+      "Added a separate Google Colab notebook under notebooks/dermascope_colab for report screenshots and non-deploy image-processing explanation.",
+      "Added backend GLCM textureFeatures metadata so the notebook method and deployed API stay aligned."
     ],
     "pendingIssues": [
       "Verify /api/process quality with real face photos after threshold tuning.",
@@ -53,7 +55,8 @@
     "nextBestActions": [
       "Run the Vite dev server and review the DermaScope UI.",
       "Test skin analysis with varied face photos and compare overlay metadata to visible marks.",
-      "Tune thresholds after manual photo review."
+      "Tune thresholds after manual photo review.",
+      "Use the Colab notebook to collect multi-photo feature, coverage, zone, GLCM, and standard deviation tables for the report."
     ],
     "validationState": [
       "npm run build passed after DermaScope redesign.",

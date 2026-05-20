@@ -159,6 +159,7 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
     zones = _zone_rects(w, h)
     condition_masks = {key: np.zeros(working_image.shape[:2], dtype=np.uint8) for key in CONDITION_META}
     zone_payload: list[dict[str, Any]] = []
+    texture_payload: list[dict[str, Any]] = []
     category_accumulator = {key: {"coverage": 0.0, "count": 0} for key in CONDITION_META}
 
     for zone_id, label, rect in zones:
@@ -167,6 +168,7 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
         zone_skin = skin_mask[zy : zy + zh, zx : zx + zw]
         zone_area = max(1, int(np.count_nonzero(zone_skin)))
         measurements = _measure_zone(zone_img, zone_skin)
+        texture_payload.append({"id": zone_id, "label": label, **_texture_features(zone_img, zone_skin)})
 
         concerns: dict[str, float] = {}
         for key, measurement in measurements.items():
@@ -220,6 +222,7 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
         "warning": warnings[0] if warnings else None,
         "categories": category_payload,
         "zones": zone_payload,
+        "textureFeatures": texture_payload,
         "legend": [
             {"id": key, "label": meta["label"], "color": meta["hex"]}
             for key, meta in CONDITION_META.items()
@@ -340,6 +343,49 @@ def _measure_zone(zone: np.ndarray, skin: np.ndarray) -> dict[str, dict[str, Any
         "wrinkles": _measurement(wrinkles, skin),
         "redness": _measurement(redness, skin),
         "pores": _measurement(pores, skin),
+    }
+
+
+def _texture_features(zone: np.ndarray, skin: np.ndarray) -> dict[str, float]:
+    gray = cv.cvtColor(zone, cv.COLOR_BGR2GRAY)
+    gray = cv.resize(gray, (128, 128), interpolation=cv.INTER_AREA)
+    valid = cv.resize(skin, (128, 128), interpolation=cv.INTER_NEAREST) > 0
+    levels = 64
+    quantized = np.clip(gray // 4, 0, levels - 1).astype(np.uint8)
+
+    left = quantized[:, :-1]
+    right = quantized[:, 1:]
+    pair_mask = valid[:, :-1] & valid[:, 1:]
+    if not np.any(pair_mask):
+        pair_mask = np.ones_like(left, dtype=bool)
+
+    matrix = np.zeros((levels, levels), dtype=np.float64)
+    np.add.at(matrix, (left[pair_mask], right[pair_mask]), 1)
+    matrix = matrix + matrix.T
+    total = matrix.sum()
+    if total <= 0:
+        return {"contrast": 0.0, "energy": 0.0, "homogeneity": 0.0, "correlation": 0.0}
+
+    matrix /= total
+    rows, cols = np.indices(matrix.shape)
+    contrast = np.sum(matrix * (rows - cols) ** 2)
+    energy = np.sqrt(np.sum(matrix**2))
+    homogeneity = np.sum(matrix / (1 + np.abs(rows - cols)))
+
+    mean_i = np.sum(rows * matrix)
+    mean_j = np.sum(cols * matrix)
+    std_i = np.sqrt(np.sum(((rows - mean_i) ** 2) * matrix))
+    std_j = np.sqrt(np.sum(((cols - mean_j) ** 2) * matrix))
+    if std_i == 0 or std_j == 0:
+        correlation = 1.0
+    else:
+        correlation = np.sum(((rows - mean_i) * (cols - mean_j) * matrix) / (std_i * std_j))
+
+    return {
+        "contrast": round(float(contrast), 4),
+        "energy": round(float(energy), 4),
+        "homogeneity": round(float(homogeneity), 4),
+        "correlation": round(float(correlation), 4),
     }
 
 

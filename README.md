@@ -16,6 +16,7 @@ DermaScope is for people who need a focused, explainable facial skin signal repo
 - Show a cropped, lighting-normalized face preview after preprocessing.
 - Split the face into forehead, left cheek, right cheek, nose, and chin zones.
 - Estimate acne, dark spots, wrinkles, redness, and enlarged pores with classical image-processing heuristics.
+- Return Gray Level Co-occurrence Matrix (GLCM) texture features in the analysis metadata.
 - Return an overlay PNG that highlights problem areas by condition.
 - Show per-category scores, an overall Skin Health Score, and per-zone breakdowns.
 - Keep images out of persistent storage.

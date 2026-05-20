@@ -16,7 +16,7 @@ The active flow is facial skin signal mapping, not a general image-processing wo
 8. Frontend sends `file`, `goal_id=skin-health-analysis`, and `parameters={}` to `POST /api/process`.
 9. Backend validates multipart input, JSON parameter shape, content type, file size, and goal ID.
 10. Backend decodes the image with OpenCV-Python.
-11. Backend detects and crops the face region, normalizes lighting, estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, and pores.
+11. Backend detects and crops the face region, normalizes lighting, estimates a skin mask, splits the face into forehead, cheeks, nose, and chin, and measures acne, dark spots, wrinkles, redness, pores, and Gray Level Co-occurrence Matrix (GLCM) texture features.
 12. Backend returns a cropped face overlay PNG plus `X-DermaScope-Analysis` and processing metadata headers.
 13. Frontend ignores stale responses, parses metadata safely, and displays the overlay, Skin Health Score, condition rows, and zone sectors.
 
@@ -30,7 +30,7 @@ The active flow is facial skin signal mapping, not a general image-processing wo
 | Image ready | Valid file or camera capture accepted. | Show face map surface, file metadata, reset, and analysis action. |
 | Preprocessed | `/api/preprocess` returns a PNG. | Replace original preview with cropped, lighting-normalized face preview. |
 | Processing | User starts analysis. | Disable analysis, keep current image visible, announce tracing state. |
-| Mapped | PNG and metadata return. | Show overlay, score, categories, zones, warnings, and processing time. |
+| Mapped | PNG and metadata return. | Show overlay, score, categories, zones, warnings, and processing time. Texture metadata is available in the response header. |
 | Error | Validation, camera, network, process, or metadata parsing fails. | Show inline recoverable error and keep current usable state. |
 
 ## Backend Flow

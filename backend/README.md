@@ -26,7 +26,7 @@ The API runs at `http://localhost:8000`.
 
 `POST /api/preprocess` accepts `multipart/form-data` with `file`. It returns a cropped, lighting-normalized face PNG.
 
-`POST /api/process` accepts `multipart/form-data` with `file`, `goal_id=skin-health-analysis`, and optional `parameters` JSON object string. It returns an overlay PNG with `X-DermaScope-*` metadata headers.
+`POST /api/process` accepts `multipart/form-data` with `file`, `goal_id=skin-health-analysis`, and optional `parameters` JSON object string. It returns an overlay PNG with `X-DermaScope-*` metadata headers, including category scores, zone results, and GLCM texture features.
 
 ## Validation
 

@@ -30,6 +30,7 @@ DermaScope helps users inspect visible facial skin-condition signals from a norm
 7. Return a preprocessed face crop preview before analysis.
 8. Return an overlay PNG plus structured metadata in `X-DermaScope-Analysis`.
 9. Show a Skin Health Score, category scores, condition counts/coverage, warnings, and zone breakdown.
+10. Return GLCM texture features in analysis metadata for report tables and method validation.
 
 ## Explicitly Out of Scope
 

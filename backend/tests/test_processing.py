@@ -33,6 +33,9 @@ class ProcessingTests(unittest.TestCase):
         assert result.analysis is not None
         self.assertIn("overallScore", result.analysis)
         self.assertEqual(len(result.analysis["categories"]), 5)
+        self.assertEqual(len(result.analysis["textureFeatures"]), 5)
+        self.assertIn("contrast", result.analysis["textureFeatures"][0])
+        self.assertIn("energy", result.analysis["textureFeatures"][0])
 
     def test_preprocess_face_returns_cropped_png(self) -> None:
         result = preprocess_face(sample_png(), "image/png")
