@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,49 +7,52 @@
 @layer base {
   :root {
     color-scheme: light;
-    --font-display: "Archivo Black", "Inter", sans-serif;
-    --font-body: "Inter", system-ui, sans-serif;
+    --font-display: "Lora", Georgia, serif;
+    --font-body: "Outfit", system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
-    --surface-sheet: #f7f4e8;
-    --surface-field: #e7ead7;
-    --surface-inked: #10100d;
-    --ink-black: #10100d;
-    --ink-muted: #4e5349;
-    --line-hard: #10100d;
-    --line-soft: #b7baa7;
-    --signal-acne: #ff5a1f;
-    --signal-spot: #8a4d00;
-    --signal-wrinkle: #007b8f;
-    --signal-redness: #d1007f;
-    --signal-pore: #617a1f;
-    --survey-cyan: #00a6b4;
-    --survey-orange: #ff5a1f;
-    --survey-magenta: #d1007f;
-    --focus-ring: #005fcc;
-    --offset-block: 6px 6px 0 var(--ink-black);
+    
+    /* Tactile Printmaker Colors */
+    --surface-sheet: #fdfbf7;   /* Natural warm ivory paper */
+    --surface-field: #efece6;   /* Ink stone gray */
+    --ink-black: #0a0b0b;       /* Dense carbon black */
+    --ink-muted: #555959;       /* Graphite metadata */
+    --line-hard: #0a0b0b;       /* Crisp metal boundaries */
+    --line-soft: #cccccc;       /* Thin layout ticks */
+    --focus-ring: #e0462d;      /* Vermilion focus ring */
+    
+    /* Separation Inks */
+    --signal-acne: #e0462d;     /* Vermilion */
+    --signal-spot: #785942;     /* Umber */
+    --signal-wrinkle: #2b5cb5;   /* Cobalt */
+    --signal-redness: #c92464;   /* Rhodamine */
+    --signal-pore: #18785a;      /* Veridian */
+    
+    --survey-cyan: #2b5cb5;
+    --survey-orange: #e0462d;
+    --survey-magenta: #c92464;
   }
 
   [data-theme="dermascope"] {
-    --color-base-100: #f7f4e8;
-    --color-base-200: #e7ead7;
-    --color-base-300: #b7baa7;
-    --color-base-content: #10100d;
-    --color-primary: #10100d;
-    --color-primary-content: #f7f4e8;
-    --color-secondary: #007b8f;
+    --color-base-100: #fdfbf7;
+    --color-base-200: #efece6;
+    --color-base-300: #cccccc;
+    --color-base-content: #0a0b0b;
+    --color-primary: #0a0b0b;
+    --color-primary-content: #fdfbf7;
+    --color-secondary: #2b5cb5;
     --color-secondary-content: #ffffff;
-    --color-accent: #ff5a1f;
-    --color-accent-content: #10100d;
-    --color-neutral: #10100d;
-    --color-neutral-content: #f7f4e8;
-    --color-info: #007b8f;
-    --color-success: #617a1f;
-    --color-warning: #8a4d00;
-    --color-error: #d1007f;
-    --radius-selector: 0.125rem;
-    --radius-field: 0.125rem;
-    --radius-box: 0.125rem;
-    --border: 2px;
+    --color-accent: #e0462d;
+    --color-accent-content: #0a0b0b;
+    --color-neutral: #0a0b0b;
+    --color-neutral-content: #fdfbf7;
+    --color-info: #2b5cb5;
+    --color-success: #18785a;
+    --color-warning: #785942;
+    --color-error: #c92464;
+    --radius-selector: 0px;
+    --radius-field: 2px;
+    --radius-box: 2px;
+    --border: 1px;
     --depth: 0;
     --noise: 0;
   }
@@ -72,8 +75,9 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
     text-wrap: balance;
+    font-weight: 700;
   }
 
   button,
@@ -87,8 +91,8 @@
   button:focus-visible,
   [role="button"]:focus-visible,
   input:focus-visible {
-    outline: 4px solid var(--focus-ring);
-    outline-offset: 4px;
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   code,
@@ -99,66 +103,60 @@
 }
 
 @layer components {
+  /* Tactile Press Bed Shell */
   .derma-shell {
     min-height: 100vh;
     isolation: isolate;
+    background-color: var(--surface-sheet);
   }
 
   .survey-masthead {
-    @apply mx-auto grid w-full max-w-7xl gap-4 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-stretch lg:px-8;
+    @apply mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:px-8 border-b;
+    border-color: var(--line-soft);
   }
 
   .brand-block {
-    @apply flex min-w-0 items-stretch border-2;
-    border-color: var(--line-hard);
-    background: var(--surface-sheet);
-    box-shadow: var(--offset-block);
+    @apply flex min-w-0 items-center gap-4;
   }
 
   .product-mark {
-    @apply flex w-16 shrink-0 items-center justify-center border-r-2 font-mono text-sm font-bold;
+    @apply flex h-12 w-12 shrink-0 items-center justify-center border font-mono text-sm font-bold tracking-wider;
     color: var(--surface-sheet);
     background: var(--ink-black);
     border-color: var(--line-hard);
   }
 
-  .brand-block > div:last-child {
-    @apply min-w-0 px-4 py-3;
-  }
-
   .brand-block h1 {
-    @apply text-2xl leading-none sm:text-4xl lg:text-5xl;
+    @apply text-xl leading-tight sm:text-2xl lg:text-3xl font-bold;
     color: var(--ink-black);
-    overflow-wrap: anywhere;
   }
 
   .kicker {
-    @apply mb-1 font-mono text-[0.68rem] font-bold uppercase;
+    @apply mb-0.5 font-mono text-[0.68rem] font-bold uppercase tracking-widest;
     color: var(--ink-muted);
-    letter-spacing: 0;
   }
 
   .status-cluster {
-    @apply grid gap-2 sm:grid-cols-2 lg:w-[380px] lg:grid-cols-1;
+    @apply grid gap-2 sm:grid-cols-2 lg:w-[410px] lg:grid-cols-1;
   }
 
   .status-pill,
   .privacy-pill,
   .intake-facts span,
   .condition-legend span {
-    @apply inline-flex items-center border-2 bg-base-100 font-mono text-xs font-bold;
-    border-color: var(--line-hard);
+    @apply inline-flex items-center border bg-base-100 font-mono text-xs font-semibold;
+    border-color: var(--line-soft);
     color: var(--ink-black);
     border-radius: 2px;
   }
 
   .status-pill,
   .privacy-pill {
-    @apply min-h-12 gap-2 px-3 py-2;
+    @apply min-h-10 gap-2 px-3 py-1.5;
   }
 
   .status-light {
-    @apply h-3 w-3 border-2;
+    @apply h-2.5 w-2.5 border;
     border-color: var(--line-hard);
     background: var(--survey-orange);
   }
@@ -172,7 +170,7 @@
   }
 
   .survey-main {
-    @apply mx-auto grid w-full max-w-7xl gap-5 px-4 pb-10 lg:px-8;
+    @apply mx-auto grid w-full max-w-7xl gap-6 px-4 pb-12 pt-6 lg:px-8;
   }
 
   .survey-main.is-intake {
@@ -180,105 +178,124 @@
   }
 
   .survey-main.has-image {
-    grid-template-columns: minmax(0, 1fr) minmax(330px, 410px);
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
   }
 
   .acquisition-layout {
-    @apply grid items-stretch gap-5;
-    min-height: calc(100vh - 132px);
-    grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.6fr);
+    @apply grid items-stretch gap-6;
+    min-height: calc(100vh - 200px);
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
   }
 
   .intake-copy {
-    @apply flex min-h-[520px] flex-col justify-between border-2 p-5 sm:p-7;
+    @apply flex flex-col justify-between border p-6 sm:p-8;
     border-color: var(--line-hard);
-    background:
-      linear-gradient(135deg, transparent 0 74%, rgba(255, 90, 31, 0.18) 74% 77%, transparent 77%),
-      var(--surface-field);
-    box-shadow: var(--offset-block);
+    background: var(--surface-field);
   }
 
   .intake-copy h2 {
-    @apply mt-2 max-w-4xl text-5xl leading-[0.92] sm:text-6xl lg:text-7xl;
+    @apply mt-2 max-w-3xl text-3xl leading-[1.05] sm:text-4xl lg:text-5xl font-bold;
     color: var(--ink-black);
-    overflow-wrap: anywhere;
   }
 
   .intake-copy p:not(.kicker) {
-    @apply mt-5 max-w-2xl text-base font-semibold sm:text-lg;
+    @apply mt-4 max-w-xl text-sm font-medium sm:text-base leading-relaxed;
     color: var(--ink-muted);
   }
 
   .intake-facts,
   .condition-legend {
-    @apply mt-5 flex flex-wrap gap-2;
+    @apply mt-6 flex flex-wrap gap-2;
   }
 
   .intake-facts span,
   .condition-legend span {
-    @apply min-h-9 gap-2 px-3 py-2;
+    @apply min-h-8 gap-2 px-2.5 py-1;
     background: var(--surface-sheet);
+    border-color: var(--line-soft);
   }
 
   .condition-marker {
-    @apply inline-block h-3 w-3 border-2;
+    @apply inline-flex items-center justify-center h-3 w-3 border;
     border-color: var(--line-hard);
-    background: currentColor;
     flex: 0 0 auto;
   }
 
   .marker-acne {
-    color: var(--signal-acne);
+    background-color: var(--signal-acne);
     border-radius: 50%;
   }
 
   .marker-dark_spots {
-    color: var(--signal-spot);
-    border-radius: 0;
+    background-color: var(--signal-spot);
+    border-radius: 0px;
   }
 
   .marker-wrinkles {
-    width: 20px;
-    height: 5px;
-    color: var(--signal-wrinkle);
+    position: relative;
+    border: none;
+    background: transparent;
+  }
+  .marker-wrinkles::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--signal-wrinkle);
+    transform: rotate(-15deg);
   }
 
   .marker-redness {
-    width: 16px;
+    background: transparent;
+    border: none;
+    position: relative;
+    width: 12px;
     height: 12px;
-    color: var(--signal-redness);
-    transform: skew(-12deg);
+  }
+  .marker-redness::before,
+  .marker-redness::after {
+    content: "";
+    position: absolute;
+    background-color: var(--signal-redness);
+  }
+  .marker-redness::before {
+    top: 0; left: 5px; width: 2px; height: 12px;
+  }
+  .marker-redness::after {
+    top: 5px; left: 0; width: 12px; height: 2px;
   }
 
   .marker-pores {
-    color: var(--signal-pore);
-    background: transparent !important;
+    background: transparent;
+    border: 2px solid var(--signal-pore);
+    border-radius: 50%;
   }
 
   .acquisition-ledger,
   .register-panel,
   .map-panel {
-    @apply border-2 bg-base-100;
+    @apply border bg-base-100;
     border-color: var(--line-hard);
-    box-shadow: var(--offset-block);
   }
 
   .acquisition-ledger {
-    @apply p-3;
+    @apply p-4;
   }
 
   .source-tabs {
-    @apply grid grid-cols-2 gap-0 border-2 p-0 font-mono text-sm font-bold;
+    @apply grid grid-cols-2 gap-0 border p-0 font-mono text-sm font-bold;
     border-color: var(--line-hard);
-    background: var(--surface-sheet);
+    background: var(--surface-field);
   }
 
   .source-tabs button {
-    @apply min-h-11 px-3 py-2 transition;
+    @apply min-h-10 px-3 py-2 transition;
   }
 
   .source-tabs button + button {
-    border-inline-start: 2px solid var(--line-hard);
+    border-inline-start: 1px solid var(--line-hard);
   }
 
   .source-tabs button.active {
@@ -287,40 +304,40 @@
   }
 
   .source-station {
-    @apply mt-3 flex min-h-[390px] cursor-pointer flex-col justify-between gap-6 border-2 border-dashed p-5 transition;
-    border-color: var(--line-hard);
+    @apply mt-4 flex min-h-[380px] cursor-pointer flex-col justify-between gap-6 border border-dashed p-6 transition;
+    border-color: var(--ink-muted);
     background: var(--surface-field);
   }
 
   .source-station:hover,
   .source-station.is-dragging {
-    transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0 var(--survey-orange);
+    border-color: var(--ink-black);
+    background: #fbf9f5;
   }
 
   .upload-symbol {
-    @apply flex h-20 w-20 items-center justify-center border-2 font-display text-5xl;
+    @apply flex h-14 w-14 items-center justify-center border font-display text-3xl font-light;
     color: var(--surface-sheet);
     background: var(--ink-black);
     border-color: var(--line-hard);
   }
 
   .source-station h2 {
-    @apply text-3xl leading-none;
+    @apply text-2xl leading-tight font-bold;
     color: var(--ink-black);
   }
 
   .source-station p {
-    @apply mt-3 text-sm font-semibold;
+    @apply mt-2 text-xs font-semibold leading-relaxed;
     color: var(--ink-muted);
   }
 
   .camera-ledger {
-    @apply mt-3 flex min-h-[420px] flex-col gap-3;
+    @apply mt-4 flex min-h-[380px] flex-col gap-3;
   }
 
   .camera-preview {
-    @apply relative flex min-h-[340px] items-center justify-center overflow-hidden border-2;
+    @apply relative flex min-h-[300px] items-center justify-center overflow-hidden border;
     border-color: var(--line-hard);
     background: var(--ink-black);
   }
@@ -335,12 +352,12 @@
   }
 
   .camera-empty span {
-    @apply font-mono text-lg font-bold uppercase;
+    @apply font-mono text-sm font-bold uppercase tracking-wider;
   }
 
   .camera-empty small {
-    @apply max-w-xs text-sm;
-    color: rgba(247, 244, 232, 0.78);
+    @apply max-w-xs text-xs;
+    color: rgba(253, 251, 247, 0.7);
   }
 
   .camera-actions {
@@ -356,10 +373,10 @@
   }
 
   .stage-header {
-    @apply grid items-center gap-3 border-b-2 px-4 py-3;
+    @apply grid items-center gap-3 border-b px-4 py-3;
     grid-template-columns: minmax(0, 1fr) auto auto;
     border-color: var(--line-hard);
-    background: var(--surface-sheet);
+    background: var(--surface-field);
   }
 
   .stage-meta {
@@ -373,12 +390,12 @@
 
   .stage-meta span,
   .stage-stats {
-    @apply font-mono text-xs font-bold;
+    @apply font-mono text-xs font-semibold;
     color: var(--ink-muted);
   }
 
   .stage-stats {
-    @apply flex flex-wrap justify-end gap-2;
+    @apply flex flex-wrap justify-end gap-3;
     font-variant-numeric: tabular-nums;
   }
 
@@ -386,37 +403,47 @@
     @apply flex flex-wrap justify-end gap-2;
   }
 
+  /* Key Print Stage Face Frame */
   .face-frame {
     @apply relative flex items-center justify-center overflow-hidden;
-    min-height: min(68vh, 660px);
-    background:
-      linear-gradient(180deg, rgba(16, 16, 13, 0.96), rgba(16, 16, 13, 0.9)),
-      var(--ink-black);
+    min-height: min(65vh, 600px);
+    background: var(--ink-black);
   }
 
-  .face-frame.has-overlay::after {
+  /* Manual plate registration guides in margins */
+  .face-frame::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: 12px;
+    border: 1px solid rgba(253, 251, 247, 0.15);
     pointer-events: none;
-    background:
-      repeating-radial-gradient(ellipse at 48% 42%, transparent 0 20px, rgba(0, 166, 180, 0.42) 21px 23px, transparent 24px 42px),
-      linear-gradient(100deg, transparent 0 38%, rgba(255, 90, 31, 0.26) 48%, transparent 60% 100%);
-    clip-path: inset(0 100% 0 0);
-    animation: contour-trace 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    mix-blend-mode: screen;
+    z-index: 5;
+  }
+
+  .face-frame::after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 24px;
+    height: 24px;
+    border-top: 2px solid var(--focus-ring);
+    border-left: 2px solid var(--focus-ring);
+    pointer-events: none;
+    z-index: 5;
   }
 
   .face-image {
     @apply absolute inset-0 h-full w-full object-contain;
   }
 
+  /* Plate Slide and Crosshair Snap Vibration */
   .overlay-image {
-    animation: overlay-map-in 200ms ease-out both;
+    animation: plate-slide-in 300ms cubic-bezier(0.25, 1, 0.5, 1) both;
   }
 
   .stage-empty {
-    @apply relative z-10 mx-4 max-w-sm border-2 px-4 py-3 text-center font-mono text-sm font-bold;
+    @apply relative z-10 mx-4 max-w-sm border px-4 py-3 text-center font-mono text-xs font-bold uppercase tracking-wider;
     color: var(--surface-sheet);
     border-color: var(--surface-sheet);
     background: var(--ink-black);
@@ -427,46 +454,45 @@
   }
 
   .register-panel {
-    @apply p-4;
+    @apply p-5;
   }
 
   .score-panel {
-    background:
-      linear-gradient(135deg, rgba(255, 90, 31, 0.18) 0 24%, transparent 24%),
-      var(--surface-sheet);
+    background: var(--surface-field);
   }
 
   .score-value {
-    @apply mt-3 flex items-end gap-2;
+    @apply mt-2 flex items-end gap-1;
     color: var(--ink-black);
   }
 
   .score-value span {
-    @apply font-mono text-7xl font-bold leading-none;
+    @apply font-mono text-6xl font-bold leading-none;
     font-variant-numeric: tabular-nums;
   }
 
   .score-value small {
-    @apply pb-2 font-mono text-sm font-bold;
+    @apply pb-1.5 font-mono text-sm font-semibold;
     color: var(--ink-muted);
   }
 
   .score-panel p:not(.kicker) {
-    @apply mt-3 text-sm font-semibold;
+    @apply mt-3 text-xs font-semibold leading-relaxed;
     color: var(--ink-muted);
   }
 
   .panel-title-row {
-    @apply flex items-start justify-between gap-3;
+    @apply flex items-start justify-between gap-3 border-b pb-3;
+    border-color: var(--line-soft);
   }
 
   .panel-title-row h2 {
-    @apply text-2xl leading-none;
+    @apply text-xl leading-tight font-bold;
     color: var(--ink-black);
   }
 
   .panel-title-row > span {
-    @apply border-2 px-2 py-1 font-mono text-xs font-bold uppercase;
+    @apply border px-2 py-0.5 font-mono text-[0.62rem] font-bold uppercase tracking-wider;
     border-color: var(--line-hard);
     color: var(--ink-black);
     background: var(--surface-field);
@@ -476,12 +502,18 @@
     @apply mt-4 space-y-2;
   }
 
+  /* Individual Separation Ink Plate Rows */
   .condition-row {
-    @apply grid min-h-14 items-center gap-3 border-2 px-3 py-3;
+    @apply grid min-h-12 items-center gap-3 border px-3 py-2;
     grid-template-columns: auto minmax(0, 1fr) auto;
-    border-color: var(--line-hard);
+    border-color: var(--line-soft);
     background: var(--surface-field);
-    animation: station-snap 140ms ease-out both;
+    transition: transform 150ms ease-out, border-color 150ms ease-out;
+  }
+
+  .condition-row:hover {
+    border-color: var(--line-hard);
+    transform: translateY(-1px);
   }
 
   .condition-copy {
@@ -489,31 +521,31 @@
   }
 
   .condition-copy strong {
-    @apply block truncate text-sm font-extrabold;
+    @apply block truncate text-xs font-bold uppercase tracking-wider;
     color: var(--ink-black);
   }
 
   .condition-copy span {
-    @apply block font-mono text-xs font-bold;
+    @apply block font-mono text-[0.68rem] font-semibold;
     color: var(--ink-muted);
   }
 
   .condition-row b {
-    @apply font-mono text-xl font-bold;
+    @apply font-mono text-lg font-bold;
     color: var(--ink-black);
     font-variant-numeric: tabular-nums;
   }
 
   .condition-meter {
-    @apply mt-2 h-2 overflow-hidden border;
-    border-color: var(--line-hard);
-    background: rgba(16, 16, 13, 0.08);
+    @apply mt-1.5 h-1.5 overflow-hidden border;
+    border-color: var(--line-soft);
+    background: rgba(10, 11, 11, 0.05);
   }
 
   .condition-meter span {
     @apply block h-full;
     background: var(--signal-color, var(--survey-cyan));
-    transition: width 200ms ease-out;
+    transition: width 350ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .process-panel ol {
@@ -521,47 +553,50 @@
   }
 
   .process-panel li {
-    @apply flex items-center gap-3 border-b-2 pb-2 font-mono text-sm font-bold;
-    border-color: var(--line-hard);
+    @apply flex items-center gap-3 border-b pb-1.5 font-mono text-xs font-bold uppercase tracking-wider;
+    border-color: var(--line-soft);
     color: var(--ink-black);
   }
 
   .process-panel li span {
-    @apply inline-flex h-7 w-9 items-center justify-center border-2 text-xs;
+    @apply inline-flex h-6 w-8 items-center justify-center border text-[0.62rem];
     border-color: var(--line-hard);
     background: var(--surface-field);
   }
 
+  /* Zone Calibration Readout Blocks */
   .zone-band {
-    @apply grid gap-2 sm:grid-cols-2 xl:grid-cols-5;
+    @apply grid gap-3 sm:grid-cols-2 xl:grid-cols-5;
   }
 
   .zone-record {
-    @apply grid gap-1 border-2 bg-base-100 px-3 py-3;
+    @apply grid gap-1 border bg-base-100 px-3.5 py-3 transition;
+    border-color: var(--line-soft);
+  }
+
+  .zone-record:hover {
     border-color: var(--line-hard);
-    box-shadow: 4px 4px 0 var(--ink-black);
-    animation: station-snap 140ms ease-out both;
   }
 
   .zone-record span {
-    @apply font-mono text-xs font-bold uppercase;
+    @apply font-mono text-[0.68rem] font-bold uppercase tracking-wider;
     color: var(--ink-muted);
   }
 
   .zone-record strong {
-    @apply font-mono text-3xl font-bold;
+    @apply font-mono text-2xl font-bold;
     color: var(--ink-black);
     font-variant-numeric: tabular-nums;
   }
 
   .zone-record small {
-    @apply text-xs font-semibold;
+    @apply text-[0.68rem] font-semibold uppercase tracking-wider;
     color: var(--ink-muted);
   }
 
   .evidence-alert,
   .alert {
-    border-radius: 2px;
+    border-radius: 0px;
   }
 
   .error-region {
@@ -576,44 +611,33 @@
   }
 
   .btn {
-    min-height: 2.75rem;
+    min-height: 2.5rem;
     border-radius: 2px;
-    font-weight: 800;
+    font-weight: 700;
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
   }
 
-  @keyframes contour-trace {
-    from {
-      clip-path: inset(0 100% 0 0);
+  /* Plate Slide Mechanical Snap Keyframes */
+  @keyframes plate-slide-in {
+    0% {
       opacity: 0;
+      transform: scale(1.02) translate(-12px, -12px);
+      filter: saturate(0.5);
     }
-    18% {
+    85% {
       opacity: 1;
+      transform: scale(1) translate(0.5px, 0.5px);
     }
-    to {
-      clip-path: inset(0 0 0 0);
-      opacity: 0;
+    90% {
+      transform: translate(-0.5px, -0.5px);
     }
-  }
-
-  @keyframes overlay-map-in {
-    from {
-      opacity: 0;
-      filter: saturate(0.7) contrast(1.1);
-    }
-    to {
+    100% {
       opacity: 1;
-      filter: saturate(1) contrast(1);
-    }
-  }
-
-  @keyframes station-snap {
-    from {
-      opacity: 0;
-      transform: translateX(6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
+      transform: scale(1) translate(0, 0);
+      filter: saturate(1);
     }
   }
 
@@ -627,8 +651,8 @@
       transition-duration: 1ms !important;
     }
 
-    .face-frame.has-overlay::after {
-      display: none;
+    .overlay-image {
+      animation: none !important;
     }
   }
 
@@ -658,29 +682,22 @@
     }
 
     .intake-copy {
-      min-height: 420px;
-    }
-
-    .intake-copy h2 {
-      @apply text-4xl sm:text-5xl;
+      min-height: auto;
+      @apply gap-4;
     }
   }
 
   @media (max-width: 640px) {
     .survey-masthead {
-      @apply px-3 py-3;
+      @apply px-4 py-4;
     }
 
     .brand-block {
-      @apply flex-col;
+      @apply flex-col items-start gap-2;
     }
 
     .product-mark {
-      @apply h-11 w-full border-b-2 border-r-0;
-    }
-
-    .brand-block h1 {
-      @apply text-3xl;
+      @apply h-10 w-10;
     }
 
     .status-cluster,
@@ -690,16 +707,7 @@
     }
 
     .survey-main {
-      @apply gap-4 px-3 pb-6;
-    }
-
-    .intake-copy {
-      @apply p-4;
-      min-height: 360px;
-    }
-
-    .intake-copy p:not(.kicker) {
-      @apply text-sm;
+      @apply gap-4 px-4 pb-8;
     }
 
     .condition-legend span,
@@ -709,7 +717,7 @@
     }
 
     .source-station {
-      min-height: 300px;
+      min-height: 280px;
     }
 
     .camera-actions,
@@ -718,7 +726,7 @@
     }
 
     .camera-preview {
-      min-height: 280px;
+      min-height: 240px;
     }
 
     .stage-header {
@@ -733,15 +741,10 @@
 
     .stage-actions .btn {
       @apply w-full;
-      min-height: 2.75rem;
     }
 
     .face-frame {
-      min-height: min(72vh, 440px);
-    }
-
-    .score-value span {
-      @apply text-6xl;
+      min-height: min(60vh, 380px);
     }
 
     .evidence-register {
@@ -750,10 +753,6 @@
 
     .condition-row {
       @apply gap-2 px-2.5;
-    }
-
-    .condition-copy span {
-      white-space: normal;
     }
 
     .zone-band {
@@ -766,18 +765,7 @@
     }
 
     .zone-record strong {
-      @apply row-span-2 text-right text-2xl;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .condition-legend span,
-    .intake-facts span {
-      min-width: 100%;
-    }
-
-    .face-frame {
-      min-height: 360px;
+      @apply row-span-2 text-right text-xl;
     }
   }
 }

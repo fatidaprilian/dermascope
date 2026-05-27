@@ -5,16 +5,14 @@
   "project": {
     "name": "DermaScope",
     "context": "Browser-first facial skin signal mapping from one uploaded or captured face photo.",
-    "domain": "Single-photo face-skin signal mapping with overlay, category scores, Skin Health Score, and zone breakdown.",
+    "domain": "Single-photo face-skin signal mapping with lithographic color-separation plate overlay, scores, and face zones.",
     "runtimeConstraint": "React + Vite + Tailwind CSS + DaisyUI frontend with FastAPI-backed OpenCV-Python analysis.",
     "architectureConstraint": "Client-side SPA submits one image to /api/process and receives overlay PNG plus X-DermaScope-Analysis metadata without persistent image storage."
   },
   "assumptions": [
-    "DermaScope is production-facing, not coursework or a generic image-processing workbench.",
-    "The app reports visible image-processing signals and must not present diagnosis, treatment, or product recommendations.",
+    "DermaScope is production-facing and reports visible image-processing signals without medical diagnosis, treatment, or product recommendations.",
     "The input flow supports file upload and browser camera capture.",
-    "The backend may be offline, so service readiness must remain visible.",
-    "Previous conservation condition-map direction is blocked by the anti-repeat ledger."
+    "The backend may be offline, so service readiness must remain visible."
   ],
   "productReading": {
     "productTypeAndCoreVerb": "DermaScope is a browser-first facial skin signal mapping app; the user submits one face photo and inspects mapped visible signals.",
@@ -41,39 +39,24 @@
       "notBorrowed": "Clinical validation claims, diagnostic language, and controlled-device authority."
     },
     {
-      "source": "https://www.usgs.gov/faqs/what-a-topographic-map",
-      "borrowed": "Contour lines as a shape-reading mechanism for a surface.",
-      "notBorrowed": "USGS brand, literal terrain imagery, and map-as-wallpaper."
-    },
-    {
-      "source": "https://www.usgs.gov/media/files/topographic-map-symbols",
-      "borrowed": "Symbol-sheet discipline, line/area/point differentiation, and marginalia logic.",
-      "notBorrowed": "Government visual identity and literal map reproduction."
-    },
-    {
-      "source": "https://oceanservice.noaa.gov/facts/sounding.html",
-      "borrowed": "Numeric soundings as compact measurements attached to a surface.",
-      "notBorrowed": "Maritime route planning, vessel safety language, and nautical palette as brand."
-    },
-    {
-      "source": "https://www.nauticalcharts.noaa.gov/publications/us-chart-1.html",
-      "borrowed": "Chart legend discipline for symbols, abbreviations, and terms.",
-      "notBorrowed": "Nautical chart layout rhythm and electronic chart UI conventions."
+      "source": "https://www.gutenberg.org/files/61226/61226-h/61226-h.htm",
+      "borrowed": "The concept of color separation printing and hand-roller lithographic press registration plates.",
+      "notBorrowed": "19th-century literal engravings, archaic language, and Victorian decorative styling."
     }
   ],
   "motionPaletteDecision": {
-    "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
-    "signatureMotionBehavior": "A contour trace passes across the face result when overlay metadata arrives, then category rows and zone sectors snap into survey-station positions.",
-    "paletteDecision": "Survey paper and hard black ink carry structure; safety orange, cyan, magenta, brown, and olive carry condition-symbol layers.",
-    "typographicRoleContrast": "Archivo Black carries blunt survey titles, Inter carries Indonesian UI copy, and IBM Plex Mono carries station labels, scores, counts, coverage, file size, and timing."
+    "anchorReference": "Fine-art lithography print registration sheet (color-separation plates)",
+    "signatureMotionBehavior": "A mechanical plate slide overlays the image channels, settling with a micro-vibration convergence at 240ms, while aside indicators stagger in sequentially.",
+    "paletteDecision": "Sheet structure is warm tactile ivory; frame boundaries are high-density carbon-black; separation inks are process vermilion, umber, cobalt, rhodamine, and viridian.",
+    "typographicRoleContrast": "Heavy ink-rich serif display headings pair with high-legibility geometric sans body copy and tabular technical monospace for print calibration metrics."
   },
   "visualResetStrategy": {
-    "resetReason": "The user explicitly requested a redesign with a concept that must differ from the previous direction.",
+    "resetReason": "The user explicitly requested a redesign with a concept that must differ from both the previous topographic survey plate and the older conservation map direction.",
     "discardedContinuity": [
-      "conservation condition-map anchor",
-      "raking-light sweep",
-      "archival paper and graphite/blue register palette",
-      "artifact conservation language"
+      "topographic survey plate anchor",
+      "contour trace motion signature",
+      "survey-paper, safety orange, cyan waterline, and olive terrain palette",
+      "conservation condition-map register"
     ],
     "retainedEvidenceOnly": [
       "single-photo upload/camera flow",
@@ -86,100 +69,30 @@
   },
   "conceptualAnchor": {
     "mode": "agent-selected-after-redesign-research",
-    "name": "Brutal topographic survey plate",
-    "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
-    "specificReferencePoint": "Topographic maps use contour lines to show surface shape and marginal information to explain scale, symbols, and measured locations.",
-    "rationale": "The anchor supports one spatial image, condition-symbol layers, scores, and zone readings without repeating skincare, clinical, dashboard, or conservation defaults.",
-    "signatureMotion": "Contour trace and station snap",
-    "signatureMove": "The face photo behaves like a measured surface with marginal stations attached to condition and zone evidence.",
-    "typographicDecision": "A heavy survey-title face is paired with plain UI copy and monospaced station numerics.",
-    "categoryCodes": {
-      "typographyClusters": [
-        {
-          "code": "beauty-app default typography: rounded geometric sans for friendly headlines, soft medium-weight body copy, and oversized circular-score numerals.",
-          "defaultReason": "Consumer scan apps commonly turn analysis into coaching and progress language.",
-          "rejectionNote": "I will not ship this because it turns evidence into lifestyle coaching."
-        },
-        {
-          "code": "clinical-device default typography: restrained neo-grotesk labels, small grey metadata, and medical chart numerals in calm panels.",
-          "defaultReason": "Dermatology devices often borrow medical chart calm to imply authority.",
-          "rejectionNote": "I will not ship this because it suggests diagnosis and repeats dermatology-device tropes."
-        },
-        {
-          "code": "image-processing coursework typography: monospace-heavy controls, algorithm names as headings, and tiny parameter labels.",
-          "defaultReason": "Image-processing projects often foreground algorithms instead of user evidence.",
-          "rejectionNote": "I will not ship this because it foregrounds implementation instead of user evidence."
-        }
-      ],
-      "paletteClusters": [
-        {
-          "code": "AI skincare pastel palette: lavender/pink glow, mint secondary, cream cards, and coral concern badges.",
-          "defaultReason": "Consumer skin tools commonly use friendly wellness colors.",
-          "rejectionNote": "I will not ship this because it reads as routine/product recommendation."
-        },
-        {
-          "code": "clinical skin-analysis palette: white shell, mint/coral status, pale blue overlay, and low-contrast grey copy.",
-          "defaultReason": "Clinical-facing skin products commonly borrow clean clinic color systems.",
-          "rejectionNote": "I will not ship this because it borrows medical-device authority."
-        },
-        {
-          "code": "conservation-map palette: archival paper, graphite ink, oxidized green, vermilion, ochre, lapis, and carmine.",
-          "defaultReason": "The previous design used conservation condition-reporting signals.",
-          "rejectionNote": "I will not ship this because it is the previous blocked direction."
-        }
-      ],
-      "layoutClusters": [
-        {
-          "code": "beauty scan layout: selfie hero, circular score above routine cards, progress history, and product modules below.",
-          "defaultReason": "Skincare products commonly sell recurring coaching after the scan.",
-          "rejectionNote": "I will not ship this because DermaScope has no history or routine engine."
-        },
-        {
-          "code": "clinical contact-sheet layout: before/after face panels, side metric list, small legend, and device-like header.",
-          "defaultReason": "Skin-analysis devices often use contact-sheet comparison and clinic controls.",
-          "rejectionNote": "I will not ship this because it overstates clinical authority."
-        },
-        {
-          "code": "SaaS dashboard layout: top bar, three KPI cards, neutral table, and side navigation.",
-          "defaultReason": "Metric-heavy apps often collapse into admin chrome.",
-          "rejectionNote": "I will not ship this because a single face image is the primary evidence object."
-        }
-      ],
-      "motionClusters": [
-        {
-          "code": "beauty coaching motion: soft fades, sparkle reveals, and score count-up celebration.",
-          "defaultReason": "Consumer wellness apps often use celebratory motion.",
-          "rejectionNote": "I will not ship this because it implies improvement coaching."
-        },
-        {
-          "code": "clinical scanner motion: slow blue sweep, contact-sheet swap, and device-console loading bar.",
-          "defaultReason": "Clinical imaging products often stage analysis as machine scanning.",
-          "rejectionNote": "I will not ship this because it is too close to medical-device theater."
-        },
-        {
-          "code": "conservation raking-light motion: luminous sweep over artifact and register rows.",
-          "defaultReason": "The previous design used artifact-inspection motion.",
-          "rejectionNote": "I will not ship this because it repeats the old redesign."
-        }
-      ],
-      "imageryClusters": [
-        {
-          "code": "AI skincare imagery: polished selfie mockups, glowing skin overlays, and product shelf shots.",
-          "defaultReason": "Skincare apps often use aspirational selfie and product imagery.",
-          "rejectionNote": "I will not ship this because it points toward ecommerce."
-        },
-        {
-          "code": "dermatology-device imagery: clinical face capture rigs, examination-room context, and medical chart screenshots.",
-          "defaultReason": "Clinical tools often use device imagery to signal precision.",
-          "rejectionNote": "I will not ship this because it implies a validated device."
-        },
-        {
-          "code": "student demo imagery: generic before/after canvas, sample image placeholders, and algorithm screenshots.",
-          "defaultReason": "Coursework projects often show technical demos instead of production flows.",
-          "rejectionNote": "I will not ship this because it fails production posture."
-        }
-      ]
-    },
+    "name": "Fine-art lithography print registration sheet",
+    "anchorReference": "Fine-art lithography print registration sheet (color-separation plates)",
+    "specificReferencePoint": "A manual printmaking registration bed where separate ink-plates are aligned using mechanical crosshairs, color-bars, and ink density draw-downs to compile a single cohesive print.",
+    "rationale": "Treats each skin-condition signal as a distinct color-separation plate layer that aligns onto the base key face photo. The layout uses alignment crosshairs, registration markers, ink density meters, and tactile press margins to arrange scores and face zones without dashboard or clinical clichés.",
+    "signatureMotion": "Tactile plate alignment and micro-vibration crosshair convergence",
+    "signatureMove": "The single face image is held inside a carbon-black metal plate holder with registration marks in the margins. Toggling an overlay triggers a mechanical sliding animation of the plate into exact alignment.",
+    "typographicDecision": "An ink-heavy elegant display serif (Lora) for editorial press headings is paired with Outfit for Indonesian product copy, and a technical monospace (IBM Plex Mono) for plate numbers, alignment coordinates, and density metrics.",
+    "categoryCodes": [
+      {
+        "code": "beauty-app default typography: rounded geometric sans for friendly headlines, soft medium-weight body copy, and oversized circular-score numerals.",
+        "categoryDefaultReason": "Consumer scan apps commonly turn analysis into coaching and progress language.",
+        "rejectionNote": "I will not ship this because it turns evidence into lifestyle coaching."
+      },
+      {
+        "code": "clinical-device default typography: restrained neo-grotesk labels, small grey metadata, and medical chart numerals in calm panels.",
+        "categoryDefaultReason": "Dermatology devices often borrow medical chart calm to imply authority.",
+        "rejectionNote": "I will not ship this because it suggests diagnosis and repeats dermatology-device tropes."
+      },
+      {
+        "code": "topographic-survey brutalism: heavy Archivo Black headings, high-contrast neobrutalist borders with thick drop shadows, safety orange and cyan waterline accents.",
+        "categoryDefaultReason": "The previous design iteration used brutalist survey mapping aesthetics.",
+        "rejectionNote": "I will not ship this because it is the discarded previous design direction."
+      }
+    ],
     "morphologicalExploration": {
       "dimensions": [
         "hierarchy",
@@ -193,208 +106,91 @@
         {
           "dimension": "hierarchy",
           "values": [
-            "Mapped face surface first",
-            "Score-first report",
-            "Intake-first field form",
-            "Zone-sector atlas",
-            "Algorithm audit trail"
+            "Press key plate (base photo) first",
+            "Composite print score report",
+            "Manual plate alignment board"
           ]
         },
         {
           "dimension": "density",
           "values": [
-            "Brutal station rows",
-            "Spacious health brochure",
-            "Dense technical ledger",
-            "Minimal coaching cards",
-            "Split legend ribbons"
+            "Ink plate rows with margin calibration data",
+            "Spacious museum catalogue",
+            "Industrial print shop ledger"
           ]
         },
         {
           "dimension": "typeRoleContrast",
           "values": [
-            "Black survey title plus mono station readings",
-            "Friendly rounded headline plus soft metrics",
-            "Mono-only technical console",
-            "Humanist report plus small data",
-            "Narrow condensed labels plus big score"
+            "Heavy ink display serif plus plain geometric body and strict monospace metrics",
+            "Technical sans-serif and tabular mono block",
+            "High-legibility humanist system"
           ]
         },
         {
           "dimension": "motionLanguage",
           "values": [
-            "Contour trace and station snap",
-            "Soft wellness fade",
-            "Device scan shutter",
-            "Region stitch-in",
-            "Static report print"
+            "Tactile plate registration and crosshair lock",
+            "Frictionless color bleed reveal",
+            "High-contrast shutter snap"
           ]
         },
         {
           "dimension": "stateVocabulary",
           "values": [
-            "Unmapped, acquiring, tracing, mapped, fallback, exception",
-            "Ready, glow, improve, routine",
-            "Pending, running, passed, failed",
-            "Captured, archived, released",
-            "Empty, loading, success, error"
+            "Unregistered, blank sheet, plate loading, registered, alignment lock, print check",
+            "Ready, scanning, matched, success",
+            "Offline, online, scanning, error"
           ]
         },
         {
           "dimension": "compositionRhythm",
           "values": [
-            "Survey sheet with marginal stations",
-            "Marketing hero then cards",
-            "Split before/after bench",
-            "Radial score orbit",
-            "Long report document"
+            "Printmaker press bed with alignment margin calibration",
+            "Split channel comparison panel",
+            "Dynamic card-based press run"
           ]
         }
       ],
       "selectedCombination": {
-        "hierarchy": "Mapped face surface first",
-        "density": "Brutal station rows",
-        "typeRoleContrast": "Black survey title plus mono station readings",
-        "motionLanguage": "Contour trace and station snap",
-        "stateVocabulary": "Unmapped, acquiring, tracing, mapped, fallback, exception",
-        "compositionRhythm": "Survey sheet with marginal stations"
+        "hierarchy": "Press key plate (base photo) first",
+        "density": "Ink plate rows with margin calibration data",
+        "typeRoleContrast": "Heavy ink display serif plus plain geometric body and strict monospace metrics",
+        "motionLanguage": "Tactile plate registration and crosshair lock",
+        "stateVocabulary": "Unregistered, blank sheet, plate loading, registered, alignment lock, print check",
+        "compositionRhythm": "Printmaker press bed with alignment margin calibration"
       },
       "uncomfortableCombination": {
-        "combinationLabel": "Algorithm audit trail as long static report",
-        "discomfortReason": "It feels wrong because public users should not need implementation internals to trust the result.",
-        "productLogicJustification": "It could work for a regulated operator console where reproducibility and audit review matter more than public upload ergonomics. That is outside the current product scope."
+        "combinationLabel": "Industrial print shop ledger with technical sans-serif and high-contrast shutter snap",
+        "discomfortReason": "It would feel too noisy, mechanical, and industrial, reducing the personal tactile character of an editorial fine-art print bed.",
+        "productLogicJustification": "It could fit a bulk commercial image validation workspace, but not a browser-first personal facial skin analysis tool."
       }
     },
     "anchorCandidates": {
-      "selectedAnchor": "USGS 7.5-minute topographic quadrangle marginalia",
+      "selectedAnchor": "Fine-art lithography print registration sheet (color-separation plates)",
       "candidates": [
         {
-          "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
-          "conceptualFamily": "Measured surface mapping",
-          "jobFit": "Converts one face photo into a mapped surface with condition symbols, contour-like signal bands, and station rows.",
-          "hierarchyImplication": "The face map is primary; score, categories, and zones become marginal station readings.",
-          "densityImplication": "Compact brutal rows carry authority while preserving a large mapped surface.",
-          "typeImplication": "Heavy survey title pairs with plain body and monospaced station numerics.",
-          "stateLanguage": "Unmapped, acquiring, tracing, mapped, fallback, exception.",
-          "motionImplication": "Contour trace reveals analysis completion; station rows snap into measured positions.",
-          "whatItRulesOut": "Rules out beauty coaching, clinical contact sheets, conservation registers, and generic dashboard chrome.",
+          "anchorReference": "Fine-art lithography print registration sheet (color-separation plates)",
+          "conceptualFamily": "Tactile manual print registration and color separation",
+          "jobFit": "Converts one face photo into a base key print sheet where acne, wrinkles, spots, redness, and pores align as separate color ink plates with calibration margin marks.",
+          "hierarchyImplication": "The face sheet is central; categories, scores, and zones behave as marginal alignment stations and density meters.",
+          "densityImplication": "Allows compact, highly legible plate rows in the margins while preserving the focus on the main print sheet.",
+          "typeImplication": "Ink-heavy display serif pairs with crisp geometric body and tabular monospace metrics.",
+          "stateLanguage": "Unregistered, blank sheet, plate loading, registered, alignment lock, print check.",
+          "motionImplication": "Mechanical plate slide onto the press bed; crosshair convergence alignment; sequential staggering.",
+          "whatItRulesOut": "Rules out clinical scanners, neobrutalist survey terrain sheets, skincare e-commerce pastels, and generic dashboard grids.",
           "renameTest": {
             "testCategories": [
               "subscription billing",
-              "music discovery",
-              "recipe planning"
-            ],
-            "results": [
-              "incoherent",
-              "incoherent",
-              "incoherent"
-            ],
-            "verdict": "STRONG PASS"
-          },
-          "categoryCodeOverlap": []
-        },
-        {
-          "anchorReference": "NOAA U.S. Chart No. 1 sounding and depth-contour chart",
-          "conceptualFamily": "Compact measurement and symbol legend",
-          "jobFit": "Attaches numeric readings to a surface and separates condition layers with legend discipline.",
-          "hierarchyImplication": "Surface map plus sounding labels, with legend rows carrying the score language.",
-          "densityImplication": "High density is acceptable when symbols remain explained.",
-          "typeImplication": "Plain chart labels pair with tabular soundings.",
-          "stateLanguage": "Unsurveyed, sounded, shoal, safe contour, warning.",
-          "motionImplication": "Depth contour lines resolve into category meters.",
-          "whatItRulesOut": "Rules out routine cards and lifestyle copy.",
-          "renameTest": {
-            "testCategories": [
-              "fitness streaks",
-              "classroom quiz app",
-              "fleet routing"
-            ],
-            "results": [
-              "incoherent",
-              "incoherent",
-              "coherent"
-            ],
-            "verdict": "PASS"
-          },
-          "categoryCodeOverlap": []
-        },
-        {
-          "anchorReference": "geologic field notebook strike-and-dip station log",
-          "conceptualFamily": "Field survey station record",
-          "jobFit": "Supports numbered observations and zone records, but is less visually tied to the overlay.",
-          "hierarchyImplication": "Station rows dominate, with the image behaving as supporting evidence.",
-          "densityImplication": "Dense readings are expected, but the face could lose primacy.",
-          "typeImplication": "Handbook-like headings pair with mono station coordinates.",
-          "stateLanguage": "Observed, sampled, uncertain, recheck, exception.",
-          "motionImplication": "Rows appear as field observations after capture.",
-          "whatItRulesOut": "Rules out app-store wellness softness.",
-          "renameTest": {
-            "testCategories": [
-              "ecommerce catalog",
-              "meditation app",
-              "ticket booking"
-            ],
-            "results": [
-              "incoherent",
-              "incoherent",
-              "incoherent"
-            ],
-            "verdict": "STRONG PASS"
-          },
-          "categoryCodeOverlap": [
-            {
-              "code": "image-processing coursework typography",
-              "reasoning": "If made mono-only it could become a technical ledger, so role contrast must stay stronger than mono labels."
-            }
-          ]
-        },
-        {
-          "anchorReference": "meteorological synoptic surface analysis chart",
-          "conceptualFamily": "Isobar and front analysis",
-          "jobFit": "Good for layered signal fronts such as redness and texture, but risks overdramatizing skin signals.",
-          "hierarchyImplication": "The image can host fronts and bands; rows explain system state.",
-          "densityImplication": "Moderate density with strong symbol explanation.",
-          "typeImplication": "Weather-station numerics pair with plain labels.",
-          "stateLanguage": "Stable, front, pressure, watch, advisory.",
-          "motionImplication": "Signal fronts drift into place.",
-          "whatItRulesOut": "Rules out conservation motion and beauty celebration.",
-          "renameTest": {
-            "testCategories": [
-              "banking dashboard",
-              "recipe planner",
-              "logistics monitoring"
-            ],
-            "results": [
-              "incoherent",
-              "incoherent",
-              "coherent"
-            ],
-            "verdict": "PASS"
-          },
-          "categoryCodeOverlap": []
-        },
-        {
-          "anchorReference": "seismic intensity shake map with station readings",
-          "conceptualFamily": "Intensity field and station reporting",
-          "jobFit": "Good for severity bands and uncertainty, but the disaster association is too severe for a personal face analysis surface.",
-          "hierarchyImplication": "Intensity bands surround a central surface with station rows attached.",
-          "densityImplication": "High-impact severity bands may overpower normal result states.",
-          "typeImplication": "Emergency-map numerics pair with high-contrast labels.",
-          "stateLanguage": "Recorded, intensity, estimated, uncertainty, advisory.",
-          "motionImplication": "Intensity bands expand from measured stations.",
-          "whatItRulesOut": "Rules out soft wellness and generic dashboard rhythm.",
-          "renameTest": {
-            "testCategories": [
-              "skincare ecommerce",
               "music library",
-              "emergency operations"
+              "recipe planner"
             ],
             "results": [
               "incoherent",
               "incoherent",
-              "coherent"
+              "incoherent"
             ],
-            "verdict": "PASS with caution"
+            "verdict": "STRONG PASS"
           },
           "categoryCodeOverlap": []
         }
@@ -402,28 +198,16 @@
     }
   },
   "derivedTokenLogic": {
-    "anchorReference": "USGS 7.5-minute topographic quadrangle marginalia",
-    "colorDerivationSource": "Cartographic symbol separation: paper and black ink for structure, high-chroma symbol colors only for condition layers and focus.",
-    "spacingDerivationSource": "Map marginalia and survey station rows, with a 12px base and accessible 44px minimum target treatment.",
-    "typographyDerivationSource": "Map title, marginal labels, and station numerics drive display/body/mono roles.",
-    "motionDerivationSource": "Contour tracing and station snapping drive result reveal and row settlement.",
-    "colorSpace": "sRGB CSS variables with OKLCH-safe contrast checks by visual audit where supported.",
-    "spatialBaseUnit": "12px",
-    "typeScaleMethod": "Fixed role sizes with clamp only for major display labels; no viewport-width font scaling.",
-    "motionBudget": "150-300ms for interaction states, 420ms maximum for result contour trace, reduced-motion fallback required.",
-    "validationRule": "Tokens must preserve WCAG 2.2 AA contrast, non-color-only condition meaning, and must not recreate the previous conservation palette.",
-    "tokenContinuityClassification": {
-      "typography": "newly-introduced",
-      "palette": "anchor-derived",
-      "motion": "anchor-derived",
-      "spacing": "anchor-derived"
-    },
-    "derivationSource": {
-      "typography": "New roles replace Space Grotesk/IBM Plex Sans/JetBrains Mono with a survey-title/body/station system.",
-      "palette": "New cartographic layer colors replace conservation inks.",
-      "motion": "Contour trace replaces raking-light sweep.",
-      "spacing": "Survey stations replace conservation register rows."
-    }
+    "anchorReference": "Fine-art lithography print registration sheet (color-separation plates)",
+    "colorDerivationSource": "Fine-art printmaking inks: natural warm ivory paper base, dense carbon black press frame, and process vermilion, umber, cobalt, rhodamine, and viridian plate colors.",
+    "spacingDerivationSource": "Tactile print margins, plate register steps, and mechanical guide bars, using a clean 16px structural base with standard 44px touch targets.",
+    "typographyDerivationSource": "Tactile editorial print title, geometric press copy, and tabular plate numbers drive Lora/Outfit/IBM Plex Mono roles.",
+    "motionDerivationSource": "Manual plate registration, crosshair convergence vibration, and sequential press bed lowering.",
+    "colorSpace": "sRGB CSS variables with high-contrast OKLCH-safe lightness targets.",
+    "spatialBaseUnit": "16px",
+    "typeScaleMethod": "Fixed role sizes with fluid editorial clamp for titles; no dynamic scale for technical metrics.",
+    "motionBudget": "150-300ms for micro-interactions, 350ms maximum for manual plate registration slide, reduced-motion fallbacks required.",
+    "validationRule": "Tokens must satisfy WCAG 2.2 AA contrast, include distinct plate marker shapes (non-color-only), and completely avoid neobrutalist brutal survey tokens."
   },
   "designFlexibilityPolicy": {
     "locked": [
@@ -431,34 +215,34 @@
       "no diagnosis or treatment claims",
       "no persistent image storage",
       "WCAG 2.2 AA floor",
-      "topographic survey anchor",
-      "previous conservation direction blocklist"
+      "lithographic color separation anchor",
+      "previous neobrutalist survey plate and conservation map blocklist"
     ],
     "flexibleUntilValidated": [
-      "exact color primitives",
-      "exact font family substitutions",
-      "exact contour trace implementation",
-      "exact row density",
-      "literal map references"
+      "exact hex values of ink colors",
+      "exact google font substitutions",
+      "exact CSS timing functions for alignment vibration",
+      "density values of ink bars"
     ]
   },
   "aiSafeUiAudit": {
-    "paletteEvidence": "The palette maps condition signals to cartographic symbol layers rather than mood, beauty, or clinic tone.",
+    "paletteEvidence": "The palette maps condition categories to authentic printmaker inks (vermilion, umber, cobalt, rhodamine, viridian) rather than skincare pastel glow or clinical blue sterile calmness.",
     "semanticColorRoles": [
-      "surface",
-      "foreground",
-      "focus",
-      "service status",
-      "five condition signals",
-      "zone stations"
+      "sheet-base",
+      "press-frame",
+      "ink-black",
+      "ink-muted",
+      "focus-ring",
+      "five-plate-channels",
+      "zone-calibration-stations"
     ],
-    "nonTransferableBehavior": "Contour and station colors attach to face-signal mapping and would not make sense in a shopping or routine product.",
+    "nonTransferableBehavior": "Ink plate registration alignment marks, ink draw-downs, and plate density meters attach strictly to printmaking compilation, making no sense on generic web dashboards or beauty apps.",
     "rejectedResidue": [
-      "purple-pink gradients",
-      "mint clinic calm",
-      "archival conservation paper",
-      "decorative grid wallpaper",
-      "generic card dashboard"
+      "purple-to-pink gradient backdrops",
+      "mint clinical buttons",
+      "neobrutalist yellow-orange and thick cartoon drop shadows",
+      "abstract tech grid backgrounds",
+      "decorative lines without calibration purpose"
     ]
   },
   "productionContentPolicy": {
@@ -495,11 +279,11 @@
       "pore"
     ],
     "state": [
-      "checking",
+      "unregistered",
+      "loading",
       "ready",
       "offline",
-      "processing",
-      "mapped",
+      "registered",
       "warning",
       "error"
     ]
@@ -507,83 +291,84 @@
   "colorTruth": {
     "conditionColorsMustHaveTextLabels": true,
     "conditionColorsMustHaveDistinctMarkers": true,
-    "theme": "light survey sheet",
+    "theme": "warm ivory fine-art print bed",
     "darkMode": "not in current scope"
   },
   "crossViewportAdaptation": {
-    "mobile": "Source action and service state first; face surface before register after image exists; no shrunken sidebars.",
-    "tablet": "Face surface wide, score and condition register below in two columns, zones as a compact station strip.",
-    "desktop": "Two-column survey sheet with mapped face left and evidence stations right."
+    "mobile": "Priority on primary action and file registration; press bed base face image before results ledger; full-width tactile ink plate rows; no shrunken layout panels.",
+    "tablet": "Wide base print sheet; score indicator and ink plate register in a two-column layout below; zone calibration bands as a compact horizontal plate.",
+    "desktop": "Two-column printmaker press bed: key print sheet left, margin calibration and separation plates right."
   },
   "motionSystem": {
-    "signature": "Contour trace and station snap",
-    "reducedMotion": "Immediate overlay replacement and static rows.",
+    "signature": "Plate registration slide and crosshair convergence vibration",
+    "reducedMotion": "Immediate plate replacement and static indicator rows.",
     "allowedProperties": [
       "transform",
       "opacity",
-      "clip-path for bounded trace"
+      "filter"
     ],
     "forbidden": [
-      "sparkle celebration",
-      "raking-light sweep",
-      "infinite background motion"
+      "sparkle transitions",
+      "raking-light sweeps",
+      "contour lines tracing",
+      "infinite backdrop waves"
     ]
   },
   "componentMorphology": {
     "majorSurfaces": [
       "survey masthead",
       "source station",
-      "map surface",
-      "evidence stations",
-      "zone sectors"
+      "key print stage",
+      "margin calibration ledger",
+      "separation ink plates",
+      "zone calibration blocks"
     ],
-    "radius": "0 to 4px for brutal survey surfaces; avoid soft wellness pills except compact status tags where required.",
-    "shadow": "Minimal; use borders, offset blocks, and surface contrast instead of soft card depth."
+    "radius": "0px to 2px for sharp print borders; avoid rounded wellness buttons.",
+    "shadow": "No soft drop shadows; depth is achieved via thin crisp borders, solid structural offsets, and high-contrast color shifts."
   },
   "accessibilityPolicy": {
     "standard": "WCAG 2.2 AA",
     "hardChecks": [
       "keyboard access",
-      "visible focus",
+      "visible focus appearance",
       "contrast",
-      "target size",
+      "touch target size",
       "status announcements",
-      "non-color-only condition meaning",
-      "reduced motion"
+      "non-color-only condition meaning via distinct marker shapes",
+      "reduced motion fallback"
     ]
   },
   "designExecutionPolicy": {
     "implementationStack": "React + Vite + Tailwind CSS + DaisyUI",
     "newUiLibraries": "none",
-    "reason": "Native CSS can deliver the selected contour trace, station snap, and responsive recomposition without adding runtime surface.",
-    "oldDesignRegressionTest": "Reject if the result preserves the conservation artifact/register composition, raking-light motion, or archival palette."
+    "reason": "Tailwind and native CSS logical properties can deliver the exact plate slide transition, crosshair convergence, and responsive recomposition cleanly."
   },
   "designExecutionHandoff": {
     "firstViewportSignals": [
-      "source/camera acquisition",
-      "five-condition symbol legend",
-      "service readiness",
-      "survey-station score language"
+      "plate registration source block",
+      "five-ink color bar legend with distinct shapes",
+      "press bed readiness status",
+      "marginal print calibration score"
     ],
-    "implementationMove": "Use strong sheet borders, station rows, and contour trace as functional result affordances."
+    "implementationMove": "Use elegant ink borders, thin mechanical guide lines, plate tags, and registration marks to achieve an authentic high-end printmaker aesthetic."
   },
   "reviewRubric": {
     "failureSignals": [
-      "looks like a skincare routine app",
-      "looks like a clinic device",
-      "looks like the previous conservation condition map",
-      "uses contour or grid marks as decorative wallpaper",
-      "hides service readiness",
-      "shows color-only condition meaning",
-      "allows stale analysis responses to overwrite newer images",
-      "ships placeholder or demo language"
+      "looks like a skincare wellness routine app",
+      "looks like a cold sterile medical diagnostic screen",
+      "looks like a neobrutalist survey terrain map",
+      "uses registration marks or color bars as purely decorative backdrop wallpaper",
+      "hides press bed readiness",
+      "shows color-only condition values",
+      "allows slow API process overrides on newer sheets",
+      "ships placeholder copy"
     ],
     "successSignals": [
-      "one-photo evidence surface is dominant",
-      "condition colors and marker shapes are explained",
-      "zone and category data are readable at a glance",
-      "mobile flow prioritizes source action",
-      "result motion clarifies mapping completion"
+      "single face print sheet is the primary focus",
+      "ink plate colors and shapes are clearly explained in the color bar",
+      "zone calibration and score metrics are readable at a glance",
+      "mobile recomposition maintains touch-safe target sizes",
+      "mechanical plate registration motion clarifies compilation success"
     ]
   },
   "contextHygiene": {
@@ -591,14 +376,13 @@
       "current user brief",
       "repo docs",
       "current frontend and backend code",
-      "current official framework docs",
-      "current research references listed in referenceIntake"
+      "current official framework docs"
     ],
     "taintedContext": [
-      "prior conservation redesign",
-      "unrelated project memory",
-      "generic AI skincare surfaces",
-      "component-kit defaults"
+      "previous neobrutalist topographic survey design",
+      "previous conservation condition map design",
+      "generic wellness skincare designs",
+      "generic dashboard layouts"
     ]
   },
   "libraryResearchStatus": "verified",
@@ -607,72 +391,66 @@
       "name": "React",
       "sourceUrl": "https://react.dev/learn/creating-a-react-app",
       "fetchedDate": "2026-05-19",
-      "stableCompatibleVersion": "19.2.6 from npm registry check",
+      "stableCompatibleVersion": "19.2.6",
       "purpose": "Existing frontend runtime.",
-      "risk": "No new React APIs required for this redesign.",
-      "fallback": "Keep installed React 19.2.x if patch update is not needed."
+      "risk": "No new React APIs needed.",
+      "fallback": "Keep current."
     },
     {
       "name": "Vite",
       "sourceUrl": "https://vite.dev/guide/",
       "fetchedDate": "2026-05-19",
-      "stableCompatibleVersion": "8.0.13 from npm registry check",
+      "stableCompatibleVersion": "8.0.13",
       "purpose": "Existing dev/build tool.",
-      "risk": "Vite 8 requires modern Node versions; repo already uses Vite 8.",
-      "fallback": "Retain current minor if environment blocks patch update."
+      "risk": "None.",
+      "fallback": "Keep current."
     },
     {
       "name": "Tailwind CSS",
       "sourceUrl": "https://tailwindcss.com/docs/installation/using-vite",
       "fetchedDate": "2026-05-19",
-      "stableCompatibleVersion": "4.3.0 from npm registry check; repo remains on 3.4.x because the current config and DaisyUI plugin path are already working.",
-      "purpose": "Existing utility CSS and token bridge.",
-      "risk": "Major upgrade would be a separate migration, not required for this redesign.",
-      "fallback": "Keep Tailwind 3.4.x with current PostCSS config."
-    },
-    {
-      "name": "DaisyUI",
-      "sourceUrl": "https://daisyui.com/docs/install/",
-      "fetchedDate": "2026-05-19",
-      "stableCompatibleVersion": "5.5.20 from npm registry check",
-      "purpose": "Existing semantic component utility layer.",
-      "risk": "Default component skins must be overridden by DermaScope tokens.",
-      "fallback": "Use native CSS classes for custom surfaces."
+      "stableCompatibleVersion": "3.4.x",
+      "purpose": "Utility CSS and tokens.",
+      "risk": "None; keep current version.",
+      "fallback": "Keep current."
     }
   ],
   "forbiddenPatterns": [
     "decorative grid wallpaper",
     "decorative contour wallpaper",
-    "purple-pink gradient hero",
+    "purple-pink gradient background",
     "clinical contact sheet",
     "conservation artifact report",
     "generic KPI dashboard",
-    "placeholder copy",
-    "terminal-only core flow"
+    "neobrutalist yellow cards with thick cartoon dropshadows",
+    "placeholder copy"
   ],
   "repoEvidence": {
-    "designEvidenceSummary": "The repo contains a React + Vite frontend, FastAPI processing backend, one DermaScope goal, camera/upload intake, overlay PNG output, category scores, and zone breakdown docs. Legacy ImgLab static files and generic operation contracts are cleanup targets."
+    "designEvidenceSummary": "The repo features a React + Vite frontend, a FastAPI backend processing skin image signals, camera/file intake, PNG overlays, and structured scores. Tonal-heavy, ink-heavy, paper-feel CSS and registration structures will replace the old neobrutalist survey terrain visuals."
   },
   "researchDossier": {
     "metadata": {
-      "researchVerifiedAt": "2026-05-19",
+      "researchVerifiedAt": "2026-05-27",
       "freshnessWindowDays": 90,
       "antiRepeatLedger": {
         "previousAnchors": [
           "portrait conservation condition map",
           "Getty Conservation Institute mural condition documentation",
-          "Canadian Conservation Institute painting baseline condition report"
+          "Canadian Conservation Institute painting baseline condition report",
+          "USGS 7.5-minute topographic quadrangle marginalia"
         ],
         "previousPalettes": [
           "paper-white and pale cool surfaces with graphite ink, archival blue, oxidized green, vermilion, ochre, lapis, and carmine",
-          "dermatology contact sheet with translucent acetate annotations"
+          "dermatology contact sheet with translucent acetate annotations",
+          "survey paper, hard black ink, safety orange, cyan waterline, magenta control marks, and olive terrain bands"
         ],
         "previousMotionSignatures": [
           "raking-light inspection sweep",
-          "artifact register row reveal"
+          "artifact register row reveal",
+          "contour trace and station snap"
         ]
       },
-      "sourceSummary": "Live research checked current skin-analysis category defaults, an open skin-imaging study, and official USGS/NOAA mapping references."
+      "sourceSummary": "Live research checked modern art-press print registration mechanics, color-separation details, and high-contrast editorial typographic systems."
     }
   }
 }

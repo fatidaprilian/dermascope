@@ -1,6 +1,6 @@
 {
-  "cliVersion": "4.1.0",
-  "generatedAt": "2026-05-19T12:09:30.859Z",
+  "cliVersion": "4.3.0",
+  "generatedAt": "2026-05-27T12:43:32.170Z",
   "operationMode": "upgrade",
   "selectedProfile": "balanced",
   "projectScope": {
@@ -35,7 +35,8 @@
     "agentDecisionRequired": true
   },
   "ciGuardrailsEnabled": true,
-  "setupDurationMs": 177,
+  "localOnly": false,
+  "setupDurationMs": 135,
   "runtimeEnvironment": {
     "selected": "linux-wsl",
     "selectedLabel": "Linux / WSL",
@@ -185,6 +186,14 @@
     },
     "generatedAt": "2026-05-06T22:54:37.340Z"
   },
+  "responseCompression": {
+    "enabled": true,
+    "mode": "compact-natural-mode",
+    "defaultOn": true,
+    "promptFile": ".agent-context/prompts/compact-natural-mode.md",
+    "appliesTo": "agent-final-responses",
+    "commandOutputBoundary": "ASCX handles command-output compression separately"
+  },
   "autoDetection": {
     "detectedStack": "typescript.md",
     "detectedAdditionalStacks": [
@@ -225,7 +234,7 @@
       "frontend: Vite config"
     ],
     "detectionTransparency": {
-      "declaredAt": "2026-05-19T12:09:30.735Z",
+      "declaredAt": "2026-05-27T12:43:32.075Z",
       "declarationType": "existing-project",
       "declarationShown": true,
       "detectionSummary": "This folder looks like Typescript with medium confidence based on frontend: package.json, frontend: Vite config. Confidence gap: 0.08. Secondary stack signals: Typescript.",
@@ -267,7 +276,7 @@
       "isUiScopeLikely": true,
       "signalReasons": [
         "onboarding project scope: both",
-        "ui markers: src, index.html",
+        "ui markers: src",
         "workspace frontend: ui markers: src, tailwind.config.js, vite.config.js, public, index.html",
         "workspace frontend: ui dependencies: react, react-dom, tailwindcss"
       ],
@@ -289,16 +298,16 @@
         }
       ],
       "frontendEvidenceMetrics": {
-        "scannedFileCount": 4,
-        "hardcodedColorCount": 50,
+        "scannedFileCount": 8,
+        "hardcodedColorCount": 61,
         "propDrillingCandidateCount": 0,
-        "mediaQueryCount": 4,
-        "tailwindBreakpointUsageCount": 3,
+        "mediaQueryCount": 5,
+        "tailwindBreakpointUsageCount": 19,
         "arbitraryBreakpointCount": 0,
-        "uniqueMediaWidthCount": 2,
-        "structuredClassAttributeCount": 5,
-        "boundClassExpressionCount": 0,
-        "inlineStyleObjectCount": 0,
+        "uniqueMediaWidthCount": 4,
+        "structuredClassAttributeCount": 59,
+        "boundClassExpressionCount": 9,
+        "inlineStyleObjectCount": 4,
         "inlineStyleBindingCount": 0,
         "inlineStyleTokenBypassCount": 0
       },
@@ -306,193 +315,263 @@
         "summaryVersion": "v1",
         "source": "lightweight-static-scan",
         "scanRootRelativePaths": [
-          "src"
+          "frontend"
         ],
-        "scannedFileCount": 4,
+        "scannedFileCount": 8,
         "cssVariables": {
-          "definitionCount": 27,
-          "referenceCount": 76,
+          "definitionCount": 42,
+          "referenceCount": 85,
           "sampleNames": [
-            "paper",
-            "paper-bright",
-            "graphite-950",
-            "graphite-900",
-            "graphite-850",
-            "graphite-800",
-            "graphite-700",
-            "graphite-600",
-            "ink",
-            "ink-invert",
-            "muted",
-            "muted-strong"
+            "font-display",
+            "font-body",
+            "font-mono",
+            "surface-sheet",
+            "surface-field",
+            "surface-inked",
+            "ink-black",
+            "ink-muted",
+            "line-hard",
+            "line-soft",
+            "signal-acne",
+            "signal-spot"
           ],
           "categoryCounts": {
-            "color": 4,
+            "color": 23,
             "spacing": 0,
             "radius": 3,
-            "shadow": 2,
-            "typography": 3,
+            "shadow": 0,
+            "typography": 5,
             "motion": 0,
-            "other": 15
+            "other": 11
           }
         },
         "colors": {
-          "hardcodedCount": 50,
+          "hardcodedCount": 61,
           "kindCounts": {
-            "hex": 19,
-            "rgb": 31,
+            "hex": 53,
+            "rgb": 8,
             "hsl": 0,
             "oklch": 0,
             "other": 0
           },
           "sampleValues": [
-            "#039",
-            "#f7f1e6",
-            "#fff7e8",
-            "#12100d",
-            "#171410",
-            "#1d1914",
-            "#252017",
-            "#3a3328",
-            "#4a4134",
-            "#1b1712",
-            "#f8f1e6",
-            "#b6ab96"
+            "#ff5a1f",
+            "#8a4d00",
+            "#007b8f",
+            "#d1007f",
+            "#617a1f",
+            "#f7f4e8",
+            "#e7ead7",
+            "#10100d",
+            "#4e5349",
+            "#b7baa7",
+            "#00a6b4",
+            "#005fcc"
           ]
         },
         "spacing": {
-          "rawValueCount": 75,
+          "rawValueCount": 18,
           "sampleValues": [
             "320px",
             "100vh",
             "20px",
-            "18px",
-            "8px",
-            "6px",
-            "420px",
+            "5px",
+            "16px",
             "12px",
-            "44px",
-            "10px",
-            "2px",
-            "14px"
+            "2.75rem",
+            "1080px",
+            "880px",
+            "900px",
+            "420px",
+            "640px"
           ]
         },
         "radius": {
           "rawValueCount": 3,
           "sampleValues": [
-            "999px"
+            "2px"
           ]
         },
         "shadow": {
-          "rawValueCount": 8,
+          "rawValueCount": 5,
           "sampleValues": [
-            "var(--shadow-soft)",
-            "0 0 0 6px rgba(240, 166, 42, 0.18)",
-            "0 0 0 6px rgba(91, 198, 134, 0.2)",
-            "var(--shadow-hard)",
-            "0 10px 18px rgba(240, 166, 42, 0.22)",
-            "inset 0 0 0 1px rgba(255, 255, 255, 0.4)",
-            "0 0 0 1px rgba(0, 0, 0, 0.3), 0 0 18px rgba(240, 166, 42, 0.45)",
-            "0 0 0 3px rgba(240, 166, 42, 0.3)"
+            "var(--offset-block)",
+            "8px 8px 0 var(--survey-orange)",
+            "4px 4px 0 var(--ink-black)"
           ]
         },
         "typography": {
-          "fontFamilyCount": 7,
-          "fontSizeCount": 19,
-          "lineHeightCount": 4,
-          "letterSpacingCount": 10,
+          "fontFamilyCount": 4,
+          "fontSizeCount": 0,
+          "lineHeightCount": 0,
+          "letterSpacingCount": 0,
           "fontFamilySamples": [
             "var(--font-body)",
             "var(--font-display)",
-            "var(--font-mono)"
+            "var(--font-mono)",
+            "{"
           ],
-          "fontSizeSamples": [
-            "0.72rem",
-            "1.05rem",
-            "0.95rem",
-            "0.68rem",
-            "0.9rem",
-            "0.86rem",
-            "0.7rem",
-            "0.74rem",
-            "0.8rem",
-            "0.75rem",
-            "0.88rem"
-          ],
-          "lineHeightSamples": [
-            "0.95",
-            "1.4",
-            "1.5"
-          ],
-          "letterSpacingSamples": [
-            "0.12em",
-            "-0.02em",
-            "0.16em",
-            "0.14em",
-            "0.06em"
-          ]
+          "fontSizeSamples": [],
+          "lineHeightSamples": [],
+          "letterSpacingSamples": []
         },
         "motion": {
-          "transitionCount": 3,
-          "animationCount": 5,
-          "durationCount": 12,
+          "transitionCount": 4,
+          "animationCount": 6,
+          "durationCount": 7,
           "durationSamples": [
-            "150ms",
-            "600ms",
-            "700ms",
-            "80ms",
-            "140ms",
+            "420ms",
             "200ms",
-            "240ms"
+            "140ms",
+            "1ms"
           ]
         },
         "tailwind": {
-          "breakpointUsageCount": 3,
+          "breakpointUsageCount": 19,
           "arbitraryBreakpointCount": 0,
           "utilityFamilyCounts": {
-            "category": 1,
-            "goal": 1,
-            "empty": 1,
-            "control": 2
+            "min": 1,
+            "derma": 1,
+            "text": 1,
+            "survey": 2,
+            "brand": 1,
+            "product": 1,
+            "kicker": 6,
+            "status": 3,
+            "${statusClass}": 1,
+            "privacy": 1,
+            "${image": 1,
+            "?": 3,
+            "\"has": 2,
+            "\"is": 2,
+            "intake": 2,
+            "condition": 8,
+            "marker": 2,
+            "acquisition": 1,
+            "source": 2,
+            "${isDragOver": 1,
+            "\"\"}": 2,
+            "upload": 1,
+            "hidden": 1,
+            "camera": 4,
+            "btn": 18,
+            "map": 1,
+            "stage": 5,
+            "face": 2,
+            "${processedImage": 1,
+            "overlay": 1,
+            "alert": 6,
+            "evidence": 3,
+            "zone": 2,
+            "register": 3,
+            "score": 2,
+            "panel": 1,
+            "process": 1,
+            "error": 1
           },
           "utilityFamilySamples": [
-            "category",
-            "goal",
-            "empty",
-            "control"
+            "min",
+            "derma",
+            "text",
+            "survey",
+            "brand",
+            "product",
+            "kicker",
+            "status",
+            "${statusClass}",
+            "privacy",
+            "${image",
+            "?"
           ]
         },
         "componentInventory": {
-          "componentFileCount": 0,
-          "pageFileCount": 0,
+          "componentFileCount": 1,
+          "pageFileCount": 1,
           "layoutFileCount": 0,
-          "surfaceFileSamples": []
+          "surfaceFileSamples": [
+            "frontend/src/App.jsx",
+            "frontend/src/index.css"
+          ]
         },
         "structuredInspection": {
           "mode": "attribute-aware-static-scan",
-          "classAttributeCount": 5,
-          "boundClassExpressionCount": 0,
-          "inlineStyleObjectCount": 0,
+          "classAttributeCount": 59,
+          "boundClassExpressionCount": 9,
+          "inlineStyleObjectCount": 4,
           "inlineStyleBindingCount": 0,
           "classAttributeSamples": [
-            "category-tab",
-            "goal-summary",
-            "empty-controls",
-            "control-field",
-            "control-label"
+            "min-h-screen derma-shell text-base-content",
+            "survey-masthead",
+            "brand-block",
+            "product-mark",
+            "kicker",
+            "status-cluster",
+            "status-pill ${statusClass}",
+            "status-light",
+            "privacy-pill",
+            "survey-main ${image ? \"has-image\" : \"is-intake\"}",
+            "intake-copy",
+            "intake-facts"
           ],
-          "inlineStyleSamples": [],
+          "inlineStyleSamples": [
+            "backgroundColor: color",
+            "\"--signal-color\": CONDITION_COLORS[category.id]",
+            "backgroundColor: CONDITION_COLORS[category.id]",
+            "width: `${Math.max(0, Math.min(100, score))}%`"
+          ],
           "utilityFamilyCounts": {
-            "category": 1,
-            "goal": 1,
-            "empty": 1,
-            "control": 2
+            "min": 1,
+            "derma": 1,
+            "text": 1,
+            "survey": 2,
+            "brand": 1,
+            "product": 1,
+            "kicker": 6,
+            "status": 3,
+            "${statusClass}": 1,
+            "privacy": 1,
+            "${image": 1,
+            "?": 3,
+            "\"has": 2,
+            "\"is": 2,
+            "intake": 2,
+            "condition": 8,
+            "marker": 2,
+            "acquisition": 1,
+            "source": 2,
+            "${isDragOver": 1,
+            "\"\"}": 2,
+            "upload": 1,
+            "hidden": 1,
+            "camera": 4,
+            "btn": 18,
+            "map": 1,
+            "stage": 5,
+            "face": 2,
+            "${processedImage": 1,
+            "overlay": 1,
+            "alert": 6,
+            "evidence": 3,
+            "zone": 2,
+            "register": 3,
+            "score": 2,
+            "panel": 1,
+            "process": 1,
+            "error": 1
           },
           "utilityFamilySamples": [
-            "category",
-            "goal",
-            "empty",
-            "control"
+            "min",
+            "derma",
+            "text",
+            "survey",
+            "brand",
+            "product",
+            "kicker",
+            "status",
+            "${statusClass}",
+            "privacy",
+            "${image",
+            "?"
           ],
           "inlineTokenBypassSignals": {
             "hardcodedColorCount": 0,
@@ -503,10 +582,10 @@
           }
         },
         "tokenBypassSignals": {
-          "hardcodedColorCount": 50,
-          "rawSpacingCount": 75,
+          "hardcodedColorCount": 61,
+          "rawSpacingCount": 18,
           "rawRadiusCount": 3,
-          "rawShadowCount": 8,
+          "rawShadowCount": 5,
           "inlineHardcodedColorCount": 0,
           "inlineRawSpacingCount": 0,
           "inlineRawRadiusCount": 0,
