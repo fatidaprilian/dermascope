@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "imglab_api/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "imglab_api/main.py"
+    }
+  ]
+}
