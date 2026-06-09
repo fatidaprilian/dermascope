@@ -91,11 +91,11 @@ function App() {
       .then((data) => {
         if (!alive) return;
         const engine = data?.engine ? ` (${data.engine})` : "";
-        setBackendStatus({ state: "ready", label: `Laci tekan siap${engine}` });
+        setBackendStatus({ state: "ready", label: `Sistem Siap${engine}` });
       })
       .catch(() => {
         if (!alive) return;
-        setBackendStatus({ state: "error", label: "Laci tekan offline" });
+        setBackendStatus({ state: "error", label: "Server Offline" });
       });
 
     return () => {
@@ -156,7 +156,7 @@ function App() {
         body: formData
       });
       if (!response.ok) {
-        let msg = "Deteksi lempeng wajah awal gagal. Menggunakan lembar dasar.";
+        let msg = "Deteksi posisi wajah gagal. Menggunakan foto asli.";
         try {
           const payload = await response.json();
           if (payload?.message) msg = payload.message;
@@ -178,7 +178,7 @@ function App() {
       setPreprocessWarning(parsedWarnings[0] || null);
     } catch (err) {
       if (preprocessRequestRef.current !== requestId) return;
-      setPreprocessWarning(err instanceof Error ? err.message : "Deteksi awal lempeng wajah gagal.");
+      setPreprocessWarning(err instanceof Error ? err.message : "Deteksi awal wajah gagal.");
     } finally {
       if (preprocessRequestRef.current === requestId) setIsPreprocessing(false);
     }
@@ -189,11 +189,11 @@ function App() {
 
     const validTypes = ["image/png", "image/jpeg", "image/webp"];
     if (!validTypes.includes(file.type)) {
-      setError("Format lempeng tidak didukung. Gunakan PNG, JPEG, atau WebP.");
+      setError("Format gambar tidak didukung. Gunakan PNG, JPEG, atau WebP.");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      setError("Ukuran lempeng melebihi batas. Maksimal 10 MB.");
+      setError("Ukuran gambar melebihi batas. Maksimal 10 MB.");
       return;
     }
 
@@ -261,7 +261,7 @@ function App() {
   const captureCameraPhoto = async () => {
     const video = videoRef.current;
     if (!video || !video.videoWidth || !video.videoHeight) {
-      setError("Modul laci kamera belum siap.");
+      setError("Kamera belum siap digunakan.");
       return;
     }
 
@@ -270,7 +270,7 @@ function App() {
     canvas.height = video.videoHeight;
     const context = canvas.getContext("2d");
     if (!context) {
-      setError("Gagal merekam data lembar kamera.");
+      setError("Gagal merekam foto dari kamera.");
       return;
     }
 
@@ -279,10 +279,10 @@ function App() {
       canvas.toBlob(resolve, "image/jpeg", 0.92);
     });
     if (!blob) {
-      setError("Gagal menyusun lembar kamera.");
+      setError("Gagal memproses foto dari kamera.");
       return;
     }
-    const file = new File([blob], `kamera-cetak-${Date.now()}.jpg`, { type: "image/jpeg" });
+    const file = new File([blob], `foto-kamera-${Date.now()}.jpg`, { type: "image/jpeg" });
     acceptImageFile(file);
     stopCamera();
   };
@@ -300,7 +300,7 @@ function App() {
     try {
       const operation = DermaScopeOperations.byId(goal.operationId);
       if (!operation) {
-        throw new Error("Lembaga analisis laci cetak tidak ditemukan.");
+        throw new Error("Model analisis tidak ditemukan.");
       }
       const defaults = DermaScopeOperations.defaultsFor(operation);
 
@@ -315,7 +315,7 @@ function App() {
       });
 
       if (!response.ok) {
-        let msg = "Mesin cetak gagal memetakan lempeng wajah ini.";
+        let msg = "Sistem gagal memproses foto wajah ini.";
         try {
           const payload = await response.json();
           if (payload?.message) msg = payload.message;
@@ -447,7 +447,7 @@ function App() {
                 </div>
 
                 {/* Color bar legend showing accessible shapes and labels */}
-                <div className="condition-legend" aria-label="Legenda Piringan Warna">
+                <div className="condition-legend" aria-label="Legenda Warna">
                   {Object.keys(CONDITION_COLORS).map((id) => (
                     <span key={id} className="gap-2">
                       <i className={`condition-marker marker-${id}`} aria-hidden="true"></i>
@@ -459,7 +459,7 @@ function App() {
 
               {/* Intake Station: Right Upload/Camera selector */}
               <div className="acquisition-ledger">
-                <div className="source-tabs" aria-label="Pilih mekanisme lempeng">
+                <div className="source-tabs" aria-label="Pilih sumber foto">
                   <button
                     type="button"
                     className={inputMode === "upload" ? "active" : ""}
@@ -558,7 +558,7 @@ function App() {
               <div className="map-panel">
                 <div className="stage-header">
                   <div className="stage-meta">
-                    <p className="kicker">MAP-01 / Analisis Gambar</p>
+                    <p className="kicker">TAHAP-01 / Analisis Gambar</p>
                     <h2 className="font-serif font-bold text-lg">{image.name}</h2>
                     <span>{stageStatus}</span>
                   </div>
@@ -641,7 +641,7 @@ function App() {
 
               {/* Zone Calibration Readout Blocks */}
               {analysis && (
-                <div className="zone-band" aria-label="Kalibrasi Sektor Wajah">
+                <div className="zone-band" aria-label="Analisis Zona Wajah">
                   {analysis.zones.map((zone) => (
                     <div key={zone.id} className="zone-record">
                       <span>{zone.label}</span>

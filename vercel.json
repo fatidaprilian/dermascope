@@ -11,5 +11,8 @@
             "builder": "@vercel/python",
             "entrypoint": "imglab_api/main.py"
         }
-    }
+    },
+    "rewrites": [
+        { "source": "/api/(.*)", "destination": "/_/backend/api/$1" }
+    ]
 }
