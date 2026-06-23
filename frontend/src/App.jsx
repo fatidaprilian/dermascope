@@ -627,10 +627,10 @@ function App() {
 
                   {/* Floating Warning Overlays */}
                   {preprocessWarning && !analysis && (
-                    <div className="absolute top-4 left-4 right-4 z-20 alert alert-warning shadow-lg font-mono text-xs py-2 px-3 flex justify-between items-center border border-warning/20 bg-warning/90 backdrop-blur-sm text-warning-content rounded-none">
+                    <div className="absolute top-4 left-4 right-4 z-20 alert shadow-lg font-mono text-xs py-2.5 px-4 flex justify-between items-center border border-[#e0462d]/40 bg-[#0a0b0b]/95 backdrop-blur-sm text-[#fdfbf7] rounded-none">
                       <span>{preprocessWarning}</span>
                       <button 
-                        className="btn btn-ghost btn-xs h-6 w-6 min-h-6 min-w-6 p-0 text-warning-content hover:bg-warning/20 flex items-center justify-center text-sm font-normal" 
+                        className="btn btn-ghost btn-xs h-6 w-6 min-h-6 min-w-6 p-0 text-[#fdfbf7] hover:bg-[#fdfbf7]/20 flex items-center justify-center text-sm font-normal" 
                         onClick={() => setPreprocessWarning(null)}
                         aria-label="Tutup Peringatan"
                       >
@@ -640,7 +640,7 @@ function App() {
                   )}
 
                   {analysis?.warning && (
-                    <div className="absolute top-4 left-4 right-4 z-20 alert alert-warning shadow-lg font-mono text-xs py-2 px-3 flex justify-between items-center border border-warning/20 bg-warning/90 backdrop-blur-sm text-warning-content rounded-none">
+                    <div className="absolute top-4 left-4 right-4 z-20 alert shadow-lg font-mono text-xs py-2.5 px-4 flex justify-between items-center border border-[#e0462d]/40 bg-[#0a0b0b]/95 backdrop-blur-sm text-[#fdfbf7] rounded-none">
                       <span>{analysis.warning}</span>
                     </div>
                   )}
