@@ -143,7 +143,7 @@ def _analyze_facial_skin(image: np.ndarray) -> tuple[np.ndarray, list[str], dict
     warnings: list[str] = []
     detected_face, detected = _detect_face(image)
     if not detected:
-        warnings.append("Face detector used a centered fallback region.")
+        raise ApiError("NO_FACE_DETECTED", "Wajah tidak terdeteksi pada gambar. Pastikan Anda mengunggah foto wajah yang jelas.", 400)
 
     crop_x, crop_y, crop_w, crop_h = _expanded_face_rect(detected_face, image.shape[1], image.shape[0])
     working_image = image[crop_y : crop_y + crop_h, crop_x : crop_x + crop_w]
@@ -271,10 +271,10 @@ def _expanded_face_rect(face: tuple[int, int, int, int], image_width: int, image
 def _skin_mask(face: np.ndarray) -> np.ndarray:
     ycrcb = cv.cvtColor(face, cv.COLOR_BGR2YCrCb)
     hsv = cv.cvtColor(face, cv.COLOR_BGR2HSV)
-    lower = np.array([30, 128, 75], dtype=np.uint8)
-    upper = np.array([245, 188, 148], dtype=np.uint8)
+    lower = np.array([15, 133, 77], dtype=np.uint8)
+    upper = np.array([245, 173, 127], dtype=np.uint8)
     color_mask = cv.inRange(ycrcb, lower, upper)
-    hsv_mask = cv.inRange(hsv, np.array([0, 18, 45], dtype=np.uint8), np.array([35, 185, 255], dtype=np.uint8))
+    hsv_mask = cv.inRange(hsv, np.array([0, 15, 15], dtype=np.uint8), np.array([35, 185, 255], dtype=np.uint8))
     mask = cv.bitwise_and(color_mask, hsv_mask)
     kernel = np.ones((5, 5), dtype=np.uint8)
     mask = cv.morphologyEx(mask, cv.MORPH_OPEN, kernel)
@@ -313,28 +313,28 @@ def _measure_zone(zone: np.ndarray, skin: np.ndarray) -> dict[str, dict[str, Any
     baseline = float(np.median(gray[valid])) if np.any(valid) else float(np.median(gray))
     red_dominance = r.astype(np.int16) - ((g.astype(np.int16) + b.astype(np.int16)) // 2)
     red_base = float(np.median(red_dominance[valid])) if np.any(valid) else float(np.median(red_dominance))
-    red_strong = red_dominance > max(30, red_base + 24)
-    red_soft = red_dominance > max(24, red_base + 18)
+    red_strong = red_dominance > max(15, red_base + 15)
+    red_soft = red_dominance > max(10, red_base + 10)
 
-    acne = np.where(valid & red_strong & (gray < baseline + 28), 255, 0).astype(np.uint8)
+    acne = np.where(valid & red_strong & (gray < baseline * 1.25), 255, 0).astype(np.uint8)
     acne = _small_blob_mask(acne, min_area=8, max_area=160)
 
-    dark = np.where(valid & (gray < baseline - 26) & ~red_strong, 255, 0).astype(np.uint8)
+    dark = np.where(valid & (gray < baseline * 0.75) & ~red_strong, 255, 0).astype(np.uint8)
     dark = _small_blob_mask(dark, min_area=12, max_area=380)
 
-    redness = np.where(valid & red_soft & (gray > baseline - 18), 255, 0).astype(np.uint8)
+    redness = np.where(valid & red_soft & (gray > baseline * 0.8), 255, 0).astype(np.uint8)
     redness = cv.morphologyEx(redness, cv.MORPH_OPEN, np.ones((5, 5), dtype=np.uint8))
     redness = cv.morphologyEx(redness, cv.MORPH_CLOSE, np.ones((7, 7), dtype=np.uint8))
 
     edges = cv.Canny(cv.GaussianBlur(gray, (3, 3), 0), 45, 120)
     line_kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 1))
-    wrinkles = np.where(valid & (edges > 0) & (gray < baseline + 24), 255, 0).astype(np.uint8)
+    wrinkles = np.where(valid & (edges > 0) & (gray < baseline * 1.25), 255, 0).astype(np.uint8)
     wrinkles = cv.morphologyEx(wrinkles, cv.MORPH_OPEN, line_kernel)
 
     laplacian = cv.Laplacian(gray, cv.CV_16S, ksize=3)
     texture = cv.convertScaleAbs(laplacian)
     texture_base = float(np.percentile(texture[valid], 68)) if np.any(valid) else float(np.percentile(texture, 68))
-    pores = np.where(valid & (texture > max(28, texture_base + 8)) & (red_dominance < red_base + 32), 255, 0).astype(np.uint8)
+    pores = np.where(valid & (texture > max(20, texture_base * 1.3)) & (red_dominance < red_base + 32), 255, 0).astype(np.uint8)
     pores = cv.morphologyEx(pores, cv.MORPH_OPEN, np.ones((2, 2), dtype=np.uint8))
 
     return {

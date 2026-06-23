@@ -1,6 +1,6 @@
 {
-  "cliVersion": "4.3.15",
-  "generatedAt": "2026-06-09T22:18:58.033Z",
+  "cliVersion": "4.4.0",
+  "generatedAt": "2026-06-23T04:00:11.030Z",
   "operationMode": "upgrade",
   "selectedProfile": "balanced",
   "projectScope": {
@@ -36,7 +36,7 @@
   },
   "ciGuardrailsEnabled": true,
   "localOnly": false,
-  "setupDurationMs": 137,
+  "setupDurationMs": 158,
   "runtimeEnvironment": {
     "selected": "linux-wsl",
     "selectedLabel": "Linux / WSL",
@@ -234,7 +234,7 @@
       "frontend: Vite config"
     ],
     "detectionTransparency": {
-      "declaredAt": "2026-06-09T22:18:57.944Z",
+      "declaredAt": "2026-06-23T04:00:10.924Z",
       "declarationType": "existing-project",
       "declarationShown": true,
       "detectionSummary": "This folder looks like Typescript with medium confidence based on frontend: package.json, frontend: Vite config. Confidence gap: 0.08. Secondary stack signals: Typescript.",

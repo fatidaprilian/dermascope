@@ -19,9 +19,7 @@ Run this before declaring a task done. Apply only the sections relevant to the c
 - [ ] Public contracts remain stable or are versioned and documented.
 
 ## 3. Architecture
-
 ### 2. Architecture (→ rules/architecture.md)
-
 - [ ] Layer and module boundaries are clear for the project’s chosen structure.
 - [ ] No clever hacks in backend and shared core modules
 - [ ] No premature abstraction (base classes/util layers created only after repeated stable patterns)
@@ -102,7 +100,7 @@ Run this before declaring a task done. Apply only the sections relevant to the c
 
 ## 9. State And Governance
 
-### 11. Context-Triggered Audit Mode
+### 9.1 Context-Triggered Audit Mode
 
 - [ ] Strict audit mode activates automatically on review and PR-intent workflows
 - [ ] Small edits avoid heavy checks by default unless strict mode is explicitly requested
