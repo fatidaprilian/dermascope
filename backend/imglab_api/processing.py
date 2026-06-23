@@ -121,8 +121,6 @@ def preprocess_face(data: bytes, content_type: str | None) -> ProcessedImage:
     x, y, w, h = _expanded_face_rect(face, image.shape[1], image.shape[0])
     roi = image[y : y + h, x : x + w]
     normalized = _normalize_lighting(roi)
-    if not detected:
-        _put_label(normalized, "Fallback ROI", (8, 22), (0, 77, 138), scale=0.5)
     success, encoded = cv.imencode(".png", normalized)
     if not success:
         raise ApiError("EXPORT_FAILED", "The preprocessed image could not be encoded.", 500)
@@ -134,7 +132,7 @@ def preprocess_face(data: bytes, content_type: str | None) -> ProcessedImage:
         height=height,
         operation_id="face-preprocess",
         output_mode="preprocess",
-        warnings=tuple(() if detected else ("Face detector used a centered fallback region.",)),
+        warnings=tuple(() if detected else ("Wajah tidak terdeteksi pada gambar. Pastikan Anda mengunggah foto wajah yang jelas.",)),
         analysis={"faceDetected": detected, "crop": {"x": x, "y": y, "width": w, "height": h}},
     )
 

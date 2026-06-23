@@ -624,20 +624,28 @@ function App() {
                       <div className="w-16 h-16 border-2 border-full rounded-full" style={{ borderColor: CONDITION_COLORS[hoveredPlate], borderStyle: "dotted" }}></div>
                     </div>
                   )}
+
+                  {/* Floating Warning Overlays */}
+                  {preprocessWarning && !analysis && (
+                    <div className="absolute top-4 left-4 right-4 z-20 alert alert-warning shadow-lg font-mono text-xs py-2 px-3 flex justify-between items-center border border-warning/20 bg-warning/90 backdrop-blur-sm text-warning-content rounded-none">
+                      <span>{preprocessWarning}</span>
+                      <button 
+                        className="btn btn-ghost btn-xs h-6 w-6 min-h-6 min-w-6 p-0 text-warning-content hover:bg-warning/20 flex items-center justify-center text-sm font-normal" 
+                        onClick={() => setPreprocessWarning(null)}
+                        aria-label="Tutup Peringatan"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+
+                  {analysis?.warning && (
+                    <div className="absolute top-4 left-4 right-4 z-20 alert alert-warning shadow-lg font-mono text-xs py-2 px-3 flex justify-between items-center border border-warning/20 bg-warning/90 backdrop-blur-sm text-warning-content rounded-none">
+                      <span>{analysis.warning}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {preprocessWarning && !analysis && (
-                <div className="alert alert-warning evidence-alert font-mono text-xs">
-                  <span>{preprocessWarning}</span>
-                </div>
-              )}
-
-              {analysis?.warning && (
-                <div className="alert alert-warning evidence-alert font-mono text-xs">
-                  <span>{analysis.warning}</span>
-                </div>
-              )}
 
               {/* Zone Calibration Readout Blocks */}
               {analysis && (
